@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adobe Analytics AI Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+<style>
+:root{--bg0:#0b0d14;--bg1:#121520;--bg2:#1a1e2e;--bg3:#232840;--brd:#2a2f48;--t1:#e8eaed;--t2:#9aa0b8;--t3:#636980;--acc:#6366f1;--acc2:#818cf8;--accg:rgba(99,102,241,.13);--grn:#22c55e;--red:#ef4444;--yel:#eab308;--blu:#3b82f6;--org:#f97316;--pur:#a855f7;--cyn:#06b6d4;--pnk:#ec4899;--tea:#14b8a6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg0);color:var(--t1);overflow:hidden;height:100vh}
+.ov{position:fixed;inset:0;background:var(--bg0);display:flex;align-items:center;justify-content:center;z-index:999;transition:opacity .4s,visibility .4s}
+.ov.hid{opacity:0;visibility:hidden;pointer-events:none}
+.sc{background:var(--bg1);border:1px solid var(--brd);border-radius:16px;padding:44px;max-width:540px;width:92%;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.sc h1{font-size:25px;margin-bottom:6px}
+.sc .sub{color:var(--t2);margin-bottom:24px;font-size:14px;line-height:1.5}
+.sc label{display:block;font-size:11px;color:var(--t3);margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.sc input[type=password],.sc input[type=text]{width:100%;padding:12px 16px;background:var(--bg2);border:1px solid var(--brd);border-radius:10px;color:var(--t1);font-size:15px;margin-bottom:16px}
+.sc input:focus{outline:none;border-color:var(--acc)}
+.btn{width:100%;padding:13px;background:var(--acc);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s,transform .1s}
+.btn:hover{background:var(--acc2)}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.err{color:var(--red);font-size:13px;margin-top:-8px;margin-bottom:12px;display:none}.err.s{display:block}
+.fd{border:2px dashed var(--brd);border-radius:12px;padding:34px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:16px}
+.fd:hover,.fd.dg{border-color:var(--acc);background:var(--accg)}
+.fd .ic{font-size:36px;margin-bottom:8px}.fd .lb{font-size:14px;color:var(--t2)}.fd .lb strong{color:var(--acc)}
+.fi{font-size:13px;color:var(--grn);margin-top:8px;display:none}
+.pb{width:100%;height:4px;background:var(--bg3);border-radius:2px;margin:12px 0;display:none}.pb .fl{height:100%;background:var(--acc);border-radius:2px;transition:width .3s;width:0}
+.si{display:flex;gap:8px;margin-bottom:24px}.sd{width:8px;height:8px;border-radius:50%;background:var(--brd);transition:background .3s}.sd.a{background:var(--acc)}.sd.d{background:var(--grn)}
+.hw{background:var(--bg2);border-radius:10px;padding:14px;margin-bottom:18px;font-size:13px;line-height:1.7;color:var(--t2)}.hw b{color:var(--t1)}
+.app{display:flex;height:100vh}
+.sb{width:268px;min-width:268px;background:var(--bg1);border-right:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden}
+.sb-h{padding:16px 18px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sb-h .lg{width:32px;height:32px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.sb-h .nm{font-size:15px;font-weight:700}
+.sb-n{padding:8px;flex-shrink:0}
+.nb{width:100%;padding:8px 12px;background:0;border:0;color:var(--t2);font-size:13px;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px;transition:all .15s;margin-bottom:1px}
+.nb:hover{background:var(--bg2);color:var(--t1)}.nb.a{background:var(--accg);color:var(--acc);font-weight:600}
+.sb-f{flex:1;overflow-y:auto;padding:8px;border-top:1px solid var(--brd)}.sb-f::-webkit-scrollbar{width:4px}.sb-f::-webkit-scrollbar-thumb{background:var(--brd);border-radius:4px}
+.fs{margin-bottom:12px}.fs h4{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:5px;padding:0 4px}
+.fc{display:inline-block;padding:3px 8px;margin:2px;font-size:11px;background:var(--bg2);border:1px solid var(--brd);border-radius:5px;cursor:pointer;transition:all .15s;color:var(--t2)}
+.fc:hover{border-color:var(--acc);color:var(--t1)}.fc.sel{background:var(--accg);border-color:var(--acc);color:var(--acc)}
+.fsi{width:100%;padding:6px 10px;background:var(--bg2);border:1px solid var(--brd);border-radius:6px;color:var(--t1);font-size:12px;margin-bottom:6px}.fsi:focus{outline:none;border-color:var(--acc)}
+.mc{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.tb{padding:12px 22px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb h2{font-size:18px;font-weight:700}
+.tt{display:flex;gap:3px;background:var(--bg2);padding:3px;border-radius:7px}
+.ttb{padding:5px 13px;border:0;background:0;color:var(--t2);font-size:12px;border-radius:5px;cursor:pointer;transition:all .15s}.ttb.a{background:var(--acc);color:#fff}
+.ca{flex:1;overflow-y:auto;padding:22px}.ca::-webkit-scrollbar{width:5px}.ca::-webkit-scrollbar-thumb{background:var(--brd);border-radius:4px}
+.kr{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.kc{background:var(--bg2);border:1px solid var(--brd);border-radius:11px;padding:16px;transition:border-color .2s}.kc:hover{border-color:var(--acc)}
+.kl{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.kv{font-size:24px;font-weight:700;margin-bottom:2px}
+.kch{font-size:11px;font-weight:600}.kch.u{color:var(--grn)}.kch.dn{color:var(--red)}
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:12px;margin-bottom:20px}
+.cc{background:var(--bg2);border:1px solid var(--brd);border-radius:11px;padding:16px;min-height:280px}
+.cc h3{font-size:13px;margin-bottom:12px;color:var(--t1)}.cc canvas{max-height:240px}
+.chtc{display:flex;flex-direction:column;height:100%;min-height:0}
+.chm{flex:1;overflow-y:auto;padding:22px;min-height:0}.chm::-webkit-scrollbar{width:4px}.chm::-webkit-scrollbar-thumb{background:var(--brd);border-radius:4px}
+.cm{max-width:82%;margin-bottom:14px;animation:fi .3s}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.cm.u{margin-left:auto}
+.cm .bb{padding:11px 15px;border-radius:11px;font-size:13.5px;line-height:1.65}
+.cm.u .bb{background:var(--acc);color:#fff;border-bottom-right-radius:3px}
+.cm.as .bb{background:var(--bg2);border:1px solid var(--brd);border-bottom-left-radius:3px}
+.cm .bb p{margin-bottom:7px}.cm .bb p:last-child{margin-bottom:0}
+.cm .bb code{background:var(--bg3);padding:2px 5px;border-radius:3px;font-size:12px}
+.cm .bb pre{background:var(--bg3);padding:10px;border-radius:7px;overflow-x:auto;margin:7px 0}.cm .bb pre code{background:0;padding:0}
+.cm .bb ul,.cm .bb ol{padding-left:18px;margin:7px 0}.cm .bb li{margin-bottom:3px}
+.cm .bb table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12px}
+.cm .bb th,.cm .bb td{padding:5px 8px;border:1px solid var(--brd);text-align:left}.cm .bb th{background:var(--bg3);font-weight:600}
+.cm .sn{font-size:10px;color:var(--t3);margin-bottom:3px;padding:0 4px}.cm.u .sn{text-align:right}
+.cty{display:flex;gap:4px;padding:8px 14px}
+.cty span{width:6px;height:6px;background:var(--t3);border-radius:50%;animation:bl 1.4s infinite both}
+.cty span:nth-child(2){animation-delay:.2s}.cty span:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,80%,100%{opacity:.3}40%{opacity:1}}
+.cia{padding:12px 22px;border-top:1px solid var(--brd);display:flex;gap:10px;flex-shrink:0;min-height:60px}
+.cia textarea{flex:1;padding:10px 13px;background:var(--bg2);border:1px solid var(--brd);border-radius:9px;color:var(--t1);font-size:13.5px;resize:none;font-family:inherit;min-height:42px;max-height:120px}
+.cia textarea:focus{outline:none;border-color:var(--acc)}
+.csb{padding:0 16px;background:var(--acc);border:0;border-radius:9px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s}
+.csb:hover{background:var(--acc2)}.csb:disabled{opacity:.35;cursor:not-allowed}
+.ccc{margin:10px 0;background:var(--bg3);border-radius:7px;padding:10px}.ccc canvas{max-height:240px}
+.dbg{display:inline-block;padding:2px 8px;background:var(--bg3);border:1px solid var(--brd);border-radius:4px;font-size:10px;color:var(--t3);margin-top:6px}
+.rc{background:var(--bg2);border:1px solid var(--brd);border-radius:11px;padding:20px;margin-bottom:12px}
+.rc h3{font-size:14px;margin-bottom:5px}
+.rc .pr{display:inline-block;padding:2px 9px;border-radius:16px;font-size:10px;font-weight:700;margin-bottom:8px}
+.rc .pr.h{background:rgba(239,68,68,.1);color:var(--red)}.rc .pr.m{background:rgba(234,179,8,.1);color:var(--yel)}.rc .pr.l{background:rgba(34,197,94,.1);color:var(--grn)}
+.rc p{color:var(--t2);font-size:13px;line-height:1.6}
+.sdm{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;min-height:32px;padding:7px;background:var(--bg2);border-radius:7px}
+.dt{display:flex;align-items:center;gap:4px;padding:3px 9px;background:var(--accg);border:1px solid var(--acc);color:var(--acc);border-radius:5px;font-size:11px}
+.dt .rm{cursor:pointer;opacity:.7}.dt .rm:hover{opacity:1}
+.tc{display:none;height:100%;overflow:hidden}.tc.a{display:flex;flex-direction:column}
+.ti{padding:7px 10px;font-size:10px;color:var(--t3);border-top:1px solid var(--brd);text-align:center}
+.hid{display:none!important}
+@media(max-width:768px){.sb{width:52px;min-width:52px}.sb-h .nm,.nb span,.sb-f{display:none}.nb{justify-content:center;padding:10px}.cg{grid-template-columns:1fr}.kr{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="ov" id="s1"><div class="sc">
+<div class="si"><div class="sd a"></div><div class="sd"></div></div>
+<h1>&#128302; Analytics AI Dashboard</h1>
+<p class="sub">Connect your Anthropic API key to power AI-driven analytics and chat.</p>
+<div class="hw"><b>How it works:</b> Your data stays 100% in your browser. When you ask a question, Claude writes an analysis script &rarr; it runs locally against your full dataset &rarr; computed results go to Claude for interpretation. Raw data never leaves your machine.</div>
+<label>Anthropic API Key</label>
+<input type="password" id="ak" placeholder="sk-ant-api03-..." autocomplete="off">
+<div class="err" id="ae"></div>
+<button class="btn" id="vb" onclick="doValidate()">Validate &amp; Continue &rarr;</button>
+</div></div>
+
+<div class="ov hid" id="s2"><div class="sc">
+<div class="si"><div class="sd d"></div><div class="sd a"></div></div>
+<h1>&#128202; Upload Dataset</h1>
+<p class="sub">Upload your Adobe Analytics Data Warehouse CSV export.</p>
+<div class="fd" id="fd" onclick="document.getElementById('fi').click()">
+<div class="ic">&#128193;</div>
+<div class="lb">Drop CSV here or <strong>click to browse</strong></div>
+<div class="fi" id="fin"></div>
+</div>
+<input type="file" id="fi" accept=".csv,.tsv,.txt" style="display:none">
+<div class="pb" id="pb"><div class="fl" id="pf"></div></div>
+<button class="btn" id="lbu" disabled onclick="doLaunch()">Launch Dashboard &rarr;</button>
+</div></div>
+
+<div class="app hid" id="ap">
+<div class="sb">
+<div class="sb-h"><div class="lg"><span>A</span></div><div class="nm">Analytics AI</div></div>
+<div class="sb-n">
+<button class="nb a" onclick="goTab('dash',this)">&#128202; <span>Dashboard</span></button>
+<button class="nb" onclick="goTab('cust',this)">&#128295; <span>Custom Reports</span></button>
+<button class="nb" onclick="goTab('chat',this)">&#128172; <span>AI Chat</span></button>
+<button class="nb" onclick="goTab('recs',this)">&#128161; <span>Recommendations</span></button>
+</div>
+<div class="sb-f" id="sf">
+<input class="fsi" placeholder="Search columns..." oninput="doFS(this.value)">
+<div id="fco"></div>
+</div>
+<div class="ti" id="tki">API Connected &#10003;</div>
+</div>
+<div class="mc">
+<div class="tb">
+<h2 id="pt">Executive Dashboard</h2>
+<div class="tt" id="tto">
+<button class="ttb" onclick="doTime('weekly',this)">Weekly</button>
+<button class="ttb a" onclick="doTime('monthly',this)">Monthly</button>
+<button class="ttb" onclick="doTime('yearly',this)">Yearly</button>
+</div>
+</div>
+<div class="tc a" id="tab-dash"><div class="ca"><div class="kr" id="kpiR"></div><div class="cg" id="chG"></div></div></div>
+<div class="tc" id="tab-cust"><div class="ca"><p style="color:var(--t2);margin-bottom:10px;font-size:13px">Select dimensions/metrics from sidebar to build charts.</p><div class="sdm" id="sdm"><span style="color:var(--t3);font-size:12px">No dimensions selected</span></div><div class="cg" id="ccG"></div></div></div>
+<div class="tc" id="tab-chat">
+<div class="chtc">
+<div class="chm" id="chMs">
+<div class="cm as"><div class="sn">Analytics AI</div><div class="bb"><p>&#128075; I'm your AI analytics assistant. Your entire dataset is loaded in-browser and I can query every row.</p><p><b>How this works:</b> I write an analysis function &rarr; runs locally on your full data &rarr; I interpret precise results. No raw data leaves your browser.</p><p>Try asking:</p><ul><li>"What are the top 10 routes by revenue?"</li><li>"Show monthly booking trend as a line chart"</li><li>"Compare revenue by loyalty tier"</li><li>"What day of the week gets the most traffic?"</li><li>"Show add-to-cart vs purchase conversion funnel"</li></ul></div></div>
+</div>
+<div class="cia"><textarea id="chi" placeholder="Ask anything about your data..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doSend()}"></textarea><button class="csb" id="csb" onclick="doSend()">Send</button></div>
+</div>
+</div>
+<div class="tc" id="tab-recs"><div class="ca" id="recA"><p style="color:var(--t2)">Generating recommendations...</p></div></div>
+</div>
+</div>
+
+<script>
+var AK='',DATA=[],COLS=[],CTYPE={},SCHEMA='';
+var EVARS=[],PROPS=[],EVENTS=[],METS=[],DIMS=[],DATECOLS=[];
+// KEY_EVENTS: events we know are important for airline analytics dashboard
+var KEY_EVENTS=[];
+var selF=new Set(),tView='monthly',chInst={},chHist=[];
+
+// ===== AUTO-DETECT API KEY FROM URL PARAMETER =====
+// Usage: https://yoursite.github.io/dashboard/?key=sk-ant-api03-xxxxx
+// If key is present, validation screen is skipped entirely.
+// The key is immediately removed from the URL bar for safety.
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var urlKey=params.get('key');
+  if(urlKey&&urlKey.indexOf('sk-ant-')===0){
+    AK=urlKey;
+    // Remove key from visible URL so it can't be accidentally shared/bookmarked
+    if(window.history&&window.history.replaceState){
+      var clean=window.location.origin+window.location.pathname+window.location.hash;
+      window.history.replaceState(null,'',clean);
+    }
+    // Once DOM is ready, skip step 1 and show step 2
+    document.addEventListener('DOMContentLoaded',function(){
+      document.getElementById('s1').classList.add('hid');
+      document.getElementById('s2').classList.remove('hid');
+    });
+  }
+})();
+
+// FRIENDLY NAMES for known Adobe Analytics event patterns
+var EVENT_LABELS={
+  event1:'Page Views',event2:'Visits',event3:'Unique Visitors',
+  event4:'Instances',event5:'Click-throughs',event6:'Searches',
+  event7:'Bookings',event8:'Booking Starts',event9:'Revenue',
+  event10:'Cart Additions',event11:'Cart Removals',event12:'Checkouts',
+  event13:'Purchases',event14:'Units',event15:'Custom Event 15',
+  event16:'Custom Event 16',event17:'Product Units',event26:'Product Revenue'
+};
+
+async function doValidate(){
+  var k=document.getElementById('ak').value.trim(),b=document.getElementById('vb'),e=document.getElementById('ae');
+  if(k.indexOf('sk-ant-')!==0){e.textContent='Key should start with sk-ant-';e.classList.add('s');return}
+  b.disabled=true;b.textContent='Validating...';e.classList.remove('s');
+  try{
+    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:30,messages:[{role:'user',content:'Reply OK'}]})});
+    if(r.ok){AK=k;document.getElementById('s1').classList.add('hid');document.getElementById('s2').classList.remove('hid')}
+    else{var d=await r.json();e.textContent=(d.error&&d.error.message)||'Validation failed.';e.classList.add('s')}
+  }catch(x){e.textContent='Network error: '+x.message;e.classList.add('s')}
+  b.disabled=false;b.textContent='Validate & Continue \u2192';
+}
+document.getElementById('ak').onkeydown=function(e){if(e.key==='Enter')doValidate()};
+
+var fd=document.getElementById('fd'),fii=document.getElementById('fi');
+fd.ondragover=function(e){e.preventDefault();fd.classList.add('dg')};
+fd.ondragleave=function(){fd.classList.remove('dg')};
+fd.ondrop=function(e){e.preventDefault();fd.classList.remove('dg');doFile(e.dataTransfer.files[0])};
+fii.onchange=function(e){if(e.target.files[0])doFile(e.target.files[0])};
+
+function doFile(f){
+  if(!f)return;
+  var info=document.getElementById('fin'),pb=document.getElementById('pb'),pf=document.getElementById('pf');
+  info.style.display='block';info.textContent='Parsing '+f.name+'...';info.style.color='var(--t2)';
+  pb.style.display='block';pf.style.width='15%';
+  Papa.parse(f,{header:true,skipEmptyLines:true,dynamicTyping:true,
+    complete:function(res){
+      pf.style.width='80%';
+      DATA=res.data.filter(function(r){return Object.values(r).some(function(v){return v!==null&&v!==''})});
+      COLS=res.meta.fields||[];
+      classifyCols();
+      pf.style.width='100%';
+      info.textContent='\u2713 '+f.name+' \u2014 '+DATA.length.toLocaleString()+' rows \u00d7 '+COLS.length+' cols';
+      info.style.color='var(--grn)';document.getElementById('lbu').disabled=false;
+    },
+    error:function(err){info.textContent='Error: '+err.message;info.style.color='var(--red)'}
+  });
+}
+
+function classifyCols(){
+  EVARS=[];PROPS=[];EVENTS=[];METS=[];DIMS=[];DATECOLS=[];KEY_EVENTS=[];
+  COLS.forEach(function(c){
+    var cl=c.toLowerCase();
+    // Detect eVars (eVar1, eVar2, etc.)
+    if(/^evar\d+$/i.test(cl)){EVARS.push(c);CTYPE[c]='evar';return}
+    // Detect props (prop1, prop2, etc.)
+    if(/^prop\d+$/i.test(cl)){PROPS.push(c);CTYPE[c]='prop';return}
+    // Detect events (event1, event2, etc.) — these ARE numeric metrics
+    if(/^event\d+$/i.test(cl)){
+      EVENTS.push(c);
+      CTYPE[c]='event'; // classified as event but ALSO treated as metric for charting
+      // Check if this event actually has non-zero data
+      var hasData=false;
+      for(var i=0;i<Math.min(DATA.length,200);i++){
+        var v=DATA[i][c];
+        if(v!==null&&v!==0&&v!==''&&v!=='0'){hasData=true;break}
+      }
+      if(hasData) KEY_EVENTS.push(c);
+      return;
+    }
+    // Detect date columns
+    if(/^(date|day of week|week|month|quarter|year|timestamp)$/i.test(cl)){
+      DATECOLS.push(c);CTYPE[c]='date';return;
+    }
+    // Detect known metric-like columns
+    if(/visit|view|click|bounce|time.*spent|revenue|order|purchase|cart|unit|instance|occurrence|page.?view|session|unique|conversion|book|checkin|check.?in|pnr|ancillary|loyalty/i.test(cl)){
+      METS.push(c);CTYPE[c]='metric';return;
+    }
+    // Auto-detect numeric vs dimension
+    var vs=DATA.slice(0,200).map(function(r){return r[c]}).filter(function(v){return v!=null});
+    var np=vs.filter(function(v){return typeof v==='number'}).length/Math.max(vs.length,1);
+    if(np>.7){METS.push(c);CTYPE[c]='metric'}
+    else{DIMS.push(c);CTYPE[c]='dimension'}
+  });
+
+  // Build a combined metrics list: explicit METS + KEY_EVENTS with data
+  // This is what the dashboard uses for KPIs and charts
+  console.log('Classification:', {evars:EVARS.length, props:PROPS.length, events:EVENTS.length, keyEvents:KEY_EVENTS.length, mets:METS.length, dims:DIMS.length, dates:DATECOLS.length});
+}
+
+// Get all plottable metrics = explicit metrics + events with data
+function getPlottableMetrics(){
+  return METS.concat(KEY_EVENTS);
+}
+
+function doLaunch(){
+  document.getElementById('s2').classList.add('hid');document.getElementById('ap').classList.remove('hid');
+  buildSchema();buildFilters();renderDash();genRecs();
+}
+
+function buildSchema(){
+  var cd=COLS.map(function(c){
+    var vs=DATA.map(function(r){return r[c]}).filter(function(v){return v!=null&&v!==''});
+    var t=CTYPE[c]||'unknown',nv=vs.filter(function(v){return typeof v==='number'});
+    var d='"'+c+'" ('+t+')';
+    if(nv.length>vs.length*.5){var s=nv.reduce(function(a,b){return a+b},0);d+=' \u2014 numeric, n='+nv.length+', sum='+s.toFixed(0)+', avg='+(s/nv.length).toFixed(2)}
+    else{var u={};vs.slice(0,1000).forEach(function(v){u[String(v)]=1});var uk=Object.keys(u);d+=' \u2014 '+uk.length+'+ unique, eg: '+uk.slice(0,6).join(', ')}
+    return d;
+  });
+  SCHEMA='DATASET: '+DATA.length+' rows x '+COLS.length+' cols\n\nCOLUMNS:\n'+cd.join('\n')+'\n\neVars: '+(EVARS.join(', ')||'none')+'\nProps: '+(PROPS.join(', ')||'none')+'\nEvents (numeric metrics): '+(EVENTS.join(', ')||'none')+'\nOther Metrics: '+(METS.join(', ')||'none')+'\nDimensions: '+(DIMS.join(', ')||'none')+'\nDate cols: '+(DATECOLS.join(', ')||'none')+'\n\nKEY EVENTS WITH DATA: '+KEY_EVENTS.join(', ')+'\n\nSample rows:\n'+JSON.stringify(DATA.slice(0,3),null,1);
+}
+
+function buildFilters(){
+  var co=document.getElementById('fco');
+  // Show key events first, then eVars, props, other events, dims
+  var keyEvLabels=KEY_EVENTS.slice(0,20).map(function(e){
+    var lbl=EVENT_LABELS[e.toLowerCase()]||e;
+    return {col:e,label:lbl+' ('+e+')'};
+  });
+  var sections=[
+    {t:'Key Metrics ('+KEY_EVENTS.length+')',items:keyEvLabels,isLabeled:true},
+    {t:'eVars ('+EVARS.length+')',items:EVARS.slice(0,20).map(function(e){return{col:e,label:e}}),isLabeled:true},
+    {t:'Props ('+PROPS.length+')',items:PROPS.slice(0,20).map(function(e){return{col:e,label:e}}),isLabeled:true},
+    {t:'Dimensions',items:DIMS.slice(0,15).map(function(e){return{col:e,label:e}}),isLabeled:true}
+  ];
+  co.innerHTML=sections.filter(function(s){return s.items.length>0}).map(function(s){
+    return '<div class="fs"><h4>'+s.t+'</h4>'+s.items.map(function(it){
+      return '<span class="fc" data-col="'+it.col+'" onclick="togF(this,\''+it.col.replace(/'/g,"\\'")+'\')">'+tr(it.label,28)+'</span>';
+    }).join('')+'</div>';
+  }).join('');
+}
+function tr(s,n){return s.length>n?s.slice(0,n)+'\u2026':s}
+function doFS(q){document.querySelectorAll('.fc').forEach(function(c){c.style.display=c.dataset.col.toLowerCase().indexOf(q.toLowerCase())>=0?'':'none'})}
+function togF(el,c){el.classList.toggle('sel');if(selF.has(c))selF.delete(c);else selF.add(c);updCust()}
+function remF(c){selF.delete(c);document.querySelectorAll('.fc[data-col="'+c+'"]').forEach(function(e){e.classList.remove('sel')});updCust()}
+
+function doTime(v,b){tView=v;document.querySelectorAll('.ttb').forEach(function(x){x.classList.remove('a')});b.classList.add('a');renderDash()}
+function goTab(t,b){
+  document.querySelectorAll('.tc').forEach(function(x){x.classList.remove('a')});
+  document.getElementById('tab-'+t).classList.add('a');
+  document.querySelectorAll('.nb').forEach(function(x){x.classList.remove('a')});b.classList.add('a');
+  var nm={dash:'Executive Dashboard',cust:'Custom Reports',chat:'AI Analytics Chat',recs:'Recommendations'};
+  document.getElementById('pt').textContent=nm[t];
+  document.getElementById('tto').style.display=(t==='dash'||t==='cust')?'flex':'none';
+}
+
+// ===== DASHBOARD =====
+function renderDash(){renderKPIs();renderCharts()}
+
+function getDateCol(){
+  // Prefer 'Date' column, then 'Month', then first date column
+  if(COLS.indexOf('Date')>=0) return 'Date';
+  if(COLS.indexOf('Month')>=0) return 'Month';
+  return DATECOLS[0]||COLS[0];
+}
+
+function aggTime(dc,mc){
+  var bk={};
+  DATA.forEach(function(r){
+    var d=r[dc];if(d===null||d===undefined||d==='')return;
+    var val=parseFloat(r[mc])||0;
+    var key;
+    // Handle 'Date' column (e.g. 2023-01-01)
+    if(dc==='Date'||dc==='date'){
+      try{
+        var dt=new Date(d);
+        if(isNaN(dt.getTime())){key=String(d)}
+        else if(tView==='weekly'){var wk=Math.ceil(((dt-new Date(dt.getFullYear(),0,1))/864e5+1)/7);key=dt.getFullYear()+'-W'+String(wk).padStart(2,'0')}
+        else if(tView==='monthly'){key=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')}
+        else{key=''+dt.getFullYear()}
+      }catch(e){key=String(d)}
+    }
+    // Handle 'Month' column (e.g. 2023-01)
+    else if(dc==='Month'){
+      key=String(d);
+      if(tView==='yearly'&&key.length>=4) key=key.slice(0,4);
+    }
+    // Handle 'Year' column
+    else if(dc==='Year'){key=String(d)}
+    // Handle 'Week' column
+    else if(dc==='Week'){
+      key=String(d);
+      if(tView==='yearly'&&key.length>=4) key=key.slice(0,4);
+      else if(tView==='monthly'&&key.indexOf('W')>=0){
+        // Try to extract year-month from week
+        var parts=key.match(/(\d{4})/);
+        if(parts) key=parts[1];
+      }
+    }
+    else{
+      // Generic fallback
+      try{
+        var dt2=new Date(d);
+        if(!isNaN(dt2.getTime())){
+          if(tView==='monthly') key=dt2.getFullYear()+'-'+String(dt2.getMonth()+1).padStart(2,'0');
+          else if(tView==='yearly') key=''+dt2.getFullYear();
+          else key=String(d).slice(0,10);
+        } else key=String(d);
+      }catch(e){key=String(d)}
+    }
+    bk[key]=(bk[key]||0)+val;
+  });
+  var s=Object.entries(bk).sort(function(a,b){return a[0].localeCompare(b[0])});
+  return{l:s.map(function(x){return x[0]}),v:s.map(function(x){return x[1]})}
+}
+
+function renderKPIs(){
+  var el=document.getElementById('kpiR');
+  var pm=getPlottableMetrics();
+  // Pick the most important KPI metrics
+  var kpiCols=findBestKPIs(pm);
+  if(!kpiCols.length){
+    el.innerHTML=[['Rows',DATA.length],['Columns',COLS.length],['eVars',EVARS.length],['Events',EVENTS.length]].map(function(p){return '<div class="kc"><div class="kl">'+p[0]+'</div><div class="kv">'+p[1].toLocaleString()+'</div></div>'}).join('');
+    return;
+  }
+  el.innerHTML=kpiCols.map(function(m){
+    var vs=DATA.map(function(r){return parseFloat(r[m])||0});
+    var tot=vs.reduce(function(a,b){return a+b},0);
+    var mid=Math.floor(vs.length/2);
+    var h1=vs.slice(0,mid).reduce(function(a,b){return a+b},0);
+    var h2=vs.slice(mid).reduce(function(a,b){return a+b},0);
+    var ch=h1>0?((h2-h1)/h1*100):0;
+    var label=EVENT_LABELS[m.toLowerCase()]||m;
+    return '<div class="kc"><div class="kl">'+tr(label,28)+'</div><div class="kv">'+fmt(tot)+'</div><div class="kch '+(ch>=0?'u':'dn')+'">'+(ch>=0?'\u2191':'\u2193')+' '+Math.abs(ch).toFixed(1)+'%</div></div>';
+  }).join('');
+}
+
+function findBestKPIs(pm){
+  // Prioritize: event1(pageviews), event2(visits), event9(revenue), event7(bookings), event10(cart), event13(purchases)
+  var priority=['event1','event2','event3','event9','event7','event10','event13','event26','event17','event12'];
+  var found=[];
+  priority.forEach(function(e){if(pm.indexOf(e)>=0&&found.length<6)found.push(e)});
+  // Fill remaining with other events that have data
+  if(found.length<6){
+    pm.forEach(function(m){if(found.indexOf(m)<0&&found.length<6)found.push(m)});
+  }
+  return found;
+}
+
+function fmt(n){if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.round(n).toLocaleString()}
+
+function renderCharts(){
+  var g=document.getElementById('chG');
+  Object.values(chInst).forEach(function(c){try{c.destroy()}catch(e){}});chInst={};
+  var dc=getDateCol();
+  var cl=['#6366f1','#22c55e','#f97316','#06b6d4','#a855f7','#eab308'];
+  var pm=getPlottableMetrics();
+  var chartMetrics=findBestKPIs(pm).slice(0,6);
+
+  if(!chartMetrics.length){g.innerHTML='<div class="cc"><h3>No metrics detected</h3><p style="color:var(--t2)">Use AI Chat to explore.</p></div>';return}
+
+  // Build chart HTML
+  var h='<div class="cc" style="grid-column:span 2"><h3>Key Metrics Trend ('+tView+')</h3><canvas id="mt"></canvas></div>';
+  chartMetrics.slice(0,4).forEach(function(m,i){
+    var label=EVENT_LABELS[m.toLowerCase()]||m;
+    h+='<div class="cc"><h3>'+tr(label,40)+'</h3><canvas id="c'+i+'"></canvas></div>';
+  });
+
+  // Top dimension: pick a meaningful eVar or dimension
+  var topDim=findBestDimension();
+  if(topDim) h+='<div class="cc"><h3>Top '+tr(topDim,25)+'</h3><canvas id="ctd"></canvas></div>';
+
+  // Route analysis — find column containing airport code pairs like YYC-MIA
+  var routeCol=null;
+  // 1. Check for column named 'route' or containing 'route'
+  routeCol=COLS.find(function(c){return/^route$/i.test(c)});
+  // 2. Scan ALL columns (eVars, props, dims) for airport code pair patterns
+  if(!routeCol){
+    var scanCols=EVARS.concat(PROPS).concat(DIMS);
+    for(var ri=0;ri<scanCols.length;ri++){
+      var sample=DATA.slice(0,100).map(function(r){return r[scanCols[ri]]}).filter(function(v){return v&&typeof v==='string'});
+      var routeMatches=sample.filter(function(v){return/^[A-Z]{3}[- ][A-Z]{3}$/.test(v.trim())});
+      if(routeMatches.length>sample.length*0.3){routeCol=scanCols[ri];break}
+    }
+  }
+  if(routeCol) h+='<div class="cc"><h3>Top Routes</h3><canvas id="crt"></canvas></div>';
+  
+  // Origin airport analysis
+  var originCol=null;
+  var scanOrig=EVARS.concat(PROPS).concat(DIMS);
+  for(var oi=0;oi<scanOrig.length;oi++){
+    var osample=DATA.slice(0,100).map(function(r){return r[scanOrig[oi]]}).filter(function(v){return v&&typeof v==='string'});
+    var airportMatches=osample.filter(function(v){return/^[A-Z]{3}$/.test(v.trim())});
+    if(airportMatches.length>osample.length*0.5){originCol=scanOrig[oi];break}
+  }
+  if(originCol) h+='<div class="cc"><h3>Top Origin Airports ('+originCol+')</h3><canvas id="cor"></canvas></div>';
+
+  g.innerHTML=h;
+
+  requestAnimationFrame(function(){
+    // Main trend: overlay top metrics
+    var datasets=chartMetrics.slice(0,4).map(function(m,i){
+      var a=aggTime(dc,m);var label=EVENT_LABELS[m.toLowerCase()]||m;
+      return{label:tr(label,20),data:a.v,borderColor:cl[i],backgroundColor:cl[i]+'22',borderWidth:2,fill:false,tension:.3,pointRadius:1};
+    });
+    var a0=aggTime(dc,chartMetrics[0]);
+    mk('mt','line',a0.l,datasets);
+
+    // Individual bar charts
+    chartMetrics.slice(0,4).forEach(function(m,i){
+      var a=aggTime(dc,m);
+      mk('c'+i,'bar',a.l,[{label:EVENT_LABELS[m.toLowerCase()]||m,data:a.v,backgroundColor:cl[i]+'88',borderColor:cl[i],borderWidth:1,borderRadius:4}]);
+    });
+
+    // Top dimension doughnut
+    if(topDim){
+      var ct={};DATA.forEach(function(r){var v=r[topDim];if(v&&v!=='')ct[v]=(ct[v]||0)+1});
+      var s=Object.entries(ct).sort(function(a,b){return b[1]-a[1]}).slice(0,8);
+      mk('ctd','doughnut',s.map(function(x){return tr(String(x[0]),18)}),[{data:s.map(function(x){return x[1]}),backgroundColor:cl.concat(['#ec4899','#14b8a6']),borderWidth:0}]);
+    }
+
+    // Top routes bar chart
+    if(routeCol){
+      var rct={};DATA.forEach(function(r){var v=r[routeCol];if(v&&v!=='')rct[v]=(rct[v]||0)+1});
+      var rs=Object.entries(rct).sort(function(a,b){return b[1]-a[1]}).slice(0,12);
+      mk('crt','bar',rs.map(function(x){return x[0]}),[{label:'Flights',data:rs.map(function(x){return x[1]}),backgroundColor:'#06b6d488',borderColor:'#06b6d4',borderWidth:1,borderRadius:4}]);
+    }
+    
+    // Top origin airports
+    if(originCol){
+      var oct={};DATA.forEach(function(r){var v=r[originCol];if(v&&v!==''&&/^[A-Z]{3}$/.test(v))oct[v]=(oct[v]||0)+1});
+      var os=Object.entries(oct).sort(function(a,b){return b[1]-a[1]}).slice(0,10);
+      mk('cor','doughnut',os.map(function(x){return x[0]}),[{data:os.map(function(x){return x[1]}),backgroundColor:['#6366f1cc','#22c55ecc','#f97316cc','#06b6d4cc','#a855f7cc','#eab308cc','#ec4899cc','#14b8a6cc','#3b82f6cc','#ef4444cc'],borderWidth:0}]);
+    }
+  });
+}
+
+function findBestDimension(){
+  // Look for meaningful dimensions: marketing channel, device, loyalty, etc.
+  var candidates=['eVar4','eVar5','eVar14','eVar12','eVar1','Hit Type'];
+  for(var i=0;i<candidates.length;i++){
+    if(COLS.indexOf(candidates[i])>=0){
+      var vals=DATA.slice(0,100).map(function(r){return r[candidates[i]]}).filter(function(v){return v&&v!==''});
+      var uniq=new Set(vals);
+      if(uniq.size>=2&&uniq.size<=50) return candidates[i];
+    }
+  }
+  // Fallback: first eVar with 2-20 unique values
+  for(var j=0;j<EVARS.length;j++){
+    var vals2=DATA.slice(0,500).map(function(r){return r[EVARS[j]]}).filter(function(v){return v&&v!==''});
+    var uniq2=new Set(vals2);
+    if(uniq2.size>=2&&uniq2.size<=20) return EVARS[j];
+  }
+  return DIMS[0]||null;
+}
+
+function mk(id,ty,lb,ds){
+  var x=document.getElementById(id);if(!x)return;
+  chInst[id]=new Chart(x,{type:ty,data:{labels:lb,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:ds.length>1,labels:{color:'#9aa0b8',font:{size:10},boxWidth:10,padding:8}}},scales:ty==='doughnut'||ty==='pie'?{}:{x:{ticks:{color:'#636980',font:{size:9},maxRotation:45},grid:{color:'#2a2f4822'}},y:{ticks:{color:'#636980',font:{size:9}},grid:{color:'#2a2f4844'}}}}});
+}
+
+// ===== CUSTOM REPORTS =====
+function updCust(){
+  var dm=document.getElementById('sdm'),g=document.getElementById('ccG'),arr=Array.from(selF);
+  if(!arr.length){dm.innerHTML='<span style="color:var(--t3);font-size:12px">No dimensions selected</span>';g.innerHTML='';return}
+  dm.innerHTML=arr.map(function(f){var label=EVENT_LABELS[f.toLowerCase()]||f;return '<span class="dt">'+tr(label,24)+' <span class="rm" onclick="remF(\''+f.replace(/'/g,"\\'")+'\')">&times;</span></span>'}).join('');
+  Object.keys(chInst).filter(function(k){return k.indexOf('cu_')===0}).forEach(function(k){chInst[k].destroy();delete chInst[k]});
+  g.innerHTML='';var dc=getDateCol(),cl=['#6366f1','#22c55e','#f97316','#06b6d4','#a855f7','#eab308'];
+  arr.forEach(function(col,idx){
+    var cid='cu_'+idx,t=CTYPE[col],label=EVENT_LABELS[col.toLowerCase()]||col;
+    g.innerHTML+='<div class="cc"><h3>'+label+'</h3><canvas id="'+cid+'"></canvas></div>';
+    requestAnimationFrame(function(){
+      if(t==='metric'||t==='event'){
+        var a=aggTime(dc,col);
+        mk(cid,'line',a.l,[{label:label,data:a.v,borderColor:cl[idx%6],backgroundColor:cl[idx%6]+'22',borderWidth:2,fill:true,tension:.3,pointRadius:1}]);
+      } else {
+        var ct={};DATA.forEach(function(r){var v=r[col];if(v&&v!=='')ct[v]=(ct[v]||0)+1});
+        var s=Object.entries(ct).sort(function(a,b){return b[1]-a[1]}).slice(0,10);
+        mk(cid,'bar',s.map(function(x){return tr(String(x[0]),15)}),[{label:label,data:s.map(function(x){return x[1]}),backgroundColor:cl[idx%6]+'88',borderColor:cl[idx%6],borderWidth:1,borderRadius:4}]);
+      }
+    });
+  });
+}
+
+// ===== AI CHAT =====
+async function doSend(){
+  var inp=document.getElementById('chi'),msg=inp.value.trim();
+  if(!msg)return;inp.value='';inp.style.height='auto';
+  addMsg('u',msg);
+  var sb=document.getElementById('csb');sb.disabled=true;
+  var tid=addTyp();
+  try{
+    var cp='You are a data analyst. The user wants to analyze a JS array called DATA (objects, one per row).\n\n'+SCHEMA+'\n\nUSER QUESTION: "'+msg+'"\n\nWrite a JS function: function analyze(DATA) { ... return result; }\nRules:\n- Return an object with clear keys\n- Handle nulls, missing data, empty strings\n- For charts include labels[] and values[] arrays in the result\n- Max 20 items in results\n- Round percentages to 2 decimals\n- No external libs, vanilla JS only\n- For dates, the Date column has ISO format (2023-01-01)\n- Event columns (event1-event100) are NUMERIC metrics\n- eVar and prop columns are STRING dimensions\n\nRespond with ONLY the function in ```js ... ``` - nothing else.';
+    var codeR=await callAI([{role:'user',content:cp}],1500);
+    var jm=codeR.match(/```(?:js|javascript)?\s*([\s\S]*?)```/);
+    var res,local=false;
+    if(jm){
+      try{var fn=new Function('DATA',jm[1]+'\nreturn analyze(DATA);');res=fn(DATA);local=true}
+      catch(ex){res={error:'Code error: '+ex.message}}
+    }else{res={error:'No code generated'}}
+    var rs=JSON.stringify(res,null,1);if(rs.length>12000)rs=rs.slice(0,12000)+'\n...(truncated)';
+    var ip;
+    if(local&&!res.error){
+      ip='You are an analytics expert for an airline website (WestJet-like). User asked: "'+msg+'"\n\nI ran analysis on the FULL dataset ('+DATA.length+' rows). EXACT computed results:\n\n'+rs+'\n\nInstructions:\n1. Clear natural-language answer with specific numbers\n2. If results have chart-ready data AND user asked for viz OR chart would help, include:\n```chart\n{"type":"bar|line|doughnut|pie","title":"Title","labels":["a","b"],"datasets":[{"label":"Series","data":[1,2]}]}\n```\n3. Markdown formatting. Concise but thorough.\n4. Numbers are exact from the full dataset.';
+    }else{
+      ip='You are an analytics expert. User asked: "'+msg+'"\n\nLocal analysis issue: '+JSON.stringify(res)+'\n\nSchema:\n'+SCHEMA+'\n\nAnswer from schema info. Note limitations.';
+    }
+    chHist.push({role:'user',content:msg});
+    var ctx=chHist.slice(-8).map(function(m){return{role:m.role,content:m.content}});
+    ctx[ctx.length-1]={role:'user',content:ip};
+    var fr=await callAI(ctx,3000);
+    chHist.push({role:'assistant',content:fr});
+    remTyp(tid);addMsg('a',fr,true,local);
+  }catch(e){remTyp(tid);addMsg('a','\u26a0\ufe0f Error: '+e.message+'. Try rephrasing.')}
+  sb.disabled=false;
+}
+
+async function callAI(msgs,mt){
+  var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:mt||2000,messages:msgs})});
+  if(!r.ok){var d=await r.json();throw new Error((d.error&&d.error.message)||'API error '+r.status)}
+  var data=await r.json();return data.content.map(function(c){return c.text||''}).join('');
+}
+
+function addMsg(role,content,parseC,local){
+  var co=document.getElementById('chMs'),dv=document.createElement('div');
+  dv.className='cm '+(role==='u'?'u':'as');
+  dv.innerHTML='<div class="sn">'+(role==='u'?'You':'Analytics AI')+'</div><div class="bb"></div>';
+  var bb=dv.querySelector('.bb');
+  if(role==='a'&&parseC){
+    var re=/```chart\s*([\s\S]*?)```/g,last=0,m;
+    while((m=re.exec(content))!==null){
+      if(m.index>last){var t=document.createElement('div');t.innerHTML=marked.parse(content.slice(last,m.index));bb.appendChild(t)}
+      try{
+        var sp=JSON.parse(m[1].trim()),wr=document.createElement('div');wr.className='ccc';
+        var cv=document.createElement('canvas');cv.id='xc_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+        wr.appendChild(cv);bb.appendChild(wr);
+        (function(i,s){requestAnimationFrame(function(){mkCC(i,s)})})(cv.id,sp);
+      }catch(e){var ed=document.createElement('div');ed.innerHTML='<code>Chart error: '+e.message+'</code>';bb.appendChild(ed)}
+      last=m.index+m[0].length;
+    }
+    if(last<content.length){var t2=document.createElement('div');t2.innerHTML=marked.parse(content.slice(last));bb.appendChild(t2)}
+    if(local){var bg=document.createElement('div');bg.className='dbg';bg.textContent='\u2713 Computed from full dataset ('+DATA.length+' rows) locally';bb.appendChild(bg)}
+  }else{
+    bb.innerHTML=role==='a'?marked.parse(content):'<p>'+esc(content)+'</p>';
+  }
+  co.appendChild(dv);co.scrollTop=co.scrollHeight;
+}
+
+function mkCC(id,sp){
+  var cl=['#6366f1','#22c55e','#f97316','#06b6d4','#a855f7','#eab308','#ec4899','#14b8a6'];
+  var ds=(sp.datasets||[]).map(function(d,i){
+    var o={};for(var k in d)o[k]=d[k];
+    if(!o.borderColor)o.borderColor=cl[i%8];
+    if(!o.backgroundColor)o.backgroundColor=sp.type==='line'?cl[i%8]+'22':sp.type==='bar'?cl[i%8]+'88':cl.map(function(c){return c+'cc'});
+    o.borderWidth=o.borderWidth||2;if(sp.type==='bar')o.borderRadius=4;if(sp.type==='line'){o.tension=.3;o.fill=true;o.pointRadius=2}
+    return o;
+  });
+  mk(id,sp.type||'bar',sp.labels||[],ds);
+}
+
+function addTyp(){var c=document.getElementById('chMs'),id='ty_'+Date.now(),d=document.createElement('div');d.className='cm as';d.id=id;d.innerHTML='<div class="sn">Analytics AI</div><div class="bb"><div class="cty"><span></span><span></span><span></span></div></div>';c.appendChild(d);c.scrollTop=c.scrollHeight;return id}
+function remTyp(id){var e=document.getElementById(id);if(e)e.remove()}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// ===== RECOMMENDATIONS =====
+async function genRecs(){
+  var el=document.getElementById('recA');
+  el.innerHTML='<p style="color:var(--t2)">\ud83e\udd16 Analyzing data for recommendations...</p>';
+  var st={};
+  var pm=getPlottableMetrics();
+  pm.slice(0,15).forEach(function(m){
+    var vs=DATA.map(function(r){return parseFloat(r[m])||0}),tot=vs.reduce(function(a,b){return a+b},0);
+    var mid=Math.floor(vs.length/2),h1=vs.slice(0,mid).reduce(function(a,b){return a+b},0),h2=vs.slice(mid).reduce(function(a,b){return a+b},0);
+    var label=EVENT_LABELS[m.toLowerCase()]||m;
+    st[label+' ('+m+')']=({total:Math.round(tot),avg:+(tot/vs.length).toFixed(2),firstHalf:Math.round(h1),secondHalf:Math.round(h2),change:h1>0?+((h2-h1)/h1*100).toFixed(1):0});
+  });
+  try{
+    var p='You are an Adobe Analytics expert for a WestJet-like airline website. Provide 6 actionable business recommendations.\n\nDATASET: '+DATA.length+' rows x '+COLS.length+' cols covering 2 years of web analytics.\nMETRIC STATS:\n'+JSON.stringify(st,null,1)+'\n\neVars: '+EVARS.slice(0,10).join(', ')+'\nKey dimensions include: marketing channel, device type, loyalty tier, route, booking type\n\nReturn JSON array of 6 objects: {title, priority (high|medium|low), insight (1-2 sentences), recommendation (2-3 sentences), metric}.\nReturn ONLY the JSON array.';
+    var r=await callAI([{role:'user',content:p}],2500);
+    var jm=r.match(/\[[\s\S]*\]/);
+    if(jm){
+      var recs=JSON.parse(jm[0]);
+      el.innerHTML=recs.map(function(r){return '<div class="rc"><span class="pr '+r.priority[0]+'">'+r.priority.toUpperCase()+' PRIORITY</span><h3>'+esc(r.title)+'</h3><p><b>Insight:</b> '+esc(r.insight)+'</p><p><b>Recommendation:</b> '+esc(r.recommendation)+'</p><p style="font-size:11px;color:var(--t3);margin-top:6px">\ud83d\udcca Track: '+esc(r.metric)+'</p></div>'}).join('');
+    }else{el.innerHTML='<div class="rc"><h3>Analysis</h3><div>'+marked.parse(r)+'</div></div>'}
+  }catch(e){el.innerHTML='<div class="rc"><h3>\u26a0\ufe0f Error</h3><p>'+e.message+'</p></div>'}
+}
+
+document.getElementById('chi').oninput=function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'};
+</script>
+</body>
+</html>
