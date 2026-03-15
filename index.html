@@ -293,10 +293,38 @@ var selF=new Set(),tView='monthly',chInst={},chHist=[];
 var EVENT_LABELS={
   event1:'Page Views',event2:'Visits',event3:'Unique Visitors',
   event4:'Instances',event5:'Click-throughs',event6:'Searches',
-  event7:'Bookings',event8:'Booking Starts',event9:'Revenue',
+  event7:'Bookings',event8:'Booking Starts',event9:'Booking Revenue',
   event10:'Cart Additions',event11:'Cart Removals',event12:'Checkouts',
-  event13:'Purchases',event14:'Units',event15:'Custom Event 15',
-  event16:'Custom Event 16',event17:'Product Units',event26:'Product Revenue'
+  event13:'Purchases',event14:'Units',event15:'Promo Codes Applied',
+  event16:'Promo Code Errors',event17:'Product Quantity',
+  event18:'Seat Selections',event19:'Seat Map Views',event20:'Seat Upgrades',
+  event21:'Check-ins Completed',event22:'Boarding Passes',event23:'PNR Lookups',
+  event24:'Manage Booking Views',event25:'Booking Modifications',
+  event26:'Total Revenue',event27:'Ancillary Revenue',event28:'Ancillary Purchases',
+  event29:'Lounge Visits',event30:'WiFi Purchases',event31:'Baggage Purchases',
+  event32:'Insurance Purchases',event33:'Priority Boarding',event34:'Meal Pre-orders',
+  event35:'Pet Bookings',event36:'Flight Status Checks',event37:'Disruption Alerts',
+  event38:'Rebookings',event39:'Points Earned',event40:'Points Redeemed',
+  event41:'Tier Upgrades',event42:'Rewards Views',event43:'Points Transfers',
+  event44:'Companion Vouchers',event45:'Email Opens',event46:'Email Clicks',
+  event47:'Email Unsubscribes',event48:'Push Opens',event49:'Push Dismissals',
+  event50:'App Opens',event51:'App Crashes',event52:'Video Views',
+  event53:'Video Completions',event54:'Social Shares',event55:'Social Clicks',
+  event56:'Chat Initiated',event57:'Chat Resolved',event58:'Call Escalations',
+  event59:'Survey Starts',event60:'Survey Completes',event61:'NPS Score',
+  event62:'CSAT Score',event63:'Complaints',event64:'Refund Requests',
+  event65:'Refund Amount',event66:'Vouchers Issued',event67:'Voucher Amount',
+  event68:'Form Starts',event69:'Form Completes',event70:'Form Errors',
+  event71:'Form Abandons',event72:'Search Result Clicks',event73:'Filter Uses',
+  event74:'Sort Changes',event75:'Calendar Interactions',event76:'Map Interactions',
+  event77:'Carousel Swipes',event78:'CTA Clicks',event79:'Banner Impressions',
+  event80:'Banner Clicks',event81:'Time to Purchase',event82:'Pages per Visit',
+  event83:'Session Duration',event84:'Scroll Milestones',event85:'Bounces',
+  event86:'404 Errors',event87:'JS Errors',event88:'Page Load Time',
+  event89:'Timeout Errors',event90:'API Errors',event91:'Payment Failures',
+  event92:'Fraud Flags',event93:'Cross-sell Impressions',event94:'Cross-sell Clicks',
+  event95:'Upsell Impressions',event96:'Upsell Conversions',event97:'Hotel Searches',
+  event98:'Car Rental Searches',event99:'Package Bookings',event100:'Package Revenue'
 };
 
 async function doValidate(){
@@ -385,7 +413,7 @@ function getPlottableMetrics(){
 
 function doLaunch(){
   document.getElementById('s2').classList.add('hid');document.getElementById('ap').classList.remove('hid');
-  buildSchema();buildFilters();renderDash();genRecs();
+  detectEvarLabels();buildSchema();buildFilters();renderDash();genRecs();
 }
 
 function buildSchema(){
@@ -397,7 +425,7 @@ function buildSchema(){
     else{var u={};vs.slice(0,1000).forEach(function(v){u[String(v)]=1});var uk=Object.keys(u);d+=' \u2014 '+uk.length+'+ unique, eg: '+uk.slice(0,6).join(', ')}
     return d;
   });
-  SCHEMA='DATASET: '+DATA.length+' rows x '+COLS.length+' cols\n\nCOLUMNS:\n'+cd.join('\n')+'\n\neVars: '+(EVARS.join(', ')||'none')+'\nProps: '+(PROPS.join(', ')||'none')+'\nEvents (numeric metrics): '+(EVENTS.join(', ')||'none')+'\nOther Metrics: '+(METS.join(', ')||'none')+'\nDimensions: '+(DIMS.join(', ')||'none')+'\nDate cols: '+(DATECOLS.join(', ')||'none')+'\n\nKEY EVENTS WITH DATA: '+KEY_EVENTS.join(', ')+'\n\nSample rows:\n'+JSON.stringify(DATA.slice(0,3),null,1);
+  SCHEMA='DATASET: '+DATA.length+' rows x '+COLS.length+' cols\n\nCOLUMNS:\n'+cd.join('\n')+'\n\neVars: '+(EVARS.join(', ')||'none')+'\nProps: '+(PROPS.join(', ')||'none')+'\nEvents (numeric metrics): '+(EVENTS.join(', ')||'none')+'\nOther Metrics: '+(METS.join(', ')||'none')+'\nDimensions: '+(DIMS.join(', ')||'none')+'\nDate cols: '+(DATECOLS.join(', ')||'none')+'\n\nKEY EVENTS WITH DATA: '+KEY_EVENTS.join(', ')+'\n\nEVAR MEANINGS: '+Object.entries(EVAR_LABELS).map(function(e){return e[0]+'='+e[1]}).join(', ')+'\n\nEVENT MEANINGS: '+Object.entries(EVENT_LABELS).slice(0,30).map(function(e){return e[0]+'='+e[1]}).join(', ')+'\n\nSample rows:\n'+JSON.stringify(DATA.slice(0,5),null,1);
 }
 
 function buildFilters(){
@@ -409,7 +437,7 @@ function buildFilters(){
   });
   var sections=[
     {t:'Key Metrics ('+KEY_EVENTS.length+')',items:keyEvLabels,isLabeled:true},
-    {t:'eVars ('+EVARS.length+')',items:EVARS.slice(0,20).map(function(e){return{col:e,label:e}}),isLabeled:true},
+    {t:'eVars ('+EVARS.length+')',items:EVARS.slice(0,20).map(function(e){var lbl=EVAR_LABELS[e]||e;return{col:e,label:lbl!==e?lbl+' ('+e+')':e}}),isLabeled:true},
     {t:'Props ('+PROPS.length+')',items:PROPS.slice(0,20).map(function(e){return{col:e,label:e}}),isLabeled:true},
     {t:'Dimensions',items:DIMS.slice(0,15).map(function(e){return{col:e,label:e}}),isLabeled:true}
   ];
@@ -420,7 +448,7 @@ function buildFilters(){
   }).join('');
 }
 function tr(s,n){return s.length>n?s.slice(0,n)+'\u2026':s}
-function doFS(q){document.querySelectorAll('.fc').forEach(function(c){c.style.display=c.dataset.col.toLowerCase().indexOf(q.toLowerCase())>=0?'':'none'})}
+function doFS(q){var ql=q.toLowerCase();document.querySelectorAll('.fc').forEach(function(c){var match=c.dataset.col.toLowerCase().indexOf(ql)>=0||c.textContent.toLowerCase().indexOf(ql)>=0;c.style.display=match?'':'none'})}
 function togF(el,c){el.classList.toggle('sel');if(selF.has(c))selF.delete(c);else selF.add(c);updCust()}
 function remF(c){selF.delete(c);document.querySelectorAll('.fc[data-col="'+c+'"]').forEach(function(e){e.classList.remove('sel')});updCust()}
 
@@ -452,13 +480,15 @@ function aggTime(dc,mc){
     var key;
     // Handle 'Date' column (e.g. 2023-01-01)
     if(dc==='Date'||dc==='date'){
-      try{
-        var dt=new Date(d);
-        if(isNaN(dt.getTime())){key=String(d)}
-        else if(tView==='weekly'){var wk=Math.ceil(((dt-new Date(dt.getFullYear(),0,1))/864e5+1)/7);key=dt.getFullYear()+'-W'+String(wk).padStart(2,'0')}
-        else if(tView==='monthly'){key=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')}
-        else{key=''+dt.getFullYear()}
-      }catch(e){key=String(d)}
+      var ds=String(d);
+      // Parse YYYY-MM-DD directly to avoid timezone issues with new Date()
+      var parts=ds.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if(parts){
+        var yr=parts[1],mo=parts[2];
+        if(tView==='weekly'){var dt=new Date(+yr,+mo-1,+parts[3]);var wk=Math.ceil(((dt-new Date(+yr,0,1))/864e5+1)/7);key=yr+'-W'+String(wk).padStart(2,'0')}
+        else if(tView==='monthly'){key=yr+'-'+mo}
+        else{key=yr}
+      } else {key=ds}
     }
     // Handle 'Month' column (e.g. 2023-01)
     else if(dc==='Month'){
@@ -497,21 +527,48 @@ function aggTime(dc,mc){
 function renderKPIs(){
   var el=document.getElementById('kpiR');
   var pm=getPlottableMetrics();
-  // Pick the most important KPI metrics
   var kpiCols=findBestKPIs(pm);
   if(!kpiCols.length){
     el.innerHTML=[['Rows',DATA.length],['Columns',COLS.length],['eVars',EVARS.length],['Events',EVENTS.length]].map(function(p){return '<div class="kc"><div class="kl">'+p[0]+'</div><div class="kv">'+p[1].toLocaleString()+'</div></div>'}).join('');
     return;
   }
+  var dc=getDateCol();
+  // Compute per-period data for each KPI metric
+  var periodData={};// {metric: {period_key: sum}}
+  kpiCols.forEach(function(m){periodData[m]={}});
+  DATA.forEach(function(r){
+    var d=r[dc];if(!d)return;
+    var ds=String(d);
+    var key;
+    var parts=ds.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(parts){
+      var yr=parts[1],mo=parts[2],dy=parts[3];
+      if(tView==='weekly'){var dt=new Date(+yr,+mo-1,+dy);var wk=Math.ceil(((dt-new Date(+yr,0,1))/864e5+1)/7);key=yr+'-W'+String(wk).padStart(2,'0')}
+      else if(tView==='monthly'){key=yr+'-'+mo}
+      else{key=yr}
+    }else if(ds.length>=7&&tView==='monthly'){key=ds.slice(0,7)}
+    else if(ds.length>=4){key=ds.slice(0,4)}
+    else{key=ds}
+    kpiCols.forEach(function(m){
+      if(!periodData[m][key])periodData[m][key]=0;
+      periodData[m][key]+=(parseFloat(r[m])||0);
+    });
+  });
+  // Get sorted periods and find current vs previous for comparison
+  var periods=Object.keys(periodData[kpiCols[0]]||{}).sort();
+  var nPeriods=periods.length;
+  var currP=nPeriods>=1?periods[nPeriods-1]:null;
+  var prevP=nPeriods>=2?periods[nPeriods-2]:null;
+  var periodLabel={weekly:'Week',monthly:'Month',yearly:'Year'}[tView]||'Period';
+  
   el.innerHTML=kpiCols.map(function(m){
-    var vs=DATA.map(function(r){return parseFloat(r[m])||0});
-    var tot=vs.reduce(function(a,b){return a+b},0);
-    var mid=Math.floor(vs.length/2);
-    var h1=vs.slice(0,mid).reduce(function(a,b){return a+b},0);
-    var h2=vs.slice(mid).reduce(function(a,b){return a+b},0);
-    var ch=h1>0?((h2-h1)/h1*100):0;
+    var tot=0;Object.values(periodData[m]).forEach(function(v){tot+=v});
+    var avg=nPeriods>0?tot/nPeriods:0;
+    var currVal=currP?periodData[m][currP]||0:0;
+    var prevVal=prevP?periodData[m][prevP]||0:0;
+    var ch=prevVal>0?((currVal-prevVal)/prevVal*100):0;
     var label=EVENT_LABELS[m.toLowerCase()]||m;
-    return '<div class="kc"><div class="kl">'+tr(label,28)+'</div><div class="kv">'+fmt(tot)+'</div><div class="kch '+(ch>=0?'u':'dn')+'">'+(ch>=0?'\u2191':'\u2193')+' '+Math.abs(ch).toFixed(1)+'%</div></div>';
+    return '<div class="kc"><div class="kl">'+tr(label,28)+'</div><div class="kv">'+fmt(tot)+'</div><div style="font-size:11px;color:var(--t3);margin:2px 0">Avg/'+periodLabel+': '+fmt(avg)+'</div><div class="kch '+(ch>=0?'u':'dn')+'">'+(ch>=0?'\u2191':'\u2193')+' '+Math.abs(ch).toFixed(1)+'% <span style="font-size:10px;color:var(--t3)">'+( currP&&prevP?currP+' vs '+prevP:'')+'</span></div></div>';
   }).join('');
 }
 
@@ -548,7 +605,7 @@ function renderCharts(){
 
   // Top dimension: pick a meaningful eVar or dimension
   var topDim=findBestDimension();
-  if(topDim) h+='<div class="cc"><h3>Top '+tr(topDim,25)+'</h3><canvas id="ctd"></canvas></div>';
+  if(topDim){var tdl=dimLabel(topDim);h+='<div class="cc"><h3>Top '+tr(tdl,30)+'</h3><canvas id="ctd"></canvas></div>'}
 
   // Route analysis — find column containing airport code pairs like YYC-MIA
   var routeCol=null;
@@ -595,8 +652,9 @@ function renderCharts(){
     // Top dimension doughnut
     if(topDim){
       var ct={};DATA.forEach(function(r){var v=r[topDim];if(v&&v!=='')ct[v]=(ct[v]||0)+1});
-      var s=Object.entries(ct).sort(function(a,b){return b[1]-a[1]}).slice(0,8);
-      mk('ctd','doughnut',s.map(function(x){return tr(String(x[0]),18)}),[{data:s.map(function(x){return x[1]}),backgroundColor:['#E8613C','#0a1628','#d4532f','#1a2d4a','#f4845f','#2a4a6b','#f9a07c','#3a6590'],borderWidth:0}]);
+      var s=Object.entries(ct).sort(function(a,b){return b[1]-a[1]}).slice(0,12);
+      var dColors=['#E8613C','#0a1628','#d4532f','#1a2d4a','#f4845f','#2a4a6b','#f9a07c','#3a6590','#fcc5b3','#4a7db5','#e09070','#5c87a8'];
+      mk('ctd','doughnut',s.map(function(x){return tr(String(x[0]),22)}),[{data:s.map(function(x){return x[1]}),backgroundColor:dColors.slice(0,s.length),borderWidth:0}]);
     }
 
     // Top routes bar chart
@@ -616,7 +674,6 @@ function renderCharts(){
 }
 
 function findBestDimension(){
-  // Look for meaningful dimensions: marketing channel, device, loyalty, etc.
   var candidates=['eVar4','eVar5','eVar14','eVar12','eVar1','Hit Type'];
   for(var i=0;i<candidates.length;i++){
     if(COLS.indexOf(candidates[i])>=0){
@@ -625,13 +682,57 @@ function findBestDimension(){
       if(uniq.size>=2&&uniq.size<=50) return candidates[i];
     }
   }
-  // Fallback: first eVar with 2-20 unique values
   for(var j=0;j<EVARS.length;j++){
     var vals2=DATA.slice(0,500).map(function(r){return r[EVARS[j]]}).filter(function(v){return v&&v!==''});
     var uniq2=new Set(vals2);
     if(uniq2.size>=2&&uniq2.size<=20) return EVARS[j];
   }
   return DIMS[0]||null;
+}
+
+// Friendly name mapping for known eVar meanings (auto-detected from data patterns)
+var EVAR_LABELS={};
+function detectEvarLabels(){
+  var guesses={
+    'eVar1':'Page Name','eVar2':'Site Section','eVar3':'Server','eVar4':'Marketing Channel',
+    'eVar5':'Device Type','eVar6':'Operating System','eVar7':'Browser','eVar8':'Campaign',
+    'eVar9':'Search Term','eVar10':'Language','eVar11':'Country','eVar12':'Province',
+    'eVar13':'Loyalty Tier','eVar14':'Cabin Class','eVar15':'Origin Airport',
+    'eVar16':'Dest Airport','eVar17':'Route','eVar18':'Route Type','eVar19':'Platform',
+    'eVar20':'Departure Time','eVar21':'Day of Week','eVar22':'Season',
+    'eVar25':'Booking Type','eVar26':'Traveler Type','eVar27':'Trip Purpose',
+    'eVar32':'Carrier','eVar35':'Payment Method','eVar36':'Auth State'
+  };
+  EVARS.forEach(function(e){
+    if(guesses[e]){EVAR_LABELS[e]=guesses[e];return}
+    // Auto-detect: sample values to guess meaning
+    var vals=DATA.slice(0,200).map(function(r){return r[e]}).filter(function(v){return v&&v!==''&&v!=='N/A'});
+    var uniq=new Set(vals);
+    if(uniq.size>=2&&uniq.size<=30){
+      // Use the column name itself but cleaned up
+      EVAR_LABELS[e]=e;
+    }
+  });
+}
+function dimLabel(col){return EVAR_LABELS[col]||col}
+
+function getDimLabel(col){
+  // Try to determine friendly name from data patterns
+  var samples=DATA.slice(0,50).map(function(r){return r[col]}).filter(function(v){return v&&v!==''});
+  var s0=samples[0]||'';
+  // Check known patterns
+  if(/Direct|Organic|Paid|Social|Email|Affiliate|Display|Metasearch/i.test(s0))return 'Marketing Channel';
+  if(/Desktop|Mobile|Tablet/i.test(s0))return 'Device Type';
+  if(/Non-Member|Teal|Silver|Gold|Platinum/i.test(s0))return 'Loyalty Tier';
+  if(/Economy|Business|Premium|First/i.test(s0))return 'Cabin Class';
+  if(/Windows|macOS|iOS|Android/i.test(s0))return 'Operating System';
+  if(/Chrome|Safari|Firefox|Edge/i.test(s0))return 'Browser';
+  if(/en-|fr-|es|de|ja/i.test(s0))return 'Language';
+  if(/One-Way|Round-Trip|Multi-City/i.test(s0))return 'Booking Type';
+  if(/Leisure|Business|VFR/i.test(s0))return 'Trip Purpose';
+  if(/Solo|Couple|Family|Group/i.test(s0))return 'Traveler Type';
+  if(/Desktop Web|Mobile Web|iOS App|Android App/i.test(s0))return 'Platform';
+  return col;
 }
 
 function mk(id,ty,lb,ds){
@@ -645,7 +746,7 @@ function updCust(){
   if(!arr.length){dm.innerHTML='<span style="color:var(--t3);font-size:12px">No dimensions selected</span>';g.innerHTML='';return}
   dm.innerHTML=arr.map(function(f){var label=EVENT_LABELS[f.toLowerCase()]||f;return '<span class="dt">'+tr(label,24)+' <span class="rm" onclick="remF(\''+f.replace(/'/g,"\\'")+'\')">&times;</span></span>'}).join('');
   Object.keys(chInst).filter(function(k){return k.indexOf('cu_')===0}).forEach(function(k){chInst[k].destroy();delete chInst[k]});
-  g.innerHTML='';var dc=getDateCol(),cl=['#6366f1','#22c55e','#f97316','#06b6d4','#a855f7','#eab308'];
+  g.innerHTML='';var dc=getDateCol(),cl=['#E8613C','#0a1628','#d4532f','#1a2d4a','#f4845f','#2a4a6b'];
   arr.forEach(function(col,idx){
     var cid='cu_'+idx,t=CTYPE[col],label=EVENT_LABELS[col.toLowerCase()]||col;
     g.innerHTML+='<div class="cc"><h3>'+label+'</h3><canvas id="'+cid+'"></canvas></div>';
@@ -745,24 +846,139 @@ function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
 // ===== RECOMMENDATIONS =====
 async function genRecs(){
   var el=document.getElementById('recA');
-  el.innerHTML='<p style="color:var(--t2)">\ud83e\udd16 Analyzing data for recommendations...</p>';
-  var st={};
+  el.innerHTML='<p style="color:var(--t2)">\ud83e\udd16 Analyzing your data for strategic recommendations...</p>';
+  
+  // 1. Compute metric totals with YoY
   var pm=getPlottableMetrics();
-  pm.slice(0,15).forEach(function(m){
-    var vs=DATA.map(function(r){return parseFloat(r[m])||0}),tot=vs.reduce(function(a,b){return a+b},0);
-    var mid=Math.floor(vs.length/2),h1=vs.slice(0,mid).reduce(function(a,b){return a+b},0),h2=vs.slice(mid).reduce(function(a,b){return a+b},0);
+  var dc=getDateCol();
+  var allYears={};
+  DATA.forEach(function(r){var d=r[dc];if(!d)return;var ds=String(d);var m=ds.match(/^(\d{4})/);if(m)allYears[m[1]]=1});
+  var yrs=Object.keys(allYears).sort();
+  var y1=yrs.length>=2?yrs[yrs.length-2]:null;
+  var y2=yrs.length>=2?yrs[yrs.length-1]:null;
+  
+  var metricStats={};
+  pm.slice(0,12).forEach(function(m){
+    var tot=0,s1=0,s2=0;
+    DATA.forEach(function(r){
+      var v=parseFloat(r[m])||0;tot+=v;
+      if(!y1)return;
+      var d=String(r[dc]||'');var ym=d.match(/^(\d{4})/);if(!ym)return;
+      if(ym[1]===y1)s1+=v;else if(ym[1]===y2)s2+=v;
+    });
     var label=EVENT_LABELS[m.toLowerCase()]||m;
-    st[label+' ('+m+')']=({total:Math.round(tot),avg:+(tot/vs.length).toFixed(2),firstHalf:Math.round(h1),secondHalf:Math.round(h2),change:h1>0?+((h2-h1)/h1*100).toFixed(1):0});
+    metricStats[label]={total:Math.round(tot),year1:Math.round(s1),year2:Math.round(s2),yoy:s1>0?Number(((s2-s1)/s1*100).toFixed(1)):0};
   });
+  
+  // 2. Compute top-N dimension breakdowns for key eVars
+  var dimBreakdowns={};
+  var keyDims=['eVar4','eVar5','eVar13','eVar14','eVar18','eVar25'];
+  keyDims.forEach(function(ev){
+    if(COLS.indexOf(ev)<0)return;
+    var label=EVAR_LABELS[ev]||ev;
+    var ct={};
+    var revCol=EVENTS.indexOf('event9')>=0?'event9':EVENTS.indexOf('event26')>=0?'event26':null;
+    DATA.forEach(function(r){
+      var v=r[ev];if(!v||v===''||v==='N/A')return;
+      if(!ct[v])ct[v]={count:0,revenue:0};
+      ct[v].count++;
+      if(revCol)ct[v].revenue+=(parseFloat(r[revCol])||0);
+    });
+    var sorted=Object.entries(ct).sort(function(a,b){return b[1].count-a[1].count}).slice(0,8);
+    dimBreakdowns[label+' ('+ev+')']=sorted.map(function(e){return{value:e[0],hits:e[1].count,revenue:Math.round(e[1].revenue)}});
+  });
+  
+  // 3. Compute conversion funnel with rates
+  var funnel={};
+  var funnelEvents=['event1','event6','event8','event10','event12','event13','event7'];
+  funnelEvents.forEach(function(e){
+    if(EVENTS.indexOf(e)<0)return;
+    var s=0,s1=0,s2=0;
+    DATA.forEach(function(r){
+      var v=parseFloat(r[e])||0;s+=v;
+      if(!y1)return;
+      var d=String(r[dc]||'');var ym=d.match(/^(\d{4})/);if(!ym)return;
+      if(ym[1]===y1)s1+=v;else if(ym[1]===y2)s2+=v;
+    });
+    var label=EVENT_LABELS[e.toLowerCase()]||e;
+    funnel[label]={total:Math.round(s),y1:Math.round(s1),y2:Math.round(s2),yoy:s1>0?Number(((s2-s1)/s1*100).toFixed(2)):0};
+  });
+  
+  // 4. Compute key derived rates with EXACT values
+  var cartAdd=0,cartAddY1=0,cartAddY2=0;
+  var purchases=0,purchY1=0,purchY2=0;
+  var checkouts=0,checkY1=0,checkY2=0;
+  var revenue=0,revY1=0,revY2=0;
+  var cartRem=0,cartRemY1=0,cartRemY2=0;
+  DATA.forEach(function(r){
+    var ca=parseFloat(r['event10'])||0;var pu=parseFloat(r['event13'])||0;
+    var ch=parseFloat(r['event12'])||0;var rv=parseFloat(r['event9'])||0;
+    var cr=parseFloat(r['event11'])||0;
+    cartAdd+=ca;purchases+=pu;checkouts+=ch;revenue+=rv;cartRem+=cr;
+    if(!y1)return;
+    var d=String(r[dc]||'');var ym=d.match(/^(\d{4})/);if(!ym)return;
+    if(ym[1]===y1){cartAddY1+=ca;purchY1+=pu;checkY1+=ch;revY1+=rv;cartRemY1+=cr}
+    else if(ym[1]===y2){cartAddY2+=ca;purchY2+=pu;checkY2+=ch;revY2+=rv;cartRemY2+=cr}
+  });
+  
+  var computedRates={};
+  computedRates['Cart Abandonment Rate (overall)']=cartAdd>0?(((cartAdd-purchases)/cartAdd*100).toFixed(2)+'%'):'N/A';
+  computedRates['Cart Abandonment Rate ('+y1+')']=cartAddY1>0?(((cartAddY1-purchY1)/cartAddY1*100).toFixed(2)+'%'):'N/A';
+  computedRates['Cart Abandonment Rate ('+y2+')']=cartAddY2>0?(((cartAddY2-purchY2)/cartAddY2*100).toFixed(2)+'%'):'N/A';
+  computedRates['Checkout Completion Rate (overall)']=checkouts>0?((purchases/checkouts*100).toFixed(2)+'%'):'N/A';
+  computedRates['Checkout Completion Rate ('+y1+')']=checkY1>0?((purchY1/checkY1*100).toFixed(2)+'%'):'N/A';
+  computedRates['Checkout Completion Rate ('+y2+')']=checkY2>0?((purchY2/checkY2*100).toFixed(2)+'%'):'N/A';
+  computedRates['AOV (overall)']=purchases>0?('$'+(revenue/purchases).toFixed(2)):'N/A';
+  computedRates['AOV ('+y1+')']=purchY1>0?('$'+(revY1/purchY1).toFixed(2)):'N/A';
+  computedRates['AOV ('+y2+')']=purchY2>0?('$'+(revY2/purchY2).toFixed(2)):'N/A';
+  computedRates['Cart Removals vs Additions']=cartAdd>0?((cartRem/cartAdd*100).toFixed(2)+'%'):'N/A';
+  
+  // 5. Also check for standard ecommerce columns
+  var ecomCols={};
+  ['prodView','scAdd','scRemove','scOpen','scCheckout','purchase','cartAdditions','cartRemovals','checkouts','orders','units','revenue','Visits','Unique Visitors','Page Views','Bounces'].forEach(function(col){
+    if(COLS.indexOf(col)<0)return;
+    var s=0,s1=0,s2=0;
+    DATA.forEach(function(r){
+      var v=parseFloat(r[col])||0;s+=v;
+      if(!y1)return;
+      var d=String(r[dc]||'');var ym=d.match(/^(\d{4})/);if(!ym)return;
+      if(ym[1]===y1)s1+=v;else if(ym[1]===y2)s2+=v;
+    });
+    if(s>0)ecomCols[col]={total:Math.round(s),y1:Math.round(s1),y2:Math.round(s2),yoy:s1>0?Number(((s2-s1)/s1*100).toFixed(2)):0};
+  });
+  
   try{
-    var p='You are an Adobe Analytics expert for a WestJet-like airline website. Provide 6 actionable business recommendations.\n\nDATASET: '+DATA.length+' rows x '+COLS.length+' cols covering 2 years of web analytics.\nMETRIC STATS:\n'+JSON.stringify(st,null,1)+'\n\neVars: '+EVARS.slice(0,10).join(', ')+'\nKey dimensions include: marketing channel, device type, loyalty tier, route, booking type\n\nReturn JSON array of 6 objects: {title, priority (high|medium|low), insight (1-2 sentences), recommendation (2-3 sentences), metric}.\nReturn ONLY the JSON array.';
-    var r=await callAI([{role:'user',content:p}],2500);
-    var jm=r.match(/\[[\s\S]*\]/);
+    var prompt='You are a senior digital analytics strategist for an airline website. Analyze this data and provide 6 specific, actionable recommendations.\n\n';
+    prompt+='ANALYSIS PERIOD: '+y1+' vs '+y2+' (2 years)\n';
+    prompt+='TOTAL ROWS: '+DATA.length+'\n\n';
+    prompt+='KEY METRICS BY YEAR:\n'+JSON.stringify(metricStats,null,1)+'\n\n';
+    if(Object.keys(ecomCols).length>0)prompt+='STANDARD ECOMMERCE METRICS:\n'+JSON.stringify(ecomCols,null,1)+'\n\n';
+    prompt+='PRE-COMPUTED RATES (USE THESE EXACT VALUES - do NOT recalculate):\n'+JSON.stringify(computedRates,null,1)+'\n\n';
+    prompt+='CONVERSION FUNNEL BY YEAR:\n'+JSON.stringify(funnel,null,1)+'\n\n';
+    prompt+='DIMENSION BREAKDOWNS:\n'+JSON.stringify(dimBreakdowns,null,1)+'\n\n';
+    prompt+='CRITICAL INSTRUCTIONS:\n';
+    prompt+='1. USE the EXACT pre-computed rates and percentages above. Do NOT recalculate or approximate them.\n';
+    prompt+='2. Always mention the time period ('+y1+' vs '+y2+') and cite exact YoY % changes.\n';
+    prompt+='3. For each insight, cite specific numbers from the data above.\n';
+    prompt+='4. Cart Abandonment Rate formula used: (Cart Additions - Purchases) / Cart Additions * 100\n';
+    prompt+='5. Cover these areas: cart abandonment, revenue/AOV trends, conversion funnel, channel optimization, device/platform, loyalty/engagement\n\n';
+    prompt+='Return a JSON array of 6 objects: {title, priority (high/medium/low), insight (2-3 sentences citing exact numbers and YoY changes), recommendation (2-3 actionable sentences), metric (what to track)}.\n';
+    prompt+='Return ONLY the JSON array.';
+    
+    var r=await callAI([{role:'user',content:prompt}],4000);
+    // Try to extract JSON array - handle cases where Claude wraps in markdown
+    var raw=r.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+    var jm=raw.match(/\[[\s\S]*\]/);
     if(jm){
       var recs=JSON.parse(jm[0]);
-      el.innerHTML=recs.map(function(r){return '<div class="rc"><span class="pr '+r.priority[0]+'">'+r.priority.toUpperCase()+' PRIORITY</span><h3>'+esc(r.title)+'</h3><p><b>Insight:</b> '+esc(r.insight)+'</p><p><b>Recommendation:</b> '+esc(r.recommendation)+'</p><p style="font-size:11px;color:var(--t3);margin-top:6px">\ud83d\udcca Track: '+esc(r.metric)+'</p></div>'}).join('');
-    }else{el.innerHTML='<div class="rc"><h3>Analysis</h3><div>'+marked.parse(r)+'</div></div>'}
-  }catch(e){el.innerHTML='<div class="rc"><h3>\u26a0\ufe0f Error</h3><p>'+e.message+'</p></div>'}
+      el.innerHTML=recs.map(function(rc){
+        var pClass=rc.priority==='high'?'h':rc.priority==='medium'?'m':'l';
+        return '<div class="rc"><span class="pr '+pClass+'">'+esc(rc.priority).toUpperCase()+' PRIORITY</span><h3>'+esc(rc.title)+'</h3><p><b>Insight:</b> '+esc(rc.insight)+'</p><p><b>Recommendation:</b> '+esc(rc.recommendation)+'</p><p style="font-size:11px;color:var(--t3);margin-top:6px">\ud83d\udcca Track: '+esc(rc.metric)+'</p></div>';
+      }).join('');
+    }else{
+      el.innerHTML='<div class="rc"><h3>Strategic Analysis</h3><div>'+marked.parse(r)+'</div></div>';
+    }
+  }catch(e){el.innerHTML='<div class="rc"><h3>\u26a0\ufe0f Error</h3><p>'+e.message+'. Try refreshing the page.</p></div>'}
 }
 
 document.getElementById('chi').oninput=function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'};
