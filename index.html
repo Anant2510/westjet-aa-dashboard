@@ -417,15 +417,33 @@ function doLaunch(){
 }
 
 function buildSchema(){
-  var cd=COLS.map(function(c){
-    var vs=DATA.map(function(r){return r[c]}).filter(function(v){return v!=null&&v!==''});
-    var t=CTYPE[c]||'unknown',nv=vs.filter(function(v){return typeof v==='number'});
-    var d='"'+c+'" ('+t+')';
-    if(nv.length>vs.length*.5){var s=nv.reduce(function(a,b){return a+b},0);d+=' \u2014 numeric, n='+nv.length+', sum='+s.toFixed(0)+', avg='+(s/nv.length).toFixed(2)}
-    else{var u={};vs.slice(0,1000).forEach(function(v){u[String(v)]=1});var uk=Object.keys(u);d+=' \u2014 '+uk.length+'+ unique, eg: '+uk.slice(0,6).join(', ')}
-    return d;
+  // Build a COMPACT schema to minimize token usage (large datasets can exceed rate limits)
+  // Only include columns that have data, skip redundant info
+  var keyEvts=KEY_EVENTS.slice(0,30).map(function(c){
+    var vs=DATA.map(function(r){return parseFloat(r[c])||0});
+    var s=vs.reduce(function(a,b){return a+b},0);
+    var lbl=EVENT_LABELS[c.toLowerCase()]||c;
+    return lbl+'('+c+'): sum='+Math.round(s);
   });
-  SCHEMA='DATASET: '+DATA.length+' rows x '+COLS.length+' cols\n\nCOLUMNS:\n'+cd.join('\n')+'\n\neVars: '+(EVARS.join(', ')||'none')+'\nProps: '+(PROPS.join(', ')||'none')+'\nEvents (numeric metrics): '+(EVENTS.join(', ')||'none')+'\nOther Metrics: '+(METS.join(', ')||'none')+'\nDimensions: '+(DIMS.join(', ')||'none')+'\nDate cols: '+(DATECOLS.join(', ')||'none')+'\n\nKEY EVENTS WITH DATA: '+KEY_EVENTS.join(', ')+'\n\nEVAR MEANINGS: '+Object.entries(EVAR_LABELS).map(function(e){return e[0]+'='+e[1]}).join(', ')+'\n\nEVENT MEANINGS: '+Object.entries(EVENT_LABELS).slice(0,30).map(function(e){return e[0]+'='+e[1]}).join(', ')+'\n\nSample rows:\n'+JSON.stringify(DATA.slice(0,5),null,1);
+  var keyDims=EVARS.slice(0,20).map(function(c){
+    var lbl=EVAR_LABELS[c]||c;
+    var u={};DATA.slice(0,500).forEach(function(r){var v=r[c];if(v&&v!=='')u[v]=1});
+    var uk=Object.keys(u);
+    return lbl+'('+c+'): '+uk.length+' unique, eg: '+uk.slice(0,5).join('|');
+  });
+  // Minimal sample: only show first row with key columns, not all 230
+  var sampleCols=['Date','eVar1','eVar4','eVar5','eVar13','eVar15','eVar16','eVar17','event1','event2','event7','event9','event10','event13','event26'];
+  var existCols=sampleCols.filter(function(c){return COLS.indexOf(c)>=0});
+  var miniSample=DATA.slice(0,2).map(function(r){
+    var o={};existCols.forEach(function(c){o[c]=r[c]});return o;
+  });
+  SCHEMA='DATASET: '+DATA.length+' rows x '+COLS.length+' cols\n\n';
+  SCHEMA+='NUMERIC METRICS:\n'+keyEvts.join('\n')+'\n\n';
+  SCHEMA+='DIMENSIONS:\n'+keyDims.join('\n')+'\n\n';
+  SCHEMA+='DATE COLS: '+(DATECOLS.join(', ')||'none')+'\n';
+  SCHEMA+='ALL COLS: '+COLS.join(', ')+'\n\n';
+  SCHEMA+='EVAR MAP: '+Object.entries(EVAR_LABELS).map(function(e){return e[0]+'='+e[1]}).join(', ')+'\n\n';
+  SCHEMA+='Sample:\n'+JSON.stringify(miniSample);
 }
 
 function buildFilters(){
@@ -787,7 +805,7 @@ async function doSend(){
       ip='You are an analytics expert. User asked: "'+msg+'"\n\nLocal analysis issue: '+JSON.stringify(res)+'\n\nSchema:\n'+SCHEMA+'\n\nAnswer from schema info. Note limitations.';
     }
     chHist.push({role:'user',content:msg});
-    var ctx=chHist.slice(-8).map(function(m){return{role:m.role,content:m.content}});
+    var ctx=chHist.slice(-4).map(function(m){return{role:m.role,content:m.content}});
     ctx[ctx.length-1]={role:'user',content:ip};
     var fr=await callAI(ctx,3000);
     chHist.push({role:'assistant',content:fr});
@@ -797,9 +815,20 @@ async function doSend(){
 }
 
 async function callAI(msgs,mt){
-  var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:mt||2000,messages:msgs})});
-  if(!r.ok){var d=await r.json();throw new Error((d.error&&d.error.message)||'API error '+r.status)}
-  var data=await r.json();return data.content.map(function(c){return c.text||''}).join('');
+  var maxRetries=3;
+  for(var attempt=0;attempt<maxRetries;attempt++){
+    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:mt||2000,messages:msgs})});
+    if(r.status===429){
+      // Rate limited - wait and retry
+      var wait=Math.pow(2,attempt+1)*5;// 10s, 20s, 40s
+      console.log('Rate limited, waiting '+wait+'s before retry '+(attempt+1));
+      await new Promise(function(ok){setTimeout(ok,wait*1000)});
+      continue;
+    }
+    if(!r.ok){var d=await r.json();throw new Error((d.error&&d.error.message)||'API error '+r.status)}
+    var data=await r.json();return data.content.map(function(c){return c.text||''}).join('');
+  }
+  throw new Error('Rate limited after '+maxRetries+' retries. Please wait a minute and try again.');
 }
 
 function addMsg(role,content,parseC,local){
