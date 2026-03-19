@@ -413,36 +413,48 @@ function getPlottableMetrics(){
 
 function doLaunch(){
   document.getElementById('s2').classList.add('hid');document.getElementById('ap').classList.remove('hid');
-  detectEvarLabels();buildSchema();buildFilters();renderDash();genRecs();
+  detectEvarLabels();buildSchema();buildRevBookingCtx();buildFilters();renderDash();genRecs();
 }
 
 function buildSchema(){
-  // Build a COMPACT schema to minimize token usage (large datasets can exceed rate limits)
-  // Only include columns that have data, skip redundant info
+  // Build a COMPACT but EXPLICIT schema for AI code generation
+  // Key: AI must know exact column names to use in r['colName'] access
   var keyEvts=KEY_EVENTS.slice(0,30).map(function(c){
     var vs=DATA.map(function(r){return parseFloat(r[c])||0});
     var s=vs.reduce(function(a,b){return a+b},0);
     var lbl=EVENT_LABELS[c.toLowerCase()]||c;
-    return lbl+'('+c+'): sum='+Math.round(s);
+    return c+' ("'+lbl+'"): sum='+Math.round(s);
   });
   var keyDims=EVARS.slice(0,20).map(function(c){
     var lbl=EVAR_LABELS[c]||c;
     var u={};DATA.slice(0,500).forEach(function(r){var v=r[c];if(v&&v!=='')u[v]=1});
     var uk=Object.keys(u);
-    return lbl+'('+c+'): '+uk.length+' unique, eg: '+uk.slice(0,5).join('|');
+    return c+' ("'+lbl+'"): '+uk.length+' unique, eg: '+uk.slice(0,5).join('|');
   });
-  // Minimal sample: only show first row with key columns, not all 230
+  // Minimal sample with key columns
   var sampleCols=['Date','eVar1','eVar4','eVar5','eVar13','eVar15','eVar16','eVar17','event1','event2','event7','event9','event10','event13','event26'];
   var existCols=sampleCols.filter(function(c){return COLS.indexOf(c)>=0});
   var miniSample=DATA.slice(0,2).map(function(r){
     var o={};existCols.forEach(function(c){o[c]=r[c]});return o;
   });
-  SCHEMA='DATASET: '+DATA.length+' rows x '+COLS.length+' cols\n\n';
-  SCHEMA+='NUMERIC METRICS:\n'+keyEvts.join('\n')+'\n\n';
-  SCHEMA+='DIMENSIONS:\n'+keyDims.join('\n')+'\n\n';
-  SCHEMA+='DATE COLS: '+(DATECOLS.join(', ')||'none')+'\n';
+  // Date range
+  var dates=DATA.map(function(r){return r['Date']||''}).filter(function(d){return d}).sort();
+  var minDate=dates[0]||'?',maxDate=dates[dates.length-1]||'?';
+  
+  SCHEMA='DATASET: '+DATA.length+' rows x '+COLS.length+' cols, date range: '+minDate+' to '+maxDate+'\n\n';
+  SCHEMA+='CRITICAL: Access columns using EXACT names below. E.g. r["event9"] for revenue, r["eVar17"] for route.\n\n';
+  SCHEMA+='NUMERIC METRIC COLUMNS (access as r["event1"], r["event9"], etc.):\n'+keyEvts.join('\n')+'\n\n';
+  SCHEMA+='DIMENSION COLUMNS (access as r["eVar4"], r["eVar17"], etc.):\n'+keyDims.join('\n')+'\n\n';
+  SCHEMA+='KEY COLUMN MAPPING:\n';
+  SCHEMA+='- Revenue: r["event9"] (booking revenue) or r["event26"] (total revenue)\n';
+  SCHEMA+='- Route: r["eVar17"] (format: "YYC-MIA")\n';
+  SCHEMA+='- Origin airport: r["eVar15"], Destination: r["eVar16"]\n';
+  SCHEMA+='- Date: r["Date"] (format: "YYYY-MM-DD", range: '+minDate+' to '+maxDate+')\n';
+  SCHEMA+='- Marketing Channel: r["eVar4"]\n';
+  SCHEMA+='- Device: r["eVar5"], Loyalty: r["eVar13"], Cabin: r["eVar14"]\n';
+  SCHEMA+='- Bookings: r["event7"], Purchases: r["event13"], Cart Adds: r["event10"]\n';
+  SCHEMA+='- Page Views: r["event1"], Visits: r["event2"]\n\n';
   SCHEMA+='ALL COLS: '+COLS.join(', ')+'\n\n';
-  SCHEMA+='EVAR MAP: '+Object.entries(EVAR_LABELS).map(function(e){return e[0]+'='+e[1]}).join(', ')+'\n\n';
   SCHEMA+='Sample:\n'+JSON.stringify(miniSample);
 }
 
@@ -782,6 +794,66 @@ function updCust(){
 }
 
 // ===== AI CHAT =====
+// Pre-computed revenue and booking stats - attached to EVERY prompt
+var REV_BOOKING_CTX='';
+function buildRevBookingCtx(){
+  var dc=getDateCol();
+  var totRev=0,totBook=0,totPurch=0,totCart=0,totVisit=0,totPV=0;
+  var byRoute={},byChannel={},byMonth={},byYear={};
+  DATA.forEach(function(r){
+    var rev=parseFloat(r['event9'])||0;
+    var rev26=parseFloat(r['event26'])||0;
+    var book=parseFloat(r['event7'])||0;
+    var purch=parseFloat(r['event13'])||0;
+    var cart=parseFloat(r['event10'])||0;
+    var vis=parseFloat(r['event2'])||0;
+    var pv=parseFloat(r['event1'])||0;
+    totRev+=rev;totBook+=book;totPurch+=purch;totCart+=cart;totVisit+=vis;totPV+=pv;
+    // By route
+    var rt=r['eVar17']||'';
+    if(rt){if(!byRoute[rt])byRoute[rt]={rev:0,book:0,count:0};byRoute[rt].rev+=rev;byRoute[rt].book+=book;byRoute[rt].count++}
+    // By channel
+    var ch=r['eVar4']||'';
+    if(ch){if(!byChannel[ch])byChannel[ch]={rev:0,book:0,count:0};byChannel[ch].rev+=rev;byChannel[ch].book+=book;byChannel[ch].count++}
+    // By month
+    var d=String(r[dc]||'');var mo=d.slice(0,7);
+    if(mo.length===7){if(!byMonth[mo])byMonth[mo]={rev:0,book:0};byMonth[mo].rev+=rev;byMonth[mo].book+=book}
+    // By year
+    var yr=d.slice(0,4);
+    if(yr.length===4){if(!byYear[yr])byYear[yr]={rev:0,book:0,purch:0};byYear[yr].rev+=rev;byYear[yr].book+=book;byYear[yr].purch+=purch}
+  });
+  // Top 10 routes by revenue
+  var topRoutes=Object.entries(byRoute).sort(function(a,b){return b[1].rev-a[1].rev}).slice(0,10);
+  // Top channels by revenue
+  var topChannels=Object.entries(byChannel).sort(function(a,b){return b[1].rev-a[1].rev}).slice(0,10);
+  // Monthly trend (last 12 months)
+  var months=Object.keys(byMonth).sort();
+  var last12=months.slice(-12);
+  
+  REV_BOOKING_CTX='\n\nPRE-COMPUTED REVENUE & BOOKING DATA (always available):\n';
+  REV_BOOKING_CTX+='Total Revenue (event9): $'+Math.round(totRev).toLocaleString()+'\n';
+  REV_BOOKING_CTX+='Total Bookings (event7): '+Math.round(totBook).toLocaleString()+'\n';
+  REV_BOOKING_CTX+='Total Purchases (event13): '+Math.round(totPurch).toLocaleString()+'\n';
+  REV_BOOKING_CTX+='Total Cart Additions (event10): '+Math.round(totCart).toLocaleString()+'\n';
+  REV_BOOKING_CTX+='Total Visits (event2): '+Math.round(totVisit).toLocaleString()+'\n';
+  REV_BOOKING_CTX+='Total Page Views (event1): '+Math.round(totPV).toLocaleString()+'\n';
+  REV_BOOKING_CTX+='AOV: $'+(totPurch>0?(totRev/totPurch).toFixed(2):'N/A')+'\n\n';
+  // Year breakdown
+  REV_BOOKING_CTX+='BY YEAR:\n';
+  Object.keys(byYear).sort().forEach(function(yr){
+    REV_BOOKING_CTX+=yr+': Revenue=$'+Math.round(byYear[yr].rev).toLocaleString()+', Bookings='+Math.round(byYear[yr].book).toLocaleString()+', Purchases='+Math.round(byYear[yr].purch).toLocaleString()+'\n';
+  });
+  // Top routes
+  REV_BOOKING_CTX+='\nTOP 10 ROUTES BY REVENUE:\n';
+  topRoutes.forEach(function(e){REV_BOOKING_CTX+=e[0]+': Revenue=$'+Math.round(e[1].rev).toLocaleString()+', Bookings='+Math.round(e[1].book).toLocaleString()+'\n'});
+  // Top channels
+  REV_BOOKING_CTX+='\nTOP CHANNELS BY REVENUE:\n';
+  topChannels.forEach(function(e){REV_BOOKING_CTX+=e[0]+': Revenue=$'+Math.round(e[1].rev).toLocaleString()+', Bookings='+Math.round(e[1].book).toLocaleString()+'\n'});
+  // Monthly trend
+  REV_BOOKING_CTX+='\nMONTHLY REVENUE TREND (last 12 months):\n';
+  last12.forEach(function(mo){REV_BOOKING_CTX+=mo+': $'+Math.round(byMonth[mo].rev).toLocaleString()+'\n'});
+}
+
 async function doSend(){
   var inp=document.getElementById('chi'),msg=inp.value.trim();
   if(!msg)return;inp.value='';inp.style.height='auto';
@@ -789,7 +861,7 @@ async function doSend(){
   var sb=document.getElementById('csb');sb.disabled=true;
   var tid=addTyp();
   try{
-    var cp='You are a data analyst. The user wants to analyze a JS array called DATA (objects, one per row).\n\n'+SCHEMA+'\n\nUSER QUESTION: "'+msg+'"\n\nWrite a JS function: function analyze(DATA) { ... return result; }\nRules:\n- Return an object with clear keys\n- Handle nulls, missing data, empty strings\n- For charts include labels[] and values[] arrays in the result\n- Max 20 items in results\n- Round percentages to 2 decimals\n- No external libs, vanilla JS only\n- For dates, the Date column has ISO format (2023-01-01)\n- Event columns (event1-event100) are NUMERIC metrics\n- eVar and prop columns are STRING dimensions\n\nRespond with ONLY the function in ```js ... ``` - nothing else.';
+    var cp='You are a data analyst. Write a JS function to answer the user question.\n\nDATA is a JS array of objects (one per row). Access columns using EXACT names like r["event9"], r["eVar17"], r["Date"].\n\n'+SCHEMA+REV_BOOKING_CTX+'\n\nUSER QUESTION: "'+msg+'"\n\nWrite: function analyze(DATA) { ... return result; }\nRules:\n- Access columns as r["event9"] NOT r.revenue or r["Booking Revenue"]\n- Revenue = parseFloat(r["event9"])||0, Route = r["eVar17"], Date = r["Date"]\n- parseFloat() all numeric event columns, they may be strings\n- Handle nulls, missing data, empty strings\n- For charts include labels[] and values[] arrays\n- Max 20 items. No external libs.\n- For "last N months" filter: compare r["Date"] against date strings like "2024-08-01"\n\nRespond with ONLY ```js ... ``` block.';
     var codeR=await callAI([{role:'user',content:cp}],1500);
     var jm=codeR.match(/```(?:js|javascript)?\s*([\s\S]*?)```/);
     var res,local=false;
@@ -800,7 +872,7 @@ async function doSend(){
     var rs=JSON.stringify(res,null,1);if(rs.length>12000)rs=rs.slice(0,12000)+'\n...(truncated)';
     var ip;
     if(local&&!res.error){
-      ip='You are an analytics expert for an airline website (WestJet-like). User asked: "'+msg+'"\n\nI ran analysis on the FULL dataset ('+DATA.length+' rows). EXACT computed results:\n\n'+rs+'\n\nInstructions:\n1. Clear natural-language answer with specific numbers\n2. If results have chart-ready data AND user asked for viz OR chart would help, include:\n```chart\n{"type":"bar|line|doughnut|pie","title":"Title","labels":["a","b"],"datasets":[{"label":"Series","data":[1,2]}]}\n```\n3. Markdown formatting. Concise but thorough.\n4. Numbers are exact from the full dataset.';
+      ip='You are an analytics expert for an airline website (WestJet-like). User asked: "'+msg+'"\n\nI ran analysis on the FULL dataset ('+DATA.length+' rows). EXACT computed results:\n\n'+rs+REV_BOOKING_CTX+'\n\nInstructions:\n1. Clear natural-language answer with specific numbers\n2. If the computed results show zeros or empty data BUT the pre-computed revenue/booking data above has values, use those pre-computed values to answer the question\n3. If results have chart-ready data AND user asked for viz OR chart would help, include:\n```chart\n{"type":"bar|line|doughnut|pie","title":"Title","labels":["a","b"],"datasets":[{"label":"Series","data":[1,2]}]}\n```\n4. Markdown formatting. Concise but thorough.\n5. Numbers are exact from the full dataset.';
     }else{
       ip='You are an analytics expert. User asked: "'+msg+'"\n\nLocal analysis issue: '+JSON.stringify(res)+'\n\nSchema:\n'+SCHEMA+'\n\nAnswer from schema info. Note limitations.';
     }
