@@ -598,7 +598,7 @@ function renderKPIs(){
     var prevVal=prevP?periodData[m][prevP]||0:0;
     var ch=prevVal>0?((currVal-prevVal)/prevVal*100):0;
     var label=EVENT_LABELS[m.toLowerCase()]||m;
-    return '<div class="kc"><div class="kl">'+tr(label,28)+'</div><div class="kv">'+fmt(tot)+'</div><div style="font-size:11px;color:var(--t3);margin:2px 0">Avg/'+periodLabel+': '+fmt(avg)+'</div><div class="kch '+(ch>=0?'u':'dn')+'">'+(ch>=0?'\u2191':'\u2193')+' '+Math.abs(ch).toFixed(1)+'% <span style="font-size:10px;color:var(--t3)">'+( currP&&prevP?currP+' vs '+prevP:'')+'</span></div></div>';
+    return '<div class="kc"><div class="kl">'+tr(label,28)+' <span style="font-weight:400;text-transform:none;font-size:10px">(per '+periodLabel+')</span></div><div class="kv">'+fmt(avg)+'</div><div style="font-size:11px;color:var(--t3);margin:2px 0">Total: '+fmt(tot)+' &middot; '+nPeriods+' '+periodLabel.toLowerCase()+'s</div><div class="kch '+(ch>=0?'u':'dn')+'">'+(ch>=0?'\u2191':'\u2193')+' '+Math.abs(ch).toFixed(1)+'%'+(currP&&prevP?' <span style="font-size:10px;color:var(--t3)">'+currP+' vs '+prevP+'</span>':'')+'</div></div>';
   }).join('');
 }
 
