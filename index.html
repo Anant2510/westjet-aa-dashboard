@@ -52,9 +52,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 .cf-footer-bottom{display:flex;align-items:center;justify-content:space-between;padding:16px 60px 24px;color:#7a92aa;font-size:13px;position:relative;overflow:hidden}
 .cf-footer-accent{position:absolute;bottom:-40px;right:-20px;width:140px;height:140px;background:#E8613C;border-radius:50%;opacity:.85}
 
-/* Layout adjustments */
+/* Layout */
 .app{display:flex;min-height:calc(100vh - 68px);margin-top:68px}
-.ov{position:fixed;top:68px;bottom:0;left:0;right:0;background:var(--bg0);display:flex;align-items:center;justify-content:center;z-index:800;transition:opacity .4s,visibility .4s}
 
 @media(max-width:1100px){
   .cf-nav{gap:14px}.cf-nav a{font-size:12px}
@@ -67,24 +66,13 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
   .cf-footer-legal,.cf-footer-bottom{padding-left:20px;padding-right:20px}
 }
 
-/* SETUP OVERLAYS */
-.ov.hid{opacity:0;visibility:hidden;pointer-events:none}
-.sc{background:#fff;border:1px solid var(--brd);border-radius:16px;padding:44px;max-width:540px;width:92%;box-shadow:var(--shadow2)}
-.sc h1{font-size:24px;margin-bottom:6px;color:var(--navy);font-weight:700}
-.sc .sub{color:var(--t2);margin-bottom:24px;font-size:14px;line-height:1.5}
-.sc label{display:block;font-size:11px;color:var(--t3);margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
-.sc input[type=password],.sc input[type=text]{width:100%;padding:12px 16px;background:var(--bg2);border:1px solid var(--brd);border-radius:10px;color:var(--t1);font-size:15px;margin-bottom:16px}
-.sc input:focus{outline:none;border-color:var(--acc)}
-.btn{width:100%;padding:13px;background:var(--acc);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s,transform .1s}
+/* BUTTON */
+.btn{padding:13px 24px;background:var(--acc);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s,transform .1s;font-family:inherit}
 .btn:hover{background:var(--acc2)}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.4;cursor:not-allowed}
-.err{color:var(--red);font-size:13px;margin-top:-8px;margin-bottom:12px;display:none}.err.s{display:block}
-.fd{border:2px dashed var(--brd);border-radius:12px;padding:34px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:16px}
-.fd:hover,.fd.dg{border-color:var(--acc);background:var(--accg)}
-.fd .ic{font-size:36px;margin-bottom:8px}.fd .lb{font-size:14px;color:var(--t2)}.fd .lb strong{color:var(--acc)}
-.fi{font-size:13px;color:var(--grn);margin-top:8px;display:none}
-.pb{width:100%;height:4px;background:var(--bg3);border-radius:2px;margin:12px 0;display:none}.pb .fl{height:100%;background:var(--acc);border-radius:2px;transition:width .3s;width:0}
-.si{display:flex;gap:8px;margin-bottom:24px}.sd{width:8px;height:8px;border-radius:50%;background:var(--brd);transition:background .3s}.sd.a{background:var(--acc)}.sd.d{background:var(--grn)}
-.hw{background:var(--bg2);border-radius:10px;padding:14px;margin-bottom:18px;font-size:13px;line-height:1.7;color:var(--t2);border-left:3px solid var(--acc)}.hw b{color:var(--t1)}
+.btn-sm{padding:9px 18px;font-size:13px;border-radius:8px}
+.btn-outline{background:transparent;border:1.5px solid var(--brd);color:var(--t2)}
+.btn-outline:hover{border-color:var(--acc);color:var(--acc);background:var(--accg)}
+.err{color:var(--red);font-size:13px;margin-top:4px;display:none}.err.s{display:block}
 
 /* MAIN APP */
 .sb{width:260px;min-width:260px;background:#fff;border-right:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden;position:sticky;top:68px;height:calc(100vh - 68px)}
@@ -94,6 +82,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 .sb-n{padding:8px;flex-shrink:0}
 .nb{width:100%;padding:8px 12px;background:0;border:0;color:var(--t2);font-size:13px;text-align:left;cursor:pointer;border-radius:7px;display:flex;align-items:center;gap:8px;transition:all .15s;margin-bottom:1px;font-family:inherit}
 .nb:hover{background:var(--bg2);color:var(--t1)}.nb.a{background:var(--accg);color:var(--acc);font-weight:600}
+.nb.disabled-nav{opacity:.4;cursor:not-allowed;pointer-events:none}
 .sb-f{flex:1;overflow-y:auto;padding:8px;border-top:1px solid var(--brd)}.sb-f::-webkit-scrollbar{width:4px}.sb-f::-webkit-scrollbar-thumb{background:var(--brd);border-radius:4px}
 .fs{margin-bottom:12px}.fs h4{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:5px;padding:0 4px;font-weight:700}
 .fc{display:inline-block;padding:3px 8px;margin:2px;font-size:11px;background:var(--bg2);border:1px solid var(--brd);border-radius:5px;cursor:pointer;transition:all .15s;color:var(--t2)}
@@ -162,12 +151,78 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 
 .tc{display:none;height:100%;overflow:hidden}.tc.a{display:flex;flex-direction:column}
 .ti{display:none}
-.hid{display:none!important}
+
+/* ============================================================
+   SETUP CARD — embedded inside the chat welcome area
+   ============================================================ */
+.setup-card{
+  background:#fff;border:1px solid var(--brd);border-radius:14px;
+  padding:28px 30px;margin:0 auto 18px;max-width:560px;
+  box-shadow:var(--shadow2);
+  animation:fi .4s;
+}
+.setup-card h2{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.setup-card .sub{color:var(--t2);font-size:13px;margin-bottom:20px;line-height:1.5}
+.setup-card label{display:block;font-size:11px;color:var(--t3);margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.setup-card input[type=password],
+.setup-card input[type=text],
+.setup-card input[type=url]{
+  width:100%;padding:11px 14px;background:var(--bg2);border:1px solid var(--brd);
+  border-radius:9px;color:var(--t1);font-size:14px;margin-bottom:4px;font-family:inherit
+}
+.setup-card input:focus{outline:none;border-color:var(--acc)}
+
+/* Status badges */
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;margin-bottom:14px}
+.status-pill.pending{background:var(--bg2);color:var(--t3)}
+.status-pill.ok{background:rgba(34,197,94,.1);color:var(--grn)}
+.status-pill.fail{background:rgba(239,68,68,.08);color:var(--red)}
+.status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.status-pill.pending .status-dot{background:var(--t3)}
+.status-pill.ok .status-dot{background:var(--grn)}
+.status-pill.fail .status-dot{background:var(--red)}
+
+/* Data source tabs */
+.ds-tabs{display:flex;gap:0;margin-bottom:18px;border:1px solid var(--brd);border-radius:9px;overflow:hidden}
+.ds-tab{flex:1;padding:10px 14px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;background:var(--bg2);color:var(--t2);border:none;font-family:inherit;transition:all .15s}
+.ds-tab:not(:last-child){border-right:1px solid var(--brd)}
+.ds-tab.active{background:var(--acc);color:#fff}
+.ds-tab:hover:not(.active){background:var(--bg3)}
+
+.ds-panel{display:none}.ds-panel.active{display:block}
+
+/* File drop zone */
+.fd{border:2px dashed var(--brd);border-radius:11px;padding:28px 16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:10px}
+.fd:hover,.fd.dg{border-color:var(--acc);background:var(--accg)}
+.fd .ic{font-size:32px;margin-bottom:6px}.fd .lb{font-size:13px;color:var(--t2)}.fd .lb strong{color:var(--acc)}
+.fi-status{font-size:12px;margin-top:6px;display:none}
+.pb{width:100%;height:4px;background:var(--bg3);border-radius:2px;margin:8px 0;display:none}.pb .fl{height:100%;background:var(--acc);border-radius:2px;transition:width .3s;width:0}
+
+/* Cloud input */
+.cloud-info{background:var(--bg2);border-radius:9px;padding:12px 14px;font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:14px;border-left:3px solid var(--acc)}
+.cloud-info b{color:var(--t1)}
+.cloud-examples{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cloud-ex{padding:3px 9px;background:#fff;border:1px solid var(--brd);border-radius:5px;font-size:11px;color:var(--t3);font-family:'SF Mono','Fira Code',monospace}
+
+/* Privacy hint */
+.hw{background:var(--bg2);border-radius:9px;padding:12px 14px;margin-bottom:16px;font-size:12px;line-height:1.65;color:var(--t2);border-left:3px solid var(--acc)}.hw b{color:var(--t1)}
+
+/* Divider */
+.setup-divider{display:flex;align-items:center;gap:10px;margin:18px 0}
+.setup-divider::before,.setup-divider::after{content:'';flex:1;height:1px;background:var(--brd)}
+.setup-divider span{font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+
+/* Section heading inside setup card */
+.setup-section{margin-bottom:16px}
+.setup-section-title{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.setup-section-num{width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.setup-section-label{font-size:13px;font-weight:600;color:var(--navy)}
 
 @media(max-width:768px){
   .sb{width:52px;min-width:52px}.sb-h .nm,.nb span,.sb-f{display:none}.nb{justify-content:center;padding:10px}
   .cg{grid-template-columns:1fr}.kr{grid-template-columns:repeat(2,1fr)}
   .cf-header{padding:0 12px}.cf-footer-links,.cf-footer-social{display:none}
+  .setup-card{margin:0 10px 18px;padding:20px}
 }
 </style>
 </head>
@@ -191,45 +246,15 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
   </nav>
 </header>
 
-
-
-<!-- STEP 1 -->
-<div class="ov" id="s1"><div class="sc">
-<div class="si"><div class="sd a"></div><div class="sd"></div></div>
-<h1>&#10038; IntelliSight</h1>
-<p style="color:var(--acc);font-size:13px;font-weight:600;margin-bottom:16px;letter-spacing:.3px">From Data to Decisive Action</p>
-<p class="sub">Connect your Anthropic API key to power AI-driven analytics and chat.</p>
-<div class="hw"><b>How it works:</b> Your data stays 100% in your browser. When you ask a question, Claude writes an analysis script &rarr; it runs locally against your full dataset &rarr; computed results go to Claude for interpretation. Raw data never leaves your machine.</div>
-<label>Anthropic API Key</label>
-<input type="password" id="ak" placeholder="sk-ant-api03-..." autocomplete="off">
-<div class="err" id="ae"></div>
-<button class="btn" id="vb" onclick="doValidate()">Validate &amp; Continue &rarr;</button>
-</div></div>
-
-<!-- STEP 2 -->
-<div class="ov hid" id="s2"><div class="sc">
-<div class="si"><div class="sd d"></div><div class="sd a"></div></div>
-<h1>&#128202; Upload Dataset</h1>
-<p class="sub">Upload your Adobe Analytics Data Warehouse CSV export.</p>
-<div class="fd" id="fd" onclick="document.getElementById('fi').click()">
-<div class="ic">&#128193;</div>
-<div class="lb">Drop CSV here or <strong>click to browse</strong></div>
-<div class="fi" id="fin"></div>
-</div>
-<input type="file" id="fi" accept=".csv,.tsv,.txt" style="display:none">
-<div class="pb" id="pb"><div class="fl" id="pf"></div></div>
-<button class="btn" id="lbu" disabled onclick="doLaunch()">Launch Dashboard &rarr;</button>
-</div></div>
-
-<!-- MAIN APP -->
-<div class="app hid" id="ap">
+<!-- MAIN APP — visible from the start, chat tab active -->
+<div class="app" id="ap">
 <div class="sb">
 <div class="sb-h"><div class="lg" style="background:#0a1628;font-size:11px"><span>iS</span></div><div class="nm">IntelliSight</div></div>
 <div class="sb-n">
-<button class="nb a" onclick="goTab('dash',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> <span>Dashboard</span></button>
-<button class="nb" onclick="goTab('cust',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> <span>Custom Reports</span></button>
-<button class="nb" onclick="goTab('chat',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> <span>AI Chat</span></button>
-<button class="nb" onclick="goTab('recs',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 00-4 12.9V17h8v-2.1A7 7 0 0012 2z"/></svg> <span>Recommendations</span></button>
+<button class="nb disabled-nav" id="nav-dash" onclick="goTab('dash',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> <span>Dashboard</span></button>
+<button class="nb disabled-nav" id="nav-cust" onclick="goTab('cust',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> <span>Custom Reports</span></button>
+<button class="nb a" id="nav-chat" onclick="goTab('chat',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> <span>AI Chat</span></button>
+<button class="nb disabled-nav" id="nav-recs" onclick="goTab('recs',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 00-4 12.9V17h8v-2.1A7 7 0 0012 2z"/></svg> <span>Recommendations</span></button>
 </div>
 <div class="sb-f" id="sf">
 <input class="fsi" placeholder="Search columns..." oninput="doFS(this.value)">
@@ -239,21 +264,104 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 </div>
 <div class="mc">
 <div class="tb">
-<h2 id="pt">Executive Dashboard</h2>
-<div class="tt" id="tto">
+<h2 id="pt">AI Analytics Chat</h2>
+<div class="tt" id="tto" style="display:none">
 <button class="ttb" onclick="doTime('weekly',this)">Weekly</button>
 <button class="ttb a" onclick="doTime('monthly',this)">Monthly</button>
 <button class="ttb" onclick="doTime('yearly',this)">Yearly</button>
 </div>
 </div>
-<div class="tc a" id="tab-dash"><div class="ca"><div class="kr" id="kpiR"></div><div class="cg" id="chG"></div></div></div>
+<div class="tc" id="tab-dash"><div class="ca"><div class="kr" id="kpiR"></div><div class="cg" id="chG"></div></div></div>
 <div class="tc" id="tab-cust"><div class="ca"><p style="color:var(--t2);margin-bottom:10px;font-size:13px">Select dimensions/metrics from sidebar to build charts.</p><div class="sdm" id="sdm"><span style="color:var(--t3);font-size:12px">No dimensions selected</span></div><div class="cg" id="ccG"></div></div></div>
-<div class="tc" id="tab-chat">
+
+<!-- CHAT TAB — active by default -->
+<div class="tc a" id="tab-chat">
 <div class="chtc">
 <div class="chm" id="chMs">
-<div class="cm as"><div class="sn">IntelliSight</div><div class="bb"><p>&#128075; I'm your analytics assistant powered by IntelliSight. Your entire dataset is loaded in-browser and I can query every row.</p><p><b>How this works:</b> I write an analysis function &rarr; runs locally on your full data &rarr; I interpret precise results. No raw data leaves your browser.</p><p>Try asking:</p><ul><li>"What are the top 10 routes by revenue?"</li><li>"Show monthly booking trend as a line chart"</li><li>"Compare revenue by loyalty tier"</li><li>"What day of the week gets the most traffic?"</li><li>"Show add-to-cart vs purchase conversion funnel"</li></ul></div></div>
+
+<!-- SETUP CARD — inline inside the chat area -->
+<div id="setupCard" class="setup-card">
+  <h2>&#10038; IntelliSight</h2>
+  <p style="color:var(--acc);font-size:12px;font-weight:600;margin-bottom:12px;letter-spacing:.3px">From Data to Decisive Action</p>
+
+  <div class="hw">
+    <b>How it works:</b> Your data stays 100% in your browser. When you ask a question, the AI writes an analysis script &rarr; it runs locally against your full dataset &rarr; computed results go to the LLM for interpretation. Raw data never leaves your machine.
+  </div>
+
+  <!-- STEP 1: API Key -->
+  <div class="setup-section">
+    <div class="setup-section-title">
+      <div class="setup-section-num">1</div>
+      <div class="setup-section-label">Connect your AI engine</div>
+    </div>
+    <label>Secret Key</label>
+    <input type="password" id="ak" placeholder="Enter your LLM secret key..." autocomplete="off">
+    <div class="err" id="ae"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+      <button class="btn btn-sm" id="vb" onclick="doValidate()">Validate Key</button>
+      <span class="status-pill pending" id="keyStatus"><span class="status-dot"></span> Awaiting key</span>
+    </div>
+  </div>
+
+  <div class="setup-divider"><span>then</span></div>
+
+  <!-- STEP 2: Data Source -->
+  <div class="setup-section">
+    <div class="setup-section-title">
+      <div class="setup-section-num">2</div>
+      <div class="setup-section-label">Link your raw data</div>
+    </div>
+
+    <div class="ds-tabs">
+      <button class="ds-tab active" onclick="switchDS('upload',this)">&#128193; Upload Files</button>
+      <button class="ds-tab" onclick="switchDS('cloud',this)">&#9729;&#65039; Cloud Storage</button>
+    </div>
+
+    <!-- Upload panel -->
+    <div class="ds-panel active" id="ds-upload">
+      <div class="fd" id="fd" onclick="document.getElementById('fi').click()">
+        <div class="ic">&#128196;</div>
+        <div class="lb">Drop CSV / TSV file here or <strong>click to browse</strong></div>
+      </div>
+      <input type="file" id="fi" accept=".csv,.tsv,.txt" style="display:none">
+      <div class="fi-status" id="fin"></div>
+      <div class="pb" id="pb"><div class="fl" id="pf"></div></div>
+    </div>
+
+    <!-- Cloud panel -->
+    <div class="ds-panel" id="ds-cloud">
+      <div class="cloud-info">
+        <b>Provide a publicly accessible URL</b> to a CSV or TSV file hosted on your cloud storage. We will fetch the file directly into your browser — nothing is stored server-side.
+        <div class="cloud-examples">
+          <span class="cloud-ex">Amazon S3</span>
+          <span class="cloud-ex">Azure Blob</span>
+          <span class="cloud-ex">Google Cloud</span>
+          <span class="cloud-ex">Dropbox</span>
+          <span class="cloud-ex">SharePoint</span>
+        </div>
+      </div>
+      <label>File URL</label>
+      <input type="url" id="cloudUrl" placeholder="https://your-bucket.s3.amazonaws.com/data.csv">
+      <div class="err" id="cloudErr"></div>
+      <button class="btn btn-sm" id="cloudBtn" onclick="doCloudFetch()" style="margin-top:8px">Fetch File</button>
+      <div class="fi-status" id="cloudFin"></div>
+      <div class="pb" id="cloudPb"><div class="fl" id="cloudPf"></div></div>
+    </div>
+
+    <span class="status-pill pending" id="dataStatus" style="margin-top:10px"><span class="status-dot"></span> No data linked</span>
+  </div>
+
+  <div style="margin-top:18px">
+    <button class="btn" id="launchBtn" style="width:100%" disabled onclick="doLaunch()">Launch IntelliSight &rarr;</button>
+  </div>
 </div>
-<div class="cia"><textarea id="chi" placeholder="Ask anything about your data..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doSend()}"></textarea><button class="csb" id="csb" onclick="doSend()">Send</button></div>
+<!-- END SETUP CARD -->
+
+</div>
+<div class="cia" id="chatInputArea">
+  <textarea id="chi" placeholder="Connect your data above to start chatting..." rows="1" disabled onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doSend()}"></textarea>
+  <button class="csb" id="csb" onclick="doSend()" disabled>Send</button>
+</div>
 </div>
 </div>
 <div class="tc" id="tab-recs"><div class="ca" id="recA"><p style="color:var(--t2)">Generating recommendations...</p></div></div>
@@ -263,33 +371,30 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 <script>
 var AK='',DATA=[],COLS=[],CTYPE={},SCHEMA='';
 var EVARS=[],PROPS=[],EVENTS=[],METS=[],DIMS=[],DATECOLS=[];
-// KEY_EVENTS: events we know are important for airline analytics dashboard
 var KEY_EVENTS=[];
 var selF=new Set(),tView='monthly',chInst={},chHist=[];
+var KEY_VALIDATED=false, DATA_LOADED=false;
 
 // ===== AUTO-DETECT API KEY FROM URL PARAMETER =====
-// Usage: https://yoursite.github.io/dashboard/?key=sk-ant-api03-xxxxx
-// If key is present, validation screen is skipped entirely.
-// The key is immediately removed from the URL bar for safety.
 (function(){
   var params=new URLSearchParams(window.location.search);
   var urlKey=params.get('key');
   if(urlKey&&urlKey.indexOf('sk-ant-')===0){
     AK=urlKey;
-    // Remove key from visible URL so it can't be accidentally shared/bookmarked
     if(window.history&&window.history.replaceState){
       var clean=window.location.origin+window.location.pathname+window.location.hash;
       window.history.replaceState(null,'',clean);
     }
-    // Once DOM is ready, skip step 1 and show step 2
     document.addEventListener('DOMContentLoaded',function(){
-      document.getElementById('s1').classList.add('hid');
-      document.getElementById('s2').classList.remove('hid');
+      document.getElementById('ak').value=urlKey;
+      KEY_VALIDATED=true;
+      showKeyStatus('ok','Key auto-detected');
+      checkLaunchReady();
     });
   }
 })();
 
-// FRIENDLY NAMES for known Adobe Analytics event patterns
+// FRIENDLY NAMES
 var EVENT_LABELS={
   event1:'Page Views',event2:'Visits',event3:'Unique Visitors',
   event4:'Instances',event5:'Click-throughs',event6:'Searches',
@@ -327,19 +432,52 @@ var EVENT_LABELS={
   event98:'Car Rental Searches',event99:'Package Bookings',event100:'Package Revenue'
 };
 
+// ===== SETUP: STATUS HELPERS =====
+function showKeyStatus(state,text){
+  var el=document.getElementById('keyStatus');
+  el.className='status-pill '+state;
+  el.innerHTML='<span class="status-dot"></span> '+text;
+}
+function showDataStatus(state,text){
+  var el=document.getElementById('dataStatus');
+  el.className='status-pill '+state;
+  el.innerHTML='<span class="status-dot"></span> '+text;
+}
+function checkLaunchReady(){
+  document.getElementById('launchBtn').disabled=!(KEY_VALIDATED&&DATA_LOADED);
+}
+
+// ===== DATA SOURCE TAB SWITCHING =====
+function switchDS(panel,btn){
+  document.querySelectorAll('.ds-tab').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.ds-panel').forEach(function(p){p.classList.remove('active')});
+  btn.classList.add('active');
+  document.getElementById('ds-'+panel).classList.add('active');
+}
+
+// ===== VALIDATE KEY =====
 async function doValidate(){
   var k=document.getElementById('ak').value.trim(),b=document.getElementById('vb'),e=document.getElementById('ae');
-  if(k.indexOf('sk-ant-')!==0){e.textContent='Key should start with sk-ant-';e.classList.add('s');return}
-  b.disabled=true;b.textContent='Validating...';e.classList.remove('s');
+  if(k.indexOf('sk-ant-')!==0){e.textContent='Invalid key format. Please check your LLM provider key.';e.classList.add('s');showKeyStatus('fail','Invalid key');return}
+  b.disabled=true;b.textContent='Validating...';e.classList.remove('s');showKeyStatus('pending','Validating...');
   try{
     var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:30,messages:[{role:'user',content:'Reply OK'}]})});
-    if(r.ok){AK=k;document.getElementById('s1').classList.add('hid');document.getElementById('s2').classList.remove('hid')}
-    else{var d=await r.json();e.textContent=(d.error&&d.error.message)||'Validation failed.';e.classList.add('s')}
-  }catch(x){e.textContent='Network error: '+x.message;e.classList.add('s')}
-  b.disabled=false;b.textContent='Validate & Continue \u2192';
+    if(r.ok){
+      AK=k;KEY_VALIDATED=true;
+      showKeyStatus('ok','Connected');
+      document.getElementById('ak').disabled=true;
+      checkLaunchReady();
+    }else{
+      var d=await r.json();
+      e.textContent=(d.error&&d.error.message)||'Validation failed.';e.classList.add('s');
+      showKeyStatus('fail','Failed');
+    }
+  }catch(x){e.textContent='Network error: '+x.message;e.classList.add('s');showKeyStatus('fail','Network error')}
+  b.disabled=false;b.textContent='Validate Key';
 }
-document.getElementById('ak').onkeydown=function(e){if(e.key==='Enter')doValidate()};
+document.getElementById('ak').addEventListener('keydown',function(e){if(e.key==='Enter')doValidate()});
 
+// ===== FILE UPLOAD =====
 var fd=document.getElementById('fd'),fii=document.getElementById('fi');
 fd.ondragover=function(e){e.preventDefault();fd.classList.add('dg')};
 fd.ondragleave=function(){fd.classList.remove('dg')};
@@ -351,6 +489,7 @@ function doFile(f){
   var info=document.getElementById('fin'),pb=document.getElementById('pb'),pf=document.getElementById('pf');
   info.style.display='block';info.textContent='Parsing '+f.name+'...';info.style.color='var(--t2)';
   pb.style.display='block';pf.style.width='15%';
+  showDataStatus('pending','Parsing...');
   Papa.parse(f,{header:true,skipEmptyLines:true,dynamicTyping:true,
     complete:function(res){
       pf.style.width='80%';
@@ -359,25 +498,79 @@ function doFile(f){
       classifyCols();
       pf.style.width='100%';
       info.textContent='\u2713 '+f.name+' \u2014 '+DATA.length.toLocaleString()+' rows \u00d7 '+COLS.length+' cols';
-      info.style.color='var(--grn)';document.getElementById('lbu').disabled=false;
+      info.style.color='var(--grn)';
+      DATA_LOADED=true;
+      showDataStatus('ok',DATA.length.toLocaleString()+' rows loaded');
+      checkLaunchReady();
     },
-    error:function(err){info.textContent='Error: '+err.message;info.style.color='var(--red)'}
+    error:function(err){info.textContent='Error: '+err.message;info.style.color='var(--red)';showDataStatus('fail','Parse error')}
   });
 }
 
+// ===== CLOUD FETCH =====
+async function doCloudFetch(){
+  var url=document.getElementById('cloudUrl').value.trim();
+  var errEl=document.getElementById('cloudErr');
+  var info=document.getElementById('cloudFin');
+  var pb=document.getElementById('cloudPb'),pf=document.getElementById('cloudPf');
+  var btn=document.getElementById('cloudBtn');
+
+  if(!url){errEl.textContent='Please enter a file URL.';errEl.classList.add('s');return}
+  try{new URL(url)}catch(e){errEl.textContent='Please enter a valid URL.';errEl.classList.add('s');return}
+
+  errEl.classList.remove('s');
+  btn.disabled=true;btn.textContent='Fetching...';
+  info.style.display='block';info.textContent='Downloading file...';info.style.color='var(--t2)';
+  pb.style.display='block';pf.style.width='30%';
+  showDataStatus('pending','Downloading...');
+
+  try{
+    var resp=await fetch(url);
+    if(!resp.ok) throw new Error('HTTP '+resp.status+': '+resp.statusText);
+    pf.style.width='60%';
+    var text=await resp.text();
+    pf.style.width='80%';
+    info.textContent='Parsing data...';
+
+    // Detect delimiter
+    var firstLine=text.split('\n')[0]||'';
+    var delimiter=firstLine.split('\t').length>firstLine.split(',').length?'\t':',';
+
+    Papa.parse(text,{header:true,skipEmptyLines:true,dynamicTyping:true,delimiter:delimiter,
+      complete:function(res){
+        pf.style.width='100%';
+        DATA=res.data.filter(function(r){return Object.values(r).some(function(v){return v!==null&&v!==''})});
+        COLS=res.meta.fields||[];
+        classifyCols();
+        var fname=url.split('/').pop().split('?')[0]||'cloud-data';
+        info.textContent='\u2713 '+fname+' \u2014 '+DATA.length.toLocaleString()+' rows \u00d7 '+COLS.length+' cols';
+        info.style.color='var(--grn)';
+        DATA_LOADED=true;
+        showDataStatus('ok',DATA.length.toLocaleString()+' rows loaded');
+        checkLaunchReady();
+      },
+      error:function(err){
+        info.textContent='Parse error: '+err.message;info.style.color='var(--red)';
+        showDataStatus('fail','Parse error');
+      }
+    });
+  }catch(e){
+    info.textContent='Fetch error: '+e.message;info.style.color='var(--red)';
+    errEl.textContent=e.message;errEl.classList.add('s');
+    showDataStatus('fail','Fetch failed');
+  }
+  btn.disabled=false;btn.textContent='Fetch File';
+}
+
+// ===== CLASSIFY COLUMNS =====
 function classifyCols(){
   EVARS=[];PROPS=[];EVENTS=[];METS=[];DIMS=[];DATECOLS=[];KEY_EVENTS=[];
   COLS.forEach(function(c){
     var cl=c.toLowerCase();
-    // Detect eVars (eVar1, eVar2, etc.)
     if(/^evar\d+$/i.test(cl)){EVARS.push(c);CTYPE[c]='evar';return}
-    // Detect props (prop1, prop2, etc.)
     if(/^prop\d+$/i.test(cl)){PROPS.push(c);CTYPE[c]='prop';return}
-    // Detect events (event1, event2, etc.) — these ARE numeric metrics
     if(/^event\d+$/i.test(cl)){
-      EVENTS.push(c);
-      CTYPE[c]='event'; // classified as event but ALSO treated as metric for charting
-      // Check if this event actually has non-zero data
+      EVENTS.push(c);CTYPE[c]='event';
       var hasData=false;
       for(var i=0;i<Math.min(DATA.length,200);i++){
         var v=DATA[i][c];
@@ -386,39 +579,47 @@ function classifyCols(){
       if(hasData) KEY_EVENTS.push(c);
       return;
     }
-    // Detect date columns
-    if(/^(date|day of week|week|month|quarter|year|timestamp)$/i.test(cl)){
-      DATECOLS.push(c);CTYPE[c]='date';return;
-    }
-    // Detect known metric-like columns
-    if(/visit|view|click|bounce|time.*spent|revenue|order|purchase|cart|unit|instance|occurrence|page.?view|session|unique|conversion|book|checkin|check.?in|pnr|ancillary|loyalty/i.test(cl)){
-      METS.push(c);CTYPE[c]='metric';return;
-    }
-    // Auto-detect numeric vs dimension
+    if(/^(date|day of week|week|month|quarter|year|timestamp)$/i.test(cl)){DATECOLS.push(c);CTYPE[c]='date';return}
+    if(/visit|view|click|bounce|time.*spent|revenue|order|purchase|cart|unit|instance|occurrence|page.?view|session|unique|conversion|book|checkin|check.?in|pnr|ancillary|loyalty/i.test(cl)){METS.push(c);CTYPE[c]='metric';return}
     var vs=DATA.slice(0,200).map(function(r){return r[c]}).filter(function(v){return v!=null});
     var np=vs.filter(function(v){return typeof v==='number'}).length/Math.max(vs.length,1);
     if(np>.7){METS.push(c);CTYPE[c]='metric'}
     else{DIMS.push(c);CTYPE[c]='dimension'}
   });
-
-  // Build a combined metrics list: explicit METS + KEY_EVENTS with data
-  // This is what the dashboard uses for KPIs and charts
-  console.log('Classification:', {evars:EVARS.length, props:PROPS.length, events:EVENTS.length, keyEvents:KEY_EVENTS.length, mets:METS.length, dims:DIMS.length, dates:DATECOLS.length});
+  console.log('Classification:',{evars:EVARS.length,props:PROPS.length,events:EVENTS.length,keyEvents:KEY_EVENTS.length,mets:METS.length,dims:DIMS.length,dates:DATECOLS.length});
 }
 
-// Get all plottable metrics = explicit metrics + events with data
-function getPlottableMetrics(){
-  return METS.concat(KEY_EVENTS);
-}
+function getPlottableMetrics(){return METS.concat(KEY_EVENTS)}
 
+// ===== LAUNCH — transition from setup to active app =====
 function doLaunch(){
-  document.getElementById('s2').classList.add('hid');document.getElementById('ap').classList.remove('hid');
-  detectEvarLabels();buildSchema();buildRevBookingCtx();buildFilters();renderDash();genRecs();
+  // Hide setup card, show welcome message
+  var card=document.getElementById('setupCard');
+  card.style.transition='opacity .3s,transform .3s';
+  card.style.opacity='0';card.style.transform='translateY(-10px)';
+  setTimeout(function(){
+    card.style.display='none';
+    // Show the welcome chat message
+    var welcome=document.createElement('div');
+    welcome.className='cm as';
+    welcome.innerHTML='<div class="sn">IntelliSight</div><div class="bb"><p>&#128075; I\'m your analytics assistant powered by IntelliSight. Your entire dataset is loaded in-browser and I can query every row.</p><p><b>How this works:</b> I write an analysis function &rarr; runs locally on your full data &rarr; I interpret precise results. No raw data leaves your browser.</p><p>Try asking:</p><ul><li>"What are the top 10 routes by revenue?"</li><li>"Show monthly booking trend as a line chart"</li><li>"Compare revenue by loyalty tier"</li><li>"What day of the week gets the most traffic?"</li><li>"Show add-to-cart vs purchase conversion funnel"</li></ul></div>';
+    document.getElementById('chMs').appendChild(welcome);
+
+    // Enable chat input
+    document.getElementById('chi').disabled=false;
+    document.getElementById('chi').placeholder='Ask anything about your data...';
+    document.getElementById('csb').disabled=false;
+
+    // Enable sidebar navigation
+    document.querySelectorAll('.nb.disabled-nav').forEach(function(b){b.classList.remove('disabled-nav')});
+
+    // Build schema & context
+    detectEvarLabels();buildSchema();buildRevBookingCtx();buildFilters();renderDash();genRecs();
+  },300);
 }
 
+// ===== SCHEMA & CONTEXT =====
 function buildSchema(){
-  // Build a COMPACT but EXPLICIT schema for AI code generation
-  // Key: AI must know exact column names to use in r['colName'] access
   var keyEvts=KEY_EVENTS.slice(0,30).map(function(c){
     var vs=DATA.map(function(r){return parseFloat(r[c])||0});
     var s=vs.reduce(function(a,b){return a+b},0);
@@ -431,16 +632,11 @@ function buildSchema(){
     var uk=Object.keys(u);
     return c+' ("'+lbl+'"): '+uk.length+' unique, eg: '+uk.slice(0,5).join('|');
   });
-  // Minimal sample with key columns
   var sampleCols=['Date','eVar1','eVar4','eVar5','eVar13','eVar15','eVar16','eVar17','event1','event2','event7','event9','event10','event13','event26'];
   var existCols=sampleCols.filter(function(c){return COLS.indexOf(c)>=0});
-  var miniSample=DATA.slice(0,2).map(function(r){
-    var o={};existCols.forEach(function(c){o[c]=r[c]});return o;
-  });
-  // Date range
+  var miniSample=DATA.slice(0,2).map(function(r){var o={};existCols.forEach(function(c){o[c]=r[c]});return o});
   var dates=DATA.map(function(r){return r['Date']||''}).filter(function(d){return d}).sort();
   var minDate=dates[0]||'?',maxDate=dates[dates.length-1]||'?';
-  
   SCHEMA='DATASET: '+DATA.length+' rows x '+COLS.length+' cols, date range: '+minDate+' to '+maxDate+'\n\n';
   SCHEMA+='CRITICAL: Access columns using EXACT names below. E.g. r["event9"] for revenue, r["eVar17"] for route.\n\n';
   SCHEMA+='NUMERIC METRIC COLUMNS (access as r["event1"], r["event9"], etc.):\n'+keyEvts.join('\n')+'\n\n';
@@ -460,7 +656,6 @@ function buildSchema(){
 
 function buildFilters(){
   var co=document.getElementById('fco');
-  // Show key events first, then eVars, props, other events, dims
   var keyEvLabels=KEY_EVENTS.slice(0,20).map(function(e){
     var lbl=EVENT_LABELS[e.toLowerCase()]||e;
     return {col:e,label:lbl+' ('+e+')'};
@@ -496,7 +691,6 @@ function goTab(t,b){
 function renderDash(){renderKPIs();renderCharts()}
 
 function getDateCol(){
-  // Prefer 'Date' column, then 'Month', then first date column
   if(COLS.indexOf('Date')>=0) return 'Date';
   if(COLS.indexOf('Month')>=0) return 'Month';
   return DATECOLS[0]||COLS[0];
@@ -508,45 +702,25 @@ function aggTime(dc,mc){
     var d=r[dc];if(d===null||d===undefined||d==='')return;
     var val=parseFloat(r[mc])||0;
     var key;
-    // Handle 'Date' column (e.g. 2023-01-01)
     if(dc==='Date'||dc==='date'){
       var ds=String(d);
-      // Parse YYYY-MM-DD directly to avoid timezone issues with new Date()
       var parts=ds.match(/^(\d{4})-(\d{2})-(\d{2})/);
       if(parts){
         var yr=parts[1],mo=parts[2];
         if(tView==='weekly'){var dt=new Date(+yr,+mo-1,+parts[3]);var wk=Math.ceil(((dt-new Date(+yr,0,1))/864e5+1)/7);key=yr+'-W'+String(wk).padStart(2,'0')}
         else if(tView==='monthly'){key=yr+'-'+mo}
         else{key=yr}
-      } else {key=ds}
-    }
-    // Handle 'Month' column (e.g. 2023-01)
-    else if(dc==='Month'){
+      }else{key=ds}
+    }else if(dc==='Month'){
       key=String(d);
       if(tView==='yearly'&&key.length>=4) key=key.slice(0,4);
-    }
-    // Handle 'Year' column
-    else if(dc==='Year'){key=String(d)}
-    // Handle 'Week' column
+    }else if(dc==='Year'){key=String(d)}
     else if(dc==='Week'){
       key=String(d);
       if(tView==='yearly'&&key.length>=4) key=key.slice(0,4);
-      else if(tView==='monthly'&&key.indexOf('W')>=0){
-        // Try to extract year-month from week
-        var parts=key.match(/(\d{4})/);
-        if(parts) key=parts[1];
-      }
-    }
-    else{
-      // Generic fallback
-      try{
-        var dt2=new Date(d);
-        if(!isNaN(dt2.getTime())){
-          if(tView==='monthly') key=dt2.getFullYear()+'-'+String(dt2.getMonth()+1).padStart(2,'0');
-          else if(tView==='yearly') key=''+dt2.getFullYear();
-          else key=String(d).slice(0,10);
-        } else key=String(d);
-      }catch(e){key=String(d)}
+      else if(tView==='monthly'&&key.indexOf('W')>=0){var parts2=key.match(/(\d{4})/);if(parts2)key=parts2[1]}
+    }else{
+      try{var dt2=new Date(d);if(!isNaN(dt2.getTime())){if(tView==='monthly')key=dt2.getFullYear()+'-'+String(dt2.getMonth()+1).padStart(2,'0');else if(tView==='yearly')key=''+dt2.getFullYear();else key=String(d).slice(0,10)}else key=String(d)}catch(e){key=String(d)}
     }
     bk[key]=(bk[key]||0)+val;
   });
@@ -563,34 +737,22 @@ function renderKPIs(){
     return;
   }
   var dc=getDateCol();
-  // Compute per-period data for each KPI metric
-  var periodData={};// {metric: {period_key: sum}}
+  var periodData={};
   kpiCols.forEach(function(m){periodData[m]={}});
   DATA.forEach(function(r){
-    var d=r[dc];if(!d)return;
-    var ds=String(d);
-    var key;
+    var d=r[dc];if(!d)return;var ds=String(d);var key;
     var parts=ds.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if(parts){
-      var yr=parts[1],mo=parts[2],dy=parts[3];
-      if(tView==='weekly'){var dt=new Date(+yr,+mo-1,+dy);var wk=Math.ceil(((dt-new Date(+yr,0,1))/864e5+1)/7);key=yr+'-W'+String(wk).padStart(2,'0')}
-      else if(tView==='monthly'){key=yr+'-'+mo}
-      else{key=yr}
-    }else if(ds.length>=7&&tView==='monthly'){key=ds.slice(0,7)}
+    if(parts){var yr=parts[1],mo=parts[2],dy=parts[3];if(tView==='weekly'){var dt=new Date(+yr,+mo-1,+dy);var wk=Math.ceil(((dt-new Date(+yr,0,1))/864e5+1)/7);key=yr+'-W'+String(wk).padStart(2,'0')}else if(tView==='monthly'){key=yr+'-'+mo}else{key=yr}}
+    else if(ds.length>=7&&tView==='monthly'){key=ds.slice(0,7)}
     else if(ds.length>=4){key=ds.slice(0,4)}
     else{key=ds}
-    kpiCols.forEach(function(m){
-      if(!periodData[m][key])periodData[m][key]=0;
-      periodData[m][key]+=(parseFloat(r[m])||0);
-    });
+    kpiCols.forEach(function(m){if(!periodData[m][key])periodData[m][key]=0;periodData[m][key]+=(parseFloat(r[m])||0)});
   });
-  // Get sorted periods and find current vs previous for comparison
   var periods=Object.keys(periodData[kpiCols[0]]||{}).sort();
   var nPeriods=periods.length;
   var currP=nPeriods>=1?periods[nPeriods-1]:null;
   var prevP=nPeriods>=2?periods[nPeriods-2]:null;
   var periodLabel={weekly:'Week',monthly:'Month',yearly:'Year'}[tView]||'Period';
-  
   el.innerHTML=kpiCols.map(function(m){
     var tot=0;Object.values(periodData[m]).forEach(function(v){tot+=v});
     var avg=nPeriods>0?tot/nPeriods:0;
@@ -603,14 +765,10 @@ function renderKPIs(){
 }
 
 function findBestKPIs(pm){
-  // Prioritize: event1(pageviews), event2(visits), event9(revenue), event7(bookings), event10(cart), event13(purchases)
   var priority=['event1','event2','event3','event9','event7','event10','event13','event26','event17','event12'];
   var found=[];
   priority.forEach(function(e){if(pm.indexOf(e)>=0&&found.length<6)found.push(e)});
-  // Fill remaining with other events that have data
-  if(found.length<6){
-    pm.forEach(function(m){if(found.indexOf(m)<0&&found.length<6)found.push(m)});
-  }
+  if(found.length<6){pm.forEach(function(m){if(found.indexOf(m)<0&&found.length<6)found.push(m)})}
   return found;
 }
 
@@ -623,147 +781,42 @@ function renderCharts(){
   var cl=['#E8613C','#0a1628','#d4532f','#1a2d4a','#f4845f','#2a4a6b','#f9a07c','#3a6590'];
   var pm=getPlottableMetrics();
   var chartMetrics=findBestKPIs(pm).slice(0,6);
-
   if(!chartMetrics.length){g.innerHTML='<div class="cc"><h3>No metrics detected</h3><p style="color:var(--t2)">Use AI Chat to explore.</p></div>';return}
-
-  // Build chart HTML
   var h='<div class="cc" style="grid-column:span 2"><h3>Key Metrics Trend ('+tView+')</h3><canvas id="mt"></canvas></div>';
-  chartMetrics.slice(0,4).forEach(function(m,i){
-    var label=EVENT_LABELS[m.toLowerCase()]||m;
-    h+='<div class="cc"><h3>'+tr(label,40)+'</h3><canvas id="c'+i+'"></canvas></div>';
-  });
-
-  // Top dimension: pick a meaningful eVar or dimension
+  chartMetrics.slice(0,4).forEach(function(m,i){var label=EVENT_LABELS[m.toLowerCase()]||m;h+='<div class="cc"><h3>'+tr(label,40)+'</h3><canvas id="c'+i+'"></canvas></div>'});
   var topDim=findBestDimension();
   if(topDim){var tdl=dimLabel(topDim);h+='<div class="cc"><h3>Top '+tr(tdl,30)+'</h3><canvas id="ctd"></canvas></div>'}
-
-  // Route analysis — find column containing airport code pairs like YYC-MIA
   var routeCol=null;
-  // 1. Check for column named 'route' or containing 'route'
   routeCol=COLS.find(function(c){return/^route$/i.test(c)});
-  // 2. Scan ALL columns (eVars, props, dims) for airport code pair patterns
-  if(!routeCol){
-    var scanCols=EVARS.concat(PROPS).concat(DIMS);
-    for(var ri=0;ri<scanCols.length;ri++){
-      var sample=DATA.slice(0,100).map(function(r){return r[scanCols[ri]]}).filter(function(v){return v&&typeof v==='string'});
-      var routeMatches=sample.filter(function(v){return/^[A-Z]{3}[- ][A-Z]{3}$/.test(v.trim())});
-      if(routeMatches.length>sample.length*0.3){routeCol=scanCols[ri];break}
-    }
-  }
+  if(!routeCol){var scanCols=EVARS.concat(PROPS).concat(DIMS);for(var ri=0;ri<scanCols.length;ri++){var sample=DATA.slice(0,100).map(function(r){return r[scanCols[ri]]}).filter(function(v){return v&&typeof v==='string'});var routeMatches=sample.filter(function(v){return/^[A-Z]{3}[- ][A-Z]{3}$/.test(v.trim())});if(routeMatches.length>sample.length*0.3){routeCol=scanCols[ri];break}}}
   if(routeCol) h+='<div class="cc"><h3>Top Routes</h3><canvas id="crt"></canvas></div>';
-  
-  // Origin airport analysis
-  var originCol=null;
-  var scanOrig=EVARS.concat(PROPS).concat(DIMS);
-  for(var oi=0;oi<scanOrig.length;oi++){
-    var osample=DATA.slice(0,100).map(function(r){return r[scanOrig[oi]]}).filter(function(v){return v&&typeof v==='string'});
-    var airportMatches=osample.filter(function(v){return/^[A-Z]{3}$/.test(v.trim())});
-    if(airportMatches.length>osample.length*0.5){originCol=scanOrig[oi];break}
-  }
+  var originCol=null;var scanOrig=EVARS.concat(PROPS).concat(DIMS);
+  for(var oi=0;oi<scanOrig.length;oi++){var osample=DATA.slice(0,100).map(function(r){return r[scanOrig[oi]]}).filter(function(v){return v&&typeof v==='string'});var airportMatches=osample.filter(function(v){return/^[A-Z]{3}$/.test(v.trim())});if(airportMatches.length>osample.length*0.5){originCol=scanOrig[oi];break}}
   if(originCol) h+='<div class="cc"><h3>Top Origin Airports ('+originCol+')</h3><canvas id="cor"></canvas></div>';
-
   g.innerHTML=h;
-
   requestAnimationFrame(function(){
-    // Main trend: overlay top metrics
-    var datasets=chartMetrics.slice(0,4).map(function(m,i){
-      var a=aggTime(dc,m);var label=EVENT_LABELS[m.toLowerCase()]||m;
-      return{label:tr(label,20),data:a.v,borderColor:cl[i],backgroundColor:cl[i]+'22',borderWidth:2,fill:false,tension:.3,pointRadius:1};
-    });
-    var a0=aggTime(dc,chartMetrics[0]);
-    mk('mt','line',a0.l,datasets);
-
-    // Individual bar charts
-    chartMetrics.slice(0,4).forEach(function(m,i){
-      var a=aggTime(dc,m);
-      mk('c'+i,'bar',a.l,[{label:EVENT_LABELS[m.toLowerCase()]||m,data:a.v,backgroundColor:cl[i]+'88',borderColor:cl[i],borderWidth:1,borderRadius:4}]);
-    });
-
-    // Top dimension doughnut
-    if(topDim){
-      var ct={};DATA.forEach(function(r){var v=r[topDim];if(v&&v!=='')ct[v]=(ct[v]||0)+1});
-      var s=Object.entries(ct).sort(function(a,b){return b[1]-a[1]}).slice(0,12);
-      var dColors=['#E8613C','#0a1628','#d4532f','#1a2d4a','#f4845f','#2a4a6b','#f9a07c','#3a6590','#fcc5b3','#4a7db5','#e09070','#5c87a8'];
-      mk('ctd','doughnut',s.map(function(x){return tr(String(x[0]),22)}),[{data:s.map(function(x){return x[1]}),backgroundColor:dColors.slice(0,s.length),borderWidth:0}]);
-    }
-
-    // Top routes bar chart
-    if(routeCol){
-      var rct={};DATA.forEach(function(r){var v=r[routeCol];if(v&&v!=='')rct[v]=(rct[v]||0)+1});
-      var rs=Object.entries(rct).sort(function(a,b){return b[1]-a[1]}).slice(0,12);
-      mk('crt','bar',rs.map(function(x){return x[0]}),[{label:'Flights',data:rs.map(function(x){return x[1]}),backgroundColor:'#06b6d488',borderColor:'#06b6d4',borderWidth:1,borderRadius:4}]);
-    }
-    
-    // Top origin airports
-    if(originCol){
-      var oct={};DATA.forEach(function(r){var v=r[originCol];if(v&&v!==''&&/^[A-Z]{3}$/.test(v))oct[v]=(oct[v]||0)+1});
-      var os=Object.entries(oct).sort(function(a,b){return b[1]-a[1]}).slice(0,10);
-      mk('cor','doughnut',os.map(function(x){return x[0]}),[{data:os.map(function(x){return x[1]}),backgroundColor:['#E8613Ccc','#0a1628cc','#d4532fcc','#1a2d4acc','#f4845fcc','#2a4a6bcc','#f9a07ccc','#3a6590cc','#fcc5b3cc','#4a7db5cc'],borderWidth:0}]);
-    }
+    var datasets=chartMetrics.slice(0,4).map(function(m,i){var a=aggTime(dc,m);var label=EVENT_LABELS[m.toLowerCase()]||m;return{label:tr(label,20),data:a.v,borderColor:cl[i],backgroundColor:cl[i]+'22',borderWidth:2,fill:false,tension:.3,pointRadius:1}});
+    var a0=aggTime(dc,chartMetrics[0]);mk('mt','line',a0.l,datasets);
+    chartMetrics.slice(0,4).forEach(function(m,i){var a=aggTime(dc,m);mk('c'+i,'bar',a.l,[{label:EVENT_LABELS[m.toLowerCase()]||m,data:a.v,backgroundColor:cl[i]+'88',borderColor:cl[i],borderWidth:1,borderRadius:4}])});
+    if(topDim){var ct={};DATA.forEach(function(r){var v=r[topDim];if(v&&v!=='')ct[v]=(ct[v]||0)+1});var s=Object.entries(ct).sort(function(a,b){return b[1]-a[1]}).slice(0,12);var dColors=['#E8613C','#0a1628','#d4532f','#1a2d4a','#f4845f','#2a4a6b','#f9a07c','#3a6590','#fcc5b3','#4a7db5','#e09070','#5c87a8'];mk('ctd','doughnut',s.map(function(x){return tr(String(x[0]),22)}),[{data:s.map(function(x){return x[1]}),backgroundColor:dColors.slice(0,s.length),borderWidth:0}])}
+    if(routeCol){var rct={};DATA.forEach(function(r){var v=r[routeCol];if(v&&v!=='')rct[v]=(rct[v]||0)+1});var rs=Object.entries(rct).sort(function(a,b){return b[1]-a[1]}).slice(0,12);mk('crt','bar',rs.map(function(x){return x[0]}),[{label:'Flights',data:rs.map(function(x){return x[1]}),backgroundColor:'#06b6d488',borderColor:'#06b6d4',borderWidth:1,borderRadius:4}])}
+    if(originCol){var oct={};DATA.forEach(function(r){var v=r[originCol];if(v&&v!==''&&/^[A-Z]{3}$/.test(v))oct[v]=(oct[v]||0)+1});var os=Object.entries(oct).sort(function(a,b){return b[1]-a[1]}).slice(0,10);mk('cor','doughnut',os.map(function(x){return x[0]}),[{data:os.map(function(x){return x[1]}),backgroundColor:['#E8613Ccc','#0a1628cc','#d4532fcc','#1a2d4acc','#f4845fcc','#2a4a6bcc','#f9a07ccc','#3a6590cc','#fcc5b3cc','#4a7db5cc'],borderWidth:0}])}
   });
 }
 
 function findBestDimension(){
   var candidates=['eVar4','eVar5','eVar14','eVar12','eVar1','Hit Type'];
-  for(var i=0;i<candidates.length;i++){
-    if(COLS.indexOf(candidates[i])>=0){
-      var vals=DATA.slice(0,100).map(function(r){return r[candidates[i]]}).filter(function(v){return v&&v!==''});
-      var uniq=new Set(vals);
-      if(uniq.size>=2&&uniq.size<=50) return candidates[i];
-    }
-  }
-  for(var j=0;j<EVARS.length;j++){
-    var vals2=DATA.slice(0,500).map(function(r){return r[EVARS[j]]}).filter(function(v){return v&&v!==''});
-    var uniq2=new Set(vals2);
-    if(uniq2.size>=2&&uniq2.size<=20) return EVARS[j];
-  }
+  for(var i=0;i<candidates.length;i++){if(COLS.indexOf(candidates[i])>=0){var vals=DATA.slice(0,100).map(function(r){return r[candidates[i]]}).filter(function(v){return v&&v!==''});var uniq=new Set(vals);if(uniq.size>=2&&uniq.size<=50)return candidates[i]}}
+  for(var j=0;j<EVARS.length;j++){var vals2=DATA.slice(0,500).map(function(r){return r[EVARS[j]]}).filter(function(v){return v&&v!==''});var uniq2=new Set(vals2);if(uniq2.size>=2&&uniq2.size<=20)return EVARS[j]}
   return DIMS[0]||null;
 }
 
-// Friendly name mapping for known eVar meanings (auto-detected from data patterns)
 var EVAR_LABELS={};
 function detectEvarLabels(){
-  var guesses={
-    'eVar1':'Page Name','eVar2':'Site Section','eVar3':'Server','eVar4':'Marketing Channel',
-    'eVar5':'Device Type','eVar6':'Operating System','eVar7':'Browser','eVar8':'Campaign',
-    'eVar9':'Search Term','eVar10':'Language','eVar11':'Country','eVar12':'Province',
-    'eVar13':'Loyalty Tier','eVar14':'Cabin Class','eVar15':'Origin Airport',
-    'eVar16':'Dest Airport','eVar17':'Route','eVar18':'Route Type','eVar19':'Platform',
-    'eVar20':'Departure Time','eVar21':'Day of Week','eVar22':'Season',
-    'eVar25':'Booking Type','eVar26':'Traveler Type','eVar27':'Trip Purpose',
-    'eVar32':'Carrier','eVar35':'Payment Method','eVar36':'Auth State'
-  };
-  EVARS.forEach(function(e){
-    if(guesses[e]){EVAR_LABELS[e]=guesses[e];return}
-    // Auto-detect: sample values to guess meaning
-    var vals=DATA.slice(0,200).map(function(r){return r[e]}).filter(function(v){return v&&v!==''&&v!=='N/A'});
-    var uniq=new Set(vals);
-    if(uniq.size>=2&&uniq.size<=30){
-      // Use the column name itself but cleaned up
-      EVAR_LABELS[e]=e;
-    }
-  });
+  var guesses={'eVar1':'Page Name','eVar2':'Site Section','eVar3':'Server','eVar4':'Marketing Channel','eVar5':'Device Type','eVar6':'Operating System','eVar7':'Browser','eVar8':'Campaign','eVar9':'Search Term','eVar10':'Language','eVar11':'Country','eVar12':'Province','eVar13':'Loyalty Tier','eVar14':'Cabin Class','eVar15':'Origin Airport','eVar16':'Dest Airport','eVar17':'Route','eVar18':'Route Type','eVar19':'Platform','eVar20':'Departure Time','eVar21':'Day of Week','eVar22':'Season','eVar25':'Booking Type','eVar26':'Traveler Type','eVar27':'Trip Purpose','eVar32':'Carrier','eVar35':'Payment Method','eVar36':'Auth State'};
+  EVARS.forEach(function(e){if(guesses[e]){EVAR_LABELS[e]=guesses[e];return}var vals=DATA.slice(0,200).map(function(r){return r[e]}).filter(function(v){return v&&v!==''&&v!=='N/A'});var uniq=new Set(vals);if(uniq.size>=2&&uniq.size<=30){EVAR_LABELS[e]=e}});
 }
 function dimLabel(col){return EVAR_LABELS[col]||col}
-
-function getDimLabel(col){
-  // Try to determine friendly name from data patterns
-  var samples=DATA.slice(0,50).map(function(r){return r[col]}).filter(function(v){return v&&v!==''});
-  var s0=samples[0]||'';
-  // Check known patterns
-  if(/Direct|Organic|Paid|Social|Email|Affiliate|Display|Metasearch/i.test(s0))return 'Marketing Channel';
-  if(/Desktop|Mobile|Tablet/i.test(s0))return 'Device Type';
-  if(/Non-Member|Teal|Silver|Gold|Platinum/i.test(s0))return 'Loyalty Tier';
-  if(/Economy|Business|Premium|First/i.test(s0))return 'Cabin Class';
-  if(/Windows|macOS|iOS|Android/i.test(s0))return 'Operating System';
-  if(/Chrome|Safari|Firefox|Edge/i.test(s0))return 'Browser';
-  if(/en-|fr-|es|de|ja/i.test(s0))return 'Language';
-  if(/One-Way|Round-Trip|Multi-City/i.test(s0))return 'Booking Type';
-  if(/Leisure|Business|VFR/i.test(s0))return 'Trip Purpose';
-  if(/Solo|Couple|Family|Group/i.test(s0))return 'Traveler Type';
-  if(/Desktop Web|Mobile Web|iOS App|Android App/i.test(s0))return 'Platform';
-  return col;
-}
 
 function mk(id,ty,lb,ds){
   var x=document.getElementById(id);if(!x)return;
@@ -781,55 +834,35 @@ function updCust(){
     var cid='cu_'+idx,t=CTYPE[col],label=EVENT_LABELS[col.toLowerCase()]||col;
     g.innerHTML+='<div class="cc"><h3>'+label+'</h3><canvas id="'+cid+'"></canvas></div>';
     requestAnimationFrame(function(){
-      if(t==='metric'||t==='event'){
-        var a=aggTime(dc,col);
-        mk(cid,'line',a.l,[{label:label,data:a.v,borderColor:cl[idx%6],backgroundColor:cl[idx%6]+'22',borderWidth:2,fill:true,tension:.3,pointRadius:1}]);
-      } else {
-        var ct={};DATA.forEach(function(r){var v=r[col];if(v&&v!=='')ct[v]=(ct[v]||0)+1});
-        var s=Object.entries(ct).sort(function(a,b){return b[1]-a[1]}).slice(0,10);
-        mk(cid,'bar',s.map(function(x){return tr(String(x[0]),15)}),[{label:label,data:s.map(function(x){return x[1]}),backgroundColor:cl[idx%6]+'88',borderColor:cl[idx%6],borderWidth:1,borderRadius:4}]);
-      }
+      if(t==='metric'||t==='event'){var a=aggTime(dc,col);mk(cid,'line',a.l,[{label:label,data:a.v,borderColor:cl[idx%6],backgroundColor:cl[idx%6]+'22',borderWidth:2,fill:true,tension:.3,pointRadius:1}])}
+      else{var ct={};DATA.forEach(function(r){var v=r[col];if(v&&v!=='')ct[v]=(ct[v]||0)+1});var s=Object.entries(ct).sort(function(a,b){return b[1]-a[1]}).slice(0,10);mk(cid,'bar',s.map(function(x){return tr(String(x[0]),15)}),[{label:label,data:s.map(function(x){return x[1]}),backgroundColor:cl[idx%6]+'88',borderColor:cl[idx%6],borderWidth:1,borderRadius:4}])}
     });
   });
 }
 
 // ===== AI CHAT =====
-// Pre-computed revenue and booking stats - attached to EVERY prompt
 var REV_BOOKING_CTX='';
 function buildRevBookingCtx(){
   var dc=getDateCol();
   var totRev=0,totBook=0,totPurch=0,totCart=0,totVisit=0,totPV=0;
   var byRoute={},byChannel={},byMonth={},byYear={};
   DATA.forEach(function(r){
-    var rev=parseFloat(r['event9'])||0;
-    var rev26=parseFloat(r['event26'])||0;
-    var book=parseFloat(r['event7'])||0;
-    var purch=parseFloat(r['event13'])||0;
-    var cart=parseFloat(r['event10'])||0;
-    var vis=parseFloat(r['event2'])||0;
-    var pv=parseFloat(r['event1'])||0;
+    var rev=parseFloat(r['event9'])||0;var book=parseFloat(r['event7'])||0;
+    var purch=parseFloat(r['event13'])||0;var cart=parseFloat(r['event10'])||0;
+    var vis=parseFloat(r['event2'])||0;var pv=parseFloat(r['event1'])||0;
     totRev+=rev;totBook+=book;totPurch+=purch;totCart+=cart;totVisit+=vis;totPV+=pv;
-    // By route
     var rt=r['eVar17']||'';
     if(rt){if(!byRoute[rt])byRoute[rt]={rev:0,book:0,count:0};byRoute[rt].rev+=rev;byRoute[rt].book+=book;byRoute[rt].count++}
-    // By channel
     var ch=r['eVar4']||'';
     if(ch){if(!byChannel[ch])byChannel[ch]={rev:0,book:0,count:0};byChannel[ch].rev+=rev;byChannel[ch].book+=book;byChannel[ch].count++}
-    // By month
     var d=String(r[dc]||'');var mo=d.slice(0,7);
     if(mo.length===7){if(!byMonth[mo])byMonth[mo]={rev:0,book:0};byMonth[mo].rev+=rev;byMonth[mo].book+=book}
-    // By year
     var yr=d.slice(0,4);
     if(yr.length===4){if(!byYear[yr])byYear[yr]={rev:0,book:0,purch:0};byYear[yr].rev+=rev;byYear[yr].book+=book;byYear[yr].purch+=purch}
   });
-  // Top 10 routes by revenue
   var topRoutes=Object.entries(byRoute).sort(function(a,b){return b[1].rev-a[1].rev}).slice(0,10);
-  // Top channels by revenue
   var topChannels=Object.entries(byChannel).sort(function(a,b){return b[1].rev-a[1].rev}).slice(0,10);
-  // Monthly trend (last 12 months)
-  var months=Object.keys(byMonth).sort();
-  var last12=months.slice(-12);
-  
+  var months=Object.keys(byMonth).sort();var last12=months.slice(-12);
   REV_BOOKING_CTX='\n\nPRE-COMPUTED REVENUE & BOOKING DATA (always available):\n';
   REV_BOOKING_CTX+='Total Revenue (event9): $'+Math.round(totRev).toLocaleString()+'\n';
   REV_BOOKING_CTX+='Total Bookings (event7): '+Math.round(totBook).toLocaleString()+'\n';
@@ -838,18 +871,12 @@ function buildRevBookingCtx(){
   REV_BOOKING_CTX+='Total Visits (event2): '+Math.round(totVisit).toLocaleString()+'\n';
   REV_BOOKING_CTX+='Total Page Views (event1): '+Math.round(totPV).toLocaleString()+'\n';
   REV_BOOKING_CTX+='AOV: $'+(totPurch>0?(totRev/totPurch).toFixed(2):'N/A')+'\n\n';
-  // Year breakdown
   REV_BOOKING_CTX+='BY YEAR:\n';
-  Object.keys(byYear).sort().forEach(function(yr){
-    REV_BOOKING_CTX+=yr+': Revenue=$'+Math.round(byYear[yr].rev).toLocaleString()+', Bookings='+Math.round(byYear[yr].book).toLocaleString()+', Purchases='+Math.round(byYear[yr].purch).toLocaleString()+'\n';
-  });
-  // Top routes
+  Object.keys(byYear).sort().forEach(function(yr){REV_BOOKING_CTX+=yr+': Revenue=$'+Math.round(byYear[yr].rev).toLocaleString()+', Bookings='+Math.round(byYear[yr].book).toLocaleString()+', Purchases='+Math.round(byYear[yr].purch).toLocaleString()+'\n'});
   REV_BOOKING_CTX+='\nTOP 10 ROUTES BY REVENUE:\n';
   topRoutes.forEach(function(e){REV_BOOKING_CTX+=e[0]+': Revenue=$'+Math.round(e[1].rev).toLocaleString()+', Bookings='+Math.round(e[1].book).toLocaleString()+'\n'});
-  // Top channels
   REV_BOOKING_CTX+='\nTOP CHANNELS BY REVENUE:\n';
   topChannels.forEach(function(e){REV_BOOKING_CTX+=e[0]+': Revenue=$'+Math.round(e[1].rev).toLocaleString()+', Bookings='+Math.round(e[1].book).toLocaleString()+'\n'});
-  // Monthly trend
   REV_BOOKING_CTX+='\nMONTHLY REVENUE TREND (last 12 months):\n';
   last12.forEach(function(mo){REV_BOOKING_CTX+=mo+': $'+Math.round(byMonth[mo].rev).toLocaleString()+'\n'});
 }
@@ -865,10 +892,8 @@ async function doSend(){
     var codeR=await callAI([{role:'user',content:cp}],1500);
     var jm=codeR.match(/```(?:js|javascript)?\s*([\s\S]*?)```/);
     var res,local=false;
-    if(jm){
-      try{var fn=new Function('DATA',jm[1]+'\nreturn analyze(DATA);');res=fn(DATA);local=true}
-      catch(ex){res={error:'Code error: '+ex.message}}
-    }else{res={error:'No code generated'}}
+    if(jm){try{var fn=new Function('DATA',jm[1]+'\nreturn analyze(DATA);');res=fn(DATA);local=true}catch(ex){res={error:'Code error: '+ex.message}}}
+    else{res={error:'No code generated'}}
     var rs=JSON.stringify(res,null,1);if(rs.length>12000)rs=rs.slice(0,12000)+'\n...(truncated)';
     var ip;
     if(local&&!res.error){
@@ -890,13 +915,7 @@ async function callAI(msgs,mt){
   var maxRetries=3;
   for(var attempt=0;attempt<maxRetries;attempt++){
     var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:mt||2000,messages:msgs})});
-    if(r.status===429){
-      // Rate limited - wait and retry
-      var wait=Math.pow(2,attempt+1)*5;// 10s, 20s, 40s
-      console.log('Rate limited, waiting '+wait+'s before retry '+(attempt+1));
-      await new Promise(function(ok){setTimeout(ok,wait*1000)});
-      continue;
-    }
+    if(r.status===429){var wait=Math.pow(2,attempt+1)*5;console.log('Rate limited, waiting '+wait+'s before retry '+(attempt+1));await new Promise(function(ok){setTimeout(ok,wait*1000)});continue}
     if(!r.ok){var d=await r.json();throw new Error((d.error&&d.error.message)||'API error '+r.status)}
     var data=await r.json();return data.content.map(function(c){return c.text||''}).join('');
   }
@@ -912,12 +931,8 @@ function addMsg(role,content,parseC,local){
     var re=/```chart\s*([\s\S]*?)```/g,last=0,m;
     while((m=re.exec(content))!==null){
       if(m.index>last){var t=document.createElement('div');t.innerHTML=marked.parse(content.slice(last,m.index));bb.appendChild(t)}
-      try{
-        var sp=JSON.parse(m[1].trim()),wr=document.createElement('div');wr.className='ccc';
-        var cv=document.createElement('canvas');cv.id='xc_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
-        wr.appendChild(cv);bb.appendChild(wr);
-        (function(i,s){requestAnimationFrame(function(){mkCC(i,s)})})(cv.id,sp);
-      }catch(e){var ed=document.createElement('div');ed.innerHTML='<code>Chart error: '+e.message+'</code>';bb.appendChild(ed)}
+      try{var sp=JSON.parse(m[1].trim()),wr=document.createElement('div');wr.className='ccc';var cv=document.createElement('canvas');cv.id='xc_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);wr.appendChild(cv);bb.appendChild(wr);(function(i,s){requestAnimationFrame(function(){mkCC(i,s)})})(cv.id,sp)}
+      catch(e){var ed=document.createElement('div');ed.innerHTML='<code>Chart error: '+e.message+'</code>';bb.appendChild(ed)}
       last=m.index+m[0].length;
     }
     if(last<content.length){var t2=document.createElement('div');t2.innerHTML=marked.parse(content.slice(last));bb.appendChild(t2)}
@@ -948,68 +963,39 @@ function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
 async function genRecs(){
   var el=document.getElementById('recA');
   el.innerHTML='<p style="color:var(--t2)">\ud83e\udd16 Analyzing your data for strategic recommendations...</p>';
-  
-  // 1. Compute metric totals with YoY
-  var pm=getPlottableMetrics();
-  var dc=getDateCol();
+  var pm=getPlottableMetrics();var dc=getDateCol();
   var allYears={};
   DATA.forEach(function(r){var d=r[dc];if(!d)return;var ds=String(d);var m=ds.match(/^(\d{4})/);if(m)allYears[m[1]]=1});
   var yrs=Object.keys(allYears).sort();
   var y1=yrs.length>=2?yrs[yrs.length-2]:null;
   var y2=yrs.length>=2?yrs[yrs.length-1]:null;
-  
   var metricStats={};
   pm.slice(0,12).forEach(function(m){
     var tot=0,s1=0,s2=0;
-    DATA.forEach(function(r){
-      var v=parseFloat(r[m])||0;tot+=v;
-      if(!y1)return;
-      var d=String(r[dc]||'');var ym=d.match(/^(\d{4})/);if(!ym)return;
-      if(ym[1]===y1)s1+=v;else if(ym[1]===y2)s2+=v;
-    });
+    DATA.forEach(function(r){var v=parseFloat(r[m])||0;tot+=v;if(!y1)return;var d=String(r[dc]||'');var ym=d.match(/^(\d{4})/);if(!ym)return;if(ym[1]===y1)s1+=v;else if(ym[1]===y2)s2+=v});
     var label=EVENT_LABELS[m.toLowerCase()]||m;
     metricStats[label]={total:Math.round(tot),year1:Math.round(s1),year2:Math.round(s2),yoy:s1>0?Number(((s2-s1)/s1*100).toFixed(1)):0};
   });
-  
-  // 2. Compute top-N dimension breakdowns for key eVars
   var dimBreakdowns={};
   var keyDims=['eVar4','eVar5','eVar13','eVar14','eVar18','eVar25'];
   keyDims.forEach(function(ev){
-    if(COLS.indexOf(ev)<0)return;
-    var label=EVAR_LABELS[ev]||ev;
-    var ct={};
+    if(COLS.indexOf(ev)<0)return;var label=EVAR_LABELS[ev]||ev;var ct={};
     var revCol=EVENTS.indexOf('event9')>=0?'event9':EVENTS.indexOf('event26')>=0?'event26':null;
-    DATA.forEach(function(r){
-      var v=r[ev];if(!v||v===''||v==='N/A')return;
-      if(!ct[v])ct[v]={count:0,revenue:0};
-      ct[v].count++;
-      if(revCol)ct[v].revenue+=(parseFloat(r[revCol])||0);
-    });
+    DATA.forEach(function(r){var v=r[ev];if(!v||v===''||v==='N/A')return;if(!ct[v])ct[v]={count:0,revenue:0};ct[v].count++;if(revCol)ct[v].revenue+=(parseFloat(r[revCol])||0)});
     var sorted=Object.entries(ct).sort(function(a,b){return b[1].count-a[1].count}).slice(0,8);
     dimBreakdowns[label+' ('+ev+')']=sorted.map(function(e){return{value:e[0],hits:e[1].count,revenue:Math.round(e[1].revenue)}});
   });
-  
-  // 3. Compute conversion funnel with rates
   var funnel={};
   var funnelEvents=['event1','event6','event8','event10','event12','event13','event7'];
   funnelEvents.forEach(function(e){
     if(EVENTS.indexOf(e)<0)return;
     var s=0,s1=0,s2=0;
-    DATA.forEach(function(r){
-      var v=parseFloat(r[e])||0;s+=v;
-      if(!y1)return;
-      var d=String(r[dc]||'');var ym=d.match(/^(\d{4})/);if(!ym)return;
-      if(ym[1]===y1)s1+=v;else if(ym[1]===y2)s2+=v;
-    });
+    DATA.forEach(function(r){var v=parseFloat(r[e])||0;s+=v;if(!y1)return;var d=String(r[dc]||'');var ym=d.match(/^(\d{4})/);if(!ym)return;if(ym[1]===y1)s1+=v;else if(ym[1]===y2)s2+=v});
     var label=EVENT_LABELS[e.toLowerCase()]||e;
     funnel[label]={total:Math.round(s),y1:Math.round(s1),y2:Math.round(s2),yoy:s1>0?Number(((s2-s1)/s1*100).toFixed(2)):0};
   });
-  
-  // 4. Compute key derived rates with EXACT values
-  var cartAdd=0,cartAddY1=0,cartAddY2=0;
-  var purchases=0,purchY1=0,purchY2=0;
-  var checkouts=0,checkY1=0,checkY2=0;
-  var revenue=0,revY1=0,revY2=0;
+  var cartAdd=0,cartAddY1=0,cartAddY2=0;var purchases=0,purchY1=0,purchY2=0;
+  var checkouts=0,checkY1=0,checkY2=0;var revenue=0,revY1=0,revY2=0;
   var cartRem=0,cartRemY1=0,cartRemY2=0;
   DATA.forEach(function(r){
     var ca=parseFloat(r['event10'])||0;var pu=parseFloat(r['event13'])||0;
@@ -1021,7 +1007,6 @@ async function genRecs(){
     if(ym[1]===y1){cartAddY1+=ca;purchY1+=pu;checkY1+=ch;revY1+=rv;cartRemY1+=cr}
     else if(ym[1]===y2){cartAddY2+=ca;purchY2+=pu;checkY2+=ch;revY2+=rv;cartRemY2+=cr}
   });
-  
   var computedRates={};
   computedRates['Cart Abandonment Rate (overall)']=cartAdd>0?(((cartAdd-purchases)/cartAdd*100).toFixed(2)+'%'):'N/A';
   computedRates['Cart Abandonment Rate ('+y1+')']=cartAddY1>0?(((cartAddY1-purchY1)/cartAddY1*100).toFixed(2)+'%'):'N/A';
@@ -1033,21 +1018,13 @@ async function genRecs(){
   computedRates['AOV ('+y1+')']=purchY1>0?('$'+(revY1/purchY1).toFixed(2)):'N/A';
   computedRates['AOV ('+y2+')']=purchY2>0?('$'+(revY2/purchY2).toFixed(2)):'N/A';
   computedRates['Cart Removals vs Additions']=cartAdd>0?((cartRem/cartAdd*100).toFixed(2)+'%'):'N/A';
-  
-  // 5. Also check for standard ecommerce columns
   var ecomCols={};
   ['prodView','scAdd','scRemove','scOpen','scCheckout','purchase','cartAdditions','cartRemovals','checkouts','orders','units','revenue','Visits','Unique Visitors','Page Views','Bounces'].forEach(function(col){
     if(COLS.indexOf(col)<0)return;
     var s=0,s1=0,s2=0;
-    DATA.forEach(function(r){
-      var v=parseFloat(r[col])||0;s+=v;
-      if(!y1)return;
-      var d=String(r[dc]||'');var ym=d.match(/^(\d{4})/);if(!ym)return;
-      if(ym[1]===y1)s1+=v;else if(ym[1]===y2)s2+=v;
-    });
+    DATA.forEach(function(r){var v=parseFloat(r[col])||0;s+=v;if(!y1)return;var d=String(r[dc]||'');var ym=d.match(/^(\d{4})/);if(!ym)return;if(ym[1]===y1)s1+=v;else if(ym[1]===y2)s2+=v});
     if(s>0)ecomCols[col]={total:Math.round(s),y1:Math.round(s1),y2:Math.round(s2),yoy:s1>0?Number(((s2-s1)/s1*100).toFixed(2)):0};
   });
-  
   try{
     var prompt='You are a senior digital analytics strategist for an airline website. Analyze this data and provide 6 specific, actionable recommendations.\n\n';
     prompt+='ANALYSIS PERIOD: '+y1+' vs '+y2+' (2 years)\n';
@@ -1065,9 +1042,7 @@ async function genRecs(){
     prompt+='5. Cover these areas: cart abandonment, revenue/AOV trends, conversion funnel, channel optimization, device/platform, loyalty/engagement\n\n';
     prompt+='Return a JSON array of 6 objects: {title, priority (high/medium/low), insight (2-3 sentences citing exact numbers and YoY changes), recommendation (2-3 actionable sentences), metric (what to track)}.\n';
     prompt+='Return ONLY the JSON array.';
-    
     var r=await callAI([{role:'user',content:prompt}],4000);
-    // Try to extract JSON array - handle cases where Claude wraps in markdown
     var raw=r.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
     var jm=raw.match(/\[[\s\S]*\]/);
     if(jm){
