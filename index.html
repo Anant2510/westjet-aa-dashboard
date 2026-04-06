@@ -157,47 +157,69 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 .hid{display:none!important}
 
 /* ============================================================
-   LANDING PAGE — VoyagerAI brand theme
+/* ============================================================
+   LANDING PAGE — VoyagerAI light brand theme
    ============================================================ */
 .lp{animation:fi .5s;margin:-22px;min-height:calc(100vh - 68px - 50px)}
 .lp *{box-sizing:border-box}
 
-/* Hero — VoyagerAI signature dark gradient */
-.lp-hero{background:linear-gradient(165deg,#061b30 0%,#082340 30%,#0d2e50 60%,#16395e 100%);padding:56px 52px 48px;position:relative;overflow:hidden}
-.lp-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(232,97,60,.14) 0%,transparent 65%);pointer-events:none}
-.lp-hero::after{content:'';position:absolute;bottom:-60px;left:20%;width:400px;height:200px;background:radial-gradient(ellipse,rgba(0,180,216,.06) 0%,transparent 70%);pointer-events:none}
-.lp-hero-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(232,97,60,.12);border:1px solid rgba(232,97,60,.2);border-radius:20px;font-size:11px;font-weight:600;color:#E8613C;letter-spacing:.5px;text-transform:uppercase;margin-bottom:18px}
-.lp-hero h1{font-size:38px;font-weight:800;color:#fff;line-height:1.12;margin-bottom:10px;letter-spacing:-.5px}
+/* Hero — VoyagerAI light style */
+.lp-hero{background:#fff;padding:48px 52px 40px;position:relative;overflow:hidden;border-bottom:1px solid #f0f0f0}
+.lp-hero::after{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(232,97,60,.04) 0%,transparent 60%);pointer-events:none}
+.lp-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:40px}
+.lp-hero-left{flex:1;max-width:560px}
+.lp-hero-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:20px}
+.lp-hero-badge .lp-badge-icon{width:40px;height:40px;background:linear-gradient(135deg,#082340,#16395e);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.lp-hero-badge .lp-badge-icon svg{width:20px;height:20px;color:#E8613C}
+.lp-hero-badge .lp-badge-name{font-size:18px;font-weight:800;color:#0a1628;letter-spacing:-.3px}
+.lp-hero-badge .lp-badge-tag{padding:3px 10px;background:#E8613C;color:#fff;border-radius:12px;font-size:10px;font-weight:700;letter-spacing:.3px}
+.lp-hero-badge .lp-badge-sub{font-size:12px;color:var(--t3);font-weight:500}
+.lp-hero h1{font-size:36px;font-weight:800;color:#0a1628;line-height:1.18;margin-bottom:14px;letter-spacing:-.5px}
 .lp-hero h1 span{color:#E8613C}
-.lp-hero .lp-sub{font-size:15px;color:#8fa3bf;line-height:1.6;max-width:540px}
-.lp-hero .lp-sub b{color:#c8d8e8}
+.lp-hero .lp-sub{font-size:15px;color:#5a6b7f;line-height:1.65;margin-bottom:24px}
+.lp-hero-ctas{display:flex;gap:12px;flex-wrap:wrap}
+.lp-hero-cta{padding:12px 28px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.lp-hero-cta.primary{background:#E8613C;color:#fff}.lp-hero-cta.primary:hover{background:#d4532f;transform:translateY(-1px);box-shadow:0 6px 20px rgba(232,97,60,.25)}
+.lp-hero-cta.outline{background:#fff;color:#0a1628;border:1.5px solid #dde1ea}.lp-hero-cta.outline:hover{border-color:#0a1628}
+.lp-hero-right{flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.lp-hero-logo{width:160px;height:160px;border-radius:50%;background:linear-gradient(135deg,#082340,#0d2e50);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 0 6px rgba(232,97,60,.15),0 0 0 12px rgba(232,97,60,.06)}
+.lp-hero-logo svg{width:60px;height:60px;color:#E8613C}
+.lp-hero-logo-label{text-align:center;margin-top:12px}
+.lp-hero-logo-label .name{font-size:15px;font-weight:700;color:#0a1628}
+.lp-hero-logo-label .sub{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;font-weight:600}
 
-/* Architecture — VoyagerAI dark panel */
-.lp-arch{padding:40px 52px 28px;background:linear-gradient(180deg,#0a1e34 0%,#0e2844 100%);border-bottom:1px solid #1a3050;position:relative;overflow:hidden}
-.lp-arch::after{content:'';position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(232,97,60,.06) 0%,transparent 70%);pointer-events:none}
+/* KPI strip */
+.lp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0;background:#fafbfc;border-bottom:1px solid #eef0f4}
+.lp-kpi{padding:20px 24px;text-align:center;border-right:1px solid #eef0f4}
+.lp-kpi:last-child{border-right:none}
+.lp-kpi-val{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:2px}
+.lp-kpi-label{font-size:11px;color:var(--t3);font-weight:500;line-height:1.4}
+
+/* Architecture — VoyagerAI light panel */
+.lp-arch{padding:40px 52px 28px;background:#f5f6fa;border-bottom:1px solid #eef0f4;position:relative}
 .lp-sh{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#E8613C;margin-bottom:6px}
-.lp-h2{font-size:22px;font-weight:700;color:#fff;margin-bottom:6px}
-.lp-p{font-size:13px;color:#6b8aab;line-height:1.6;margin-bottom:22px}
+.lp-h2{font-size:22px;font-weight:800;color:#0a1628;margin-bottom:4px}
+.lp-p{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:22px}
 .lp-arch-svg{width:100%;max-width:640px;margin:0 auto;display:block}
 
-/* Features — VoyagerAI glass card style on dark */
-.lp-feat{padding:32px 52px;background:#061b30;border-bottom:1px solid #1a3050}
+/* Features — VoyagerAI white cards on light bg */
+.lp-feat{padding:32px 52px;background:#f5f6fa;border-bottom:1px solid #eef0f4}
 .lp-feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.lp-fc{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:22px 18px;transition:all .25s;position:relative;overflow:hidden}
-.lp-fc::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px;opacity:0;transition:opacity .25s}
+.lp-fc{background:#fff;border:1px solid #eef0f4;border-radius:14px;padding:22px 18px;transition:all .2s;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(10,22,40,.03)}
+.lp-fc::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px;opacity:0;transition:opacity .2s}
 .lp-fc:nth-child(1)::before{background:#E8613C}.lp-fc:nth-child(2)::before{background:#00b4d8}.lp-fc:nth-child(3)::before{background:#7F77DD}.lp-fc:nth-child(4)::before{background:#22c55e}
-.lp-fc:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);box-shadow:0 8px 32px rgba(0,0,0,.2);transform:translateY(-2px)}
+.lp-fc:hover{border-color:#dde1ea;box-shadow:0 4px 20px rgba(10,22,40,.06);transform:translateY(-2px)}
 .lp-fc:hover::before{opacity:1}
 .lp-fc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
-.lp-fc h3{font-size:14px;font-weight:700;color:#e8ecf2;margin-bottom:6px}
-.lp-fc p{font-size:12px;color:#6b8aab;line-height:1.55}
+.lp-fc h3{font-size:14px;font-weight:700;color:#0a1628;margin-bottom:6px}
+.lp-fc p{font-size:12px;color:var(--t2);line-height:1.55}
 
-/* Privacy bar */
-.lp-priv{display:flex;align-items:center;gap:32px;padding:18px 52px;background:linear-gradient(90deg,#082340,#0d2e50);border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid #1a3050;flex-wrap:wrap}
-.lp-priv-item{display:flex;align-items:center;gap:8px;font-size:12px;color:#6b8aab;font-weight:500}
+/* Privacy bar — subtle light version */
+.lp-priv{display:flex;align-items:center;gap:32px;padding:16px 52px;background:#fff;border-bottom:1px solid #eef0f4;flex-wrap:wrap}
+.lp-priv-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2);font-weight:500}
 .lp-priv-item svg{width:16px;height:16px;color:#22c55e;flex-shrink:0}
 
-/* Connect section — light panel */
+/* Connect section */
 .lp-connect{padding:32px 52px 40px;background:#fff}
 .lp-connect .lp-sh{color:var(--acc)}.lp-connect .lp-h2{color:var(--navy)}.lp-connect .lp-p{color:var(--t2)}
 .lp-connect-inner{max-width:480px}
@@ -216,20 +238,14 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 .ds-tab{flex:1;padding:10px 14px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;background:var(--bg2);color:var(--t2);border:none;font-family:inherit;transition:all .15s}
 .ds-tab:not(:last-child){border-right:1px solid var(--brd)}.ds-tab.active{background:var(--acc);color:#fff}.ds-tab:hover:not(.active){background:var(--bg3)}
 .ds-panel{display:none}.ds-panel.active{display:block}
-
-/* File drop zone */
 .fd{border:2px dashed var(--brd);border-radius:11px;padding:28px 16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:10px}
 .fd:hover,.fd.dg{border-color:var(--acc);background:var(--accg)}
 .fd .ic{font-size:32px;margin-bottom:6px}.fd .lb{font-size:13px;color:var(--t2)}.fd .lb strong{color:var(--acc)}
 .fi-status{font-size:12px;margin-top:6px;display:none}
 .pb{width:100%;height:4px;background:var(--bg3);border-radius:2px;margin:8px 0;display:none}.pb .fl{height:100%;background:var(--acc);border-radius:2px;transition:width .3s;width:0}
-
-/* Cloud input */
 .cloud-info{background:var(--bg2);border-radius:9px;padding:12px 14px;font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:14px;border-left:3px solid var(--acc)}.cloud-info b{color:var(--t1)}
 .cloud-examples{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .cloud-ex{padding:3px 9px;background:#fff;border:1px solid var(--brd);border-radius:5px;font-size:11px;color:var(--t3);font-family:'SF Mono','Fira Code',monospace}
-
-/* Setup internals */
 .setup-section{margin-bottom:16px}
 .setup-section-title{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .setup-section-num{width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
@@ -239,20 +255,19 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 .setup-divider span{font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 .hw{background:var(--bg2);border-radius:9px;padding:12px 14px;margin-bottom:16px;font-size:12px;line-height:1.65;color:var(--t2);border-left:3px solid var(--acc)}.hw b{color:var(--t1)}
 
-/* Dataset card — VoyagerAI style */
-.ds-card{background:#fff;border:1px solid var(--brd);border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(10,22,40,.1)}
-.ds-card-header{padding:14px 20px;background:linear-gradient(135deg,#082340 0%,#0d2e50 50%,#16395e 100%);position:relative}
+/* Dataset card */
+.ds-card{background:#fff;border:1px solid #eef0f4;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(10,22,40,.06)}
+.ds-card-header{padding:14px 20px;background:linear-gradient(135deg,#082340,#16395e);position:relative}
 .ds-card-header::after{content:'';position:absolute;right:20px;top:50%;width:60px;height:60px;transform:translateY(-50%);background:radial-gradient(circle,rgba(232,97,60,.1) 0%,transparent 70%);pointer-events:none}
 .ds-card-badge{display:flex;align-items:center;gap:8px;color:#8fa3bf;font-size:12px;font-weight:600}
 .ds-card-badge svg{color:#22c55e}
 .ds-card-table{width:100%;border-collapse:collapse;font-size:13px}
-.ds-card-table tr{border-bottom:1px solid var(--bg3)}.ds-card-table tr:last-child{border-bottom:none}
+.ds-card-table tr{border-bottom:1px solid #f0f2f8}.ds-card-table tr:last-child{border-bottom:none}
 .ds-card-label{padding:10px 20px;color:var(--t3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px;width:130px;white-space:nowrap;vertical-align:top}
 .ds-card-value{padding:10px 20px 10px 0;color:var(--t1);font-weight:500}
-.ds-card-actions{padding:18px 20px;background:var(--bg2);display:flex;flex-direction:column;gap:10px;align-items:center}
+.ds-card-actions{padding:18px 20px;background:#fafbfc;display:flex;flex-direction:column;gap:10px;align-items:center}
 .ds-card-alt{display:flex;align-items:center;gap:8px}
 .ds-card-alt-btn{background:none;border:none;color:var(--acc);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;font-weight:500}.ds-card-alt-btn:hover{color:var(--acc2)}
-
 /* Auto-load progress */
 .lp-autoload{background:var(--bg2);border-radius:10px;padding:14px 16px;border:1px solid var(--brd)}
 .lp-autoload-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
@@ -342,11 +357,49 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 <!-- LANDING PAGE — VoyagerAI format + Option C architecture -->
 <div id="setupCard" class="lp">
 
-  <!-- HERO -->
+  <!-- HERO — VoyagerAI style -->
   <div class="lp-hero">
-    <div class="lp-hero-badge">&#10038; Coforge xPerion</div>
-    <h1>Intelli<span>Sight</span></h1>
-    <p class="lp-sub"><b>From data to decisive action.</b> A conversational analytics agent that transforms raw datasets into executive dashboards, strategic recommendations, and on-demand insights — all running securely in your browser.</p>
+    <div class="lp-hero-top">
+      <div class="lp-hero-left">
+        <div class="lp-hero-badge">
+          <div class="lp-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="lp-badge-name">IntelliSight</span>
+              <span class="lp-badge-tag">Agent</span>
+            </div>
+            <div class="lp-badge-sub">Conversational Analytics &middot; Adobe Experience Cloud</div>
+          </div>
+        </div>
+        <h1><span>Conversational</span> Analytics Agent for Data-Driven Decisions at Scale</h1>
+        <p class="lp-sub">IntelliSight is a privacy-first analytics agent that transforms raw Adobe Analytics datasets into executive dashboards, strategic recommendations, and on-demand insights — all running 100% in your browser.</p>
+        <div class="lp-hero-ctas">
+          <a class="lp-hero-cta primary" onclick="document.getElementById('autoLoadBar').scrollIntoView({behavior:'smooth'})">&#9889; Explore Demo Data</a>
+          <a class="lp-hero-cta outline" onclick="document.querySelector('.lp-arch').scrollIntoView({behavior:'smooth'})">View Architecture &rarr;</a>
+        </div>
+      </div>
+      <div class="lp-hero-right">
+        <div>
+          <div class="lp-hero-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </div>
+          <div class="lp-hero-logo-label">
+            <div class="name">IntelliSight</div>
+            <div class="sub">Analytics Agent</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="lp-kpis">
+    <div class="lp-kpi"><div class="lp-kpi-val" style="color:#E8613C">100%</div><div class="lp-kpi-label">In-browser processing</div></div>
+    <div class="lp-kpi"><div class="lp-kpi-val" style="color:#00b4d8">10K+</div><div class="lp-kpi-label">Rows analyzed per query</div></div>
+    <div class="lp-kpi"><div class="lp-kpi-val" style="color:#E8613C">302</div><div class="lp-kpi-label">Columns auto-classified</div></div>
+    <div class="lp-kpi"><div class="lp-kpi-val" style="color:#7F77DD">4</div><div class="lp-kpi-label">Intelligent capabilities</div></div>
+    <div class="lp-kpi"><div class="lp-kpi-val" style="color:#22c55e">0</div><div class="lp-kpi-label">Data sent to servers</div></div>
+    <div class="lp-kpi"><div class="lp-kpi-val" style="color:#E8613C">&lt;5s</div><div class="lp-kpi-label">Time to first insight</div></div>
   </div>
 
   <!-- ARCHITECTURE DIAGRAM -->
@@ -363,36 +416,36 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
       <!-- Experience layer -->
       <rect x="40" y="12" width="560" height="44" rx="10" fill="#E8613C" fill-opacity=".08" stroke="#E8613C" stroke-width=".5"/>
       <text x="320" y="30" text-anchor="middle" fill="#E8613C" font-size="12" font-weight="700" font-family="Inter,sans-serif">EXPERIENCE LAYER</text>
-      <text x="320" y="46" text-anchor="middle" fill="#c87050" font-size="10" font-family="Inter,sans-serif">Natural language chat &bull; Inline charts &bull; Markdown tables</text>
+      <text x="320" y="46" text-anchor="middle" fill="#99553a" font-size="10" font-family="Inter,sans-serif">Natural language chat &bull; Inline charts &bull; Markdown tables</text>
       <!-- Arrows -->
-      <line x1="200" y1="56" x2="200" y2="74" stroke="#3a5a7a" stroke-width=".5" marker-end="url(#aa)"/>
-      <line x1="320" y1="56" x2="320" y2="74" stroke="#3a5a7a" stroke-width=".5" marker-end="url(#aa)"/>
-      <line x1="440" y1="56" x2="440" y2="74" stroke="#3a5a7a" stroke-width=".5" marker-end="url(#aa)"/>
+      <line x1="200" y1="56" x2="200" y2="74" stroke="#8492a6" stroke-width=".5" marker-end="url(#aa)"/>
+      <line x1="320" y1="56" x2="320" y2="74" stroke="#8492a6" stroke-width=".5" marker-end="url(#aa)"/>
+      <line x1="440" y1="56" x2="440" y2="74" stroke="#8492a6" stroke-width=".5" marker-end="url(#aa)"/>
       <!-- Agent layer container -->
-      <rect x="40" y="78" width="560" height="96" rx="12" fill="none" stroke="#2a4a6b" stroke-width=".5" stroke-dasharray="4 3"/>
-      <text x="60" y="96" fill="#8fa3bf" font-size="11" font-weight="700" font-family="Inter,sans-serif" letter-spacing=".5">INTELLIGENT AGENT LAYER</text>
+      <rect x="40" y="78" width="560" height="96" rx="12" fill="none" stroke="#0a1628" stroke-width=".5" stroke-dasharray="4 3"/>
+      <text x="60" y="96" fill="#4a5568" font-size="11" font-weight="700" font-family="Inter,sans-serif" letter-spacing=".5">INTELLIGENT AGENT LAYER</text>
       <!-- 3 sub-agents -->
-      <rect x="60" y="108" width="160" height="52" rx="8" fill="rgba(255,255,255,.06)" stroke="#2a4a6b" stroke-width=".5"/>
-      <text x="140" y="128" text-anchor="middle" fill="#c8d8e8" font-size="12" font-weight="600" font-family="Inter,sans-serif">Code synthesis</text>
-      <text x="140" y="144" text-anchor="middle" fill="#5a7a9a" font-size="10" font-family="Inter,sans-serif">Generates analysis scripts</text>
-      <rect x="240" y="108" width="160" height="52" rx="8" fill="rgba(255,255,255,.06)" stroke="#2a4a6b" stroke-width=".5"/>
-      <text x="320" y="128" text-anchor="middle" fill="#c8d8e8" font-size="12" font-weight="600" font-family="Inter,sans-serif">Result interpreter</text>
-      <text x="320" y="144" text-anchor="middle" fill="#5a7a9a" font-size="10" font-family="Inter,sans-serif">Explains findings</text>
-      <rect x="420" y="108" width="160" height="52" rx="8" fill="rgba(255,255,255,.06)" stroke="#2a4a6b" stroke-width=".5"/>
-      <text x="500" y="128" text-anchor="middle" fill="#c8d8e8" font-size="12" font-weight="600" font-family="Inter,sans-serif">Strategy engine</text>
-      <text x="500" y="144" text-anchor="middle" fill="#5a7a9a" font-size="10" font-family="Inter,sans-serif">Generates actions</text>
+      <rect x="60" y="108" width="160" height="52" rx="8" fill="#082340" fill-opacity=".06" stroke="#0a1628" stroke-width=".5"/>
+      <text x="140" y="128" text-anchor="middle" fill="#0a1628" font-size="12" font-weight="600" font-family="Inter,sans-serif">Code synthesis</text>
+      <text x="140" y="144" text-anchor="middle" fill="#8492a6" font-size="10" font-family="Inter,sans-serif">Generates analysis scripts</text>
+      <rect x="240" y="108" width="160" height="52" rx="8" fill="#082340" fill-opacity=".06" stroke="#0a1628" stroke-width=".5"/>
+      <text x="320" y="128" text-anchor="middle" fill="#0a1628" font-size="12" font-weight="600" font-family="Inter,sans-serif">Result interpreter</text>
+      <text x="320" y="144" text-anchor="middle" fill="#8492a6" font-size="10" font-family="Inter,sans-serif">Explains findings</text>
+      <rect x="420" y="108" width="160" height="52" rx="8" fill="#082340" fill-opacity=".06" stroke="#0a1628" stroke-width=".5"/>
+      <text x="500" y="128" text-anchor="middle" fill="#0a1628" font-size="12" font-weight="600" font-family="Inter,sans-serif">Strategy engine</text>
+      <text x="500" y="144" text-anchor="middle" fill="#8492a6" font-size="10" font-family="Inter,sans-serif">Generates actions</text>
       <!-- Arrow -->
-      <line x1="320" y1="174" x2="320" y2="194" stroke="#3a5a7a" stroke-width=".5" marker-end="url(#aa)"/>
+      <line x1="320" y1="174" x2="320" y2="194" stroke="#8492a6" stroke-width=".5" marker-end="url(#aa)"/>
       <!-- Compute engine -->
       <rect x="40" y="198" width="560" height="44" rx="10" fill="#6c3fbf" fill-opacity=".06" stroke="#7F77DD" stroke-width=".5"/>
       <text x="320" y="216" text-anchor="middle" fill="#534AB7" font-size="12" font-weight="700" font-family="Inter,sans-serif">IN-BROWSER COMPUTE ENGINE</text>
       <text x="320" y="232" text-anchor="middle" fill="#7F77DD" font-size="10" font-family="Inter,sans-serif">All analysis runs locally &bull; Raw data never leaves your machine</text>
       <!-- Arrow -->
-      <line x1="320" y1="242" x2="320" y2="262" stroke="#3a5a7a" stroke-width=".5" marker-end="url(#aa)"/>
+      <line x1="320" y1="242" x2="320" y2="262" stroke="#8492a6" stroke-width=".5" marker-end="url(#aa)"/>
       <!-- Data layer -->
-      <rect x="40" y="266" width="560" height="44" rx="10" fill="rgba(255,255,255,.05)" stroke="#2a4a6b" stroke-width=".5"/>
-      <text x="320" y="284" text-anchor="middle" fill="#e8ecf2" font-size="12" font-weight="700" font-family="Inter,sans-serif">DATA LAYER</text>
-      <text x="320" y="300" text-anchor="middle" fill="#5a7a9a" font-size="10" font-family="Inter,sans-serif">CSV upload or cloud storage &bull; Parsed and indexed in-browser</text>
+      <rect x="40" y="266" width="560" height="44" rx="10" fill="#0a1628" fill-opacity=".05" stroke="#0a1628" stroke-width=".5"/>
+      <text x="320" y="284" text-anchor="middle" fill="#0a1628" font-size="12" font-weight="700" font-family="Inter,sans-serif">DATA LAYER</text>
+      <text x="320" y="300" text-anchor="middle" fill="#8492a6" font-size="10" font-family="Inter,sans-serif">CSV upload or cloud storage &bull; Parsed and indexed in-browser</text>
       <!-- Output icons -->
       <rect x="60" y="322" width="110" height="12" rx="6" fill="#E8613C" fill-opacity=".1"/>
       <text x="115" y="332" text-anchor="middle" fill="#E8613C" font-size="9" font-weight="600" font-family="Inter,sans-serif">DASHBOARD</text>
@@ -401,7 +454,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
       <rect x="316" y="322" width="110" height="12" rx="6" fill="#7F77DD" fill-opacity=".1"/>
       <text x="371" y="332" text-anchor="middle" fill="#534AB7" font-size="9" font-weight="600" font-family="Inter,sans-serif">INSIGHTS</text>
       <rect x="444" y="322" width="140" height="12" rx="6" fill="#0a1628" fill-opacity=".06"/>
-      <text x="514" y="332" text-anchor="middle" fill="#5a7a9a" font-size="9" font-weight="600" font-family="Inter,sans-serif">CUSTOM REPORTS</text>
+      <text x="514" y="332" text-anchor="middle" fill="#4a5568" font-size="9" font-weight="600" font-family="Inter,sans-serif">CUSTOM REPORTS</text>
     </svg>
   </div>
 
@@ -409,29 +462,29 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
   <div class="lp-feat">
     <div class="lp-feat-grid">
       <div class="lp-fc">
-        <div class="lp-fc-icon" style="background:rgba(232,97,60,.15)">
+        <div class="lp-fc-icon" style="background:rgba(232,97,60,.08)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8613C" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         </div>
         <h3>Executive dashboard</h3>
         <p>Auto-generated KPIs, trend charts, and dimension breakdowns from your raw data.</p>
       </div>
       <div class="lp-fc">
-        <div class="lp-fc-icon" style="background:rgba(0,180,216,.15)">
+        <div class="lp-fc-icon" style="background:rgba(0,180,216,.08)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00b4d8" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
         </div>
         <h3>Analytics chat</h3>
         <p>Ask questions in plain English. Get answers with inline charts computed from your full dataset.</p>
       </div>
       <div class="lp-fc">
-        <div class="lp-fc-icon" style="background:rgba(127,119,221,.15)">
+        <div class="lp-fc-icon" style="background:rgba(127,119,221,.08)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7F77DD" stroke-width="2"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 00-4 12.9V17h8v-2.1A7 7 0 0012 2z"/></svg>
         </div>
         <h3>Strategic recommendations</h3>
         <p>Priority-ranked insights with YoY analysis, conversion funnel, and channel optimization.</p>
       </div>
       <div class="lp-fc">
-        <div class="lp-fc-icon" style="background:rgba(34,197,94,.12)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <div class="lp-fc-icon" style="background:rgba(34,197,94,.08)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a1628" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         </div>
         <h3>Custom reports</h3>
         <p>Select any dimension or metric from the sidebar to build your own visualizations on demand.</p>
