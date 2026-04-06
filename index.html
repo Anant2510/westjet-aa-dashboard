@@ -257,7 +257,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 <div class="sb-n">
 <button class="nb disabled-nav" id="nav-dash" onclick="goTab('dash',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> <span>Dashboard</span></button>
 <button class="nb disabled-nav" id="nav-cust" onclick="goTab('cust',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> <span>Custom Reports</span></button>
-<button class="nb a" id="nav-chat" onclick="goTab('chat',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> <span>AI Chat</span></button>
+<button class="nb a" id="nav-chat" onclick="goTab('chat',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> <span>Chat</span></button>
 <button class="nb disabled-nav" id="nav-recs" onclick="goTab('recs',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 00-4 12.9V17h8v-2.1A7 7 0 0012 2z"/></svg> <span>Recommendations</span></button>
 </div>
 <div class="sb-f" id="sf">
@@ -265,13 +265,13 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 <div id="fco"></div>
 </div>
 <div style="padding:8px;border-top:1px solid var(--brd);flex-shrink:0" id="sbReconfigWrap" class="hid">
-  <button onclick="doReconfigure()" style="width:100%;padding:7px 10px;background:none;border:1px solid var(--brd);border-radius:7px;font-size:11px;color:var(--t3);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px" onmouseover="this.style.borderColor='var(--acc)';this.style.color='var(--acc)'" onmouseout="this.style.borderColor='var(--brd)';this.style.color='var(--t3)'">&#9881; Reconfigure</button>
+  <button onclick="doReconfigure()" style="width:100%;padding:7px 10px;background:none;border:1px solid var(--brd);border-radius:7px;font-size:11px;color:var(--t3);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px" onmouseover="this.style.borderColor='var(--acc)';this.style.color='var(--acc)'" onmouseout="this.style.borderColor='var(--brd)';this.style.color='var(--t3)'">&#9881; Change data source</button>
 </div>
-<div class="ti" id="tki">Connected &#10003;</div>
+<div class="ti" id="tki">Ready &#10003;</div>
 </div>
 <div class="mc">
 <div class="tb">
-<h2 id="pt">AI Analytics Chat</h2>
+<h2 id="pt">Analytics Chat</h2>
 <div class="tt" id="tto" style="display:none">
 <button class="ttb" onclick="doTime('weekly',this)">Weekly</button>
 <button class="ttb a" onclick="doTime('monthly',this)">Monthly</button>
@@ -292,10 +292,11 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
   <p style="color:var(--acc);font-size:12px;font-weight:600;margin-bottom:12px;letter-spacing:.3px">From Data to Decisive Action</p>
 
   <div class="hw">
-    <b>How it works:</b> Your data stays 100% in your browser. When you ask a question, the AI writes an analysis script &rarr; it runs locally against your full dataset &rarr; computed results go to the LLM for interpretation. Raw data never leaves your machine.
+    <b>How it works:</b> Your data stays 100% in your browser. When you ask a question, an analysis script runs locally against your full dataset &rarr; precise results are computed in-browser &rarr; you get actionable insights. Raw data never leaves your machine.
   </div>
 
-  <!-- STEP 1: API Key -->
+  <!-- KEY SECTION — hidden when key is pre-configured -->
+  <div id="keySectionWrap">
   <div class="setup-section">
     <div class="setup-section-title">
       <div class="setup-section-num">1</div>
@@ -314,11 +315,13 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
   </div>
 
   <div class="setup-divider"><span>then</span></div>
+  </div>
+  <!-- END KEY SECTION -->
 
   <!-- STEP 2: Data Source -->
   <div class="setup-section">
     <div class="setup-section-title">
-      <div class="setup-section-num">2</div>
+      <div class="setup-section-num" id="dataStepNum">2</div>
       <div class="setup-section-label">Link your raw data</div>
     </div>
 
@@ -456,12 +459,13 @@ var KEY_VALIDATED=false, DATA_LOADED=false;
     // Persist for future visits
     try{localStorage.setItem('intellisight_ak',resolved)}catch(e){}
     document.addEventListener('DOMContentLoaded',function(){
-      document.getElementById('ak').value='••••••••••••••••';
-      document.getElementById('ak').disabled=true;
-      document.getElementById('vb').style.display='none';
-      document.getElementById('changeKeyRow').style.display='';
+      // Hide the entire key section — user never sees it
+      var keyWrap=document.getElementById('keySectionWrap');
+      if(keyWrap) keyWrap.style.display='none';
+      // Hide step number on data section (no need for "Step 2" when there's only one step)
+      var dsn=document.getElementById('dataStepNum');
+      if(dsn) dsn.style.display='none';
       KEY_VALIDATED=true;
-      showKeyStatus('ok','Key loaded automatically');
       checkLaunchReady();
     });
   }
@@ -531,7 +535,7 @@ function switchDS(panel,btn){
 // ===== VALIDATE KEY =====
 async function doValidate(){
   var k=document.getElementById('ak').value.trim(),b=document.getElementById('vb'),e=document.getElementById('ae');
-  if(k.indexOf('sk-ant-')!==0){e.textContent='Invalid key format. Please check your LLM provider key.';e.classList.add('s');showKeyStatus('fail','Invalid key');return}
+  if(k.indexOf('sk-ant-')!==0){e.textContent='Invalid key format.';e.classList.add('s');showKeyStatus('fail','Invalid key');return}
   b.disabled=true;b.textContent='Validating...';e.classList.remove('s');showKeyStatus('pending','Validating...');
   try{
     var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:30,messages:[{role:'user',content:'Reply OK'}]})});
@@ -560,7 +564,7 @@ function forgetKey(){
   try{localStorage.removeItem('intellisight_ak')}catch(e){}
   AK='';KEY_VALIDATED=false;
   var akEl=document.getElementById('ak');
-  akEl.value='';akEl.disabled=false;akEl.placeholder='Enter your LLM secret key...';
+  akEl.value='';akEl.disabled=false;akEl.placeholder='Enter key...';
   document.getElementById('vb').style.display='';
   document.getElementById('changeKeyRow').style.display='none';
   showKeyStatus('pending','Awaiting key');
@@ -570,8 +574,7 @@ function forgetKey(){
 
 // ===== RECONFIGURE (post-launch) =====
 function doReconfigure(){
-  // Clear stored key, reload page to re-show setup card
-  try{localStorage.removeItem('intellisight_ak')}catch(e){}
+  // Reload page to re-show setup card (key stays in localStorage)
   window.location.reload();
 }
 
@@ -700,7 +703,7 @@ function doLaunch(){
     // Show the welcome chat message
     var welcome=document.createElement('div');
     welcome.className='cm as';
-    welcome.innerHTML='<div class="sn">IntelliSight</div><div class="bb"><p>&#128075; I\'m your analytics assistant powered by IntelliSight. Your entire dataset is loaded in-browser and I can query every row.</p><p><b>How this works:</b> I write an analysis function &rarr; runs locally on your full data &rarr; I interpret precise results. No raw data leaves your browser.</p><p>Try asking:</p><ul><li>"What are the top 10 routes by revenue?"</li><li>"Show monthly booking trend as a line chart"</li><li>"Compare revenue by loyalty tier"</li><li>"What day of the week gets the most traffic?"</li><li>"Show add-to-cart vs purchase conversion funnel"</li></ul></div>';
+    welcome.innerHTML='<div class="sn">IntelliSight</div><div class="bb"><p>&#128075; Welcome to IntelliSight. Your entire dataset (<b>'+DATA.length.toLocaleString()+' rows</b>) is loaded in-browser and ready to query.</p><p><b>How this works:</b> An analysis function runs locally on your full data &rarr; precise results are computed in-browser &rarr; you get actionable insights. No raw data leaves your browser.</p><p>Try asking:</p><ul><li>"What are the top 10 routes by revenue?"</li><li>"Show monthly booking trend as a line chart"</li><li>"Compare revenue by loyalty tier"</li><li>"What day of the week gets the most traffic?"</li><li>"Show add-to-cart vs purchase conversion funnel"</li></ul></div>';
     document.getElementById('chMs').appendChild(welcome);
 
     // Enable chat input
@@ -782,7 +785,7 @@ function goTab(t,b){
   document.querySelectorAll('.tc').forEach(function(x){x.classList.remove('a')});
   document.getElementById('tab-'+t).classList.add('a');
   document.querySelectorAll('.nb').forEach(function(x){x.classList.remove('a')});b.classList.add('a');
-  var nm={dash:'Executive Dashboard',cust:'Custom Reports',chat:'AI Analytics Chat',recs:'Recommendations'};
+  var nm={dash:'Executive Dashboard',cust:'Custom Reports',chat:'Analytics Chat',recs:'Recommendations'};
   document.getElementById('pt').textContent=nm[t];
   document.getElementById('tto').style.display=(t==='dash'||t==='cust')?'flex':'none';
 }
@@ -881,7 +884,7 @@ function renderCharts(){
   var cl=['#E8613C','#0a1628','#d4532f','#1a2d4a','#f4845f','#2a4a6b','#f9a07c','#3a6590'];
   var pm=getPlottableMetrics();
   var chartMetrics=findBestKPIs(pm).slice(0,6);
-  if(!chartMetrics.length){g.innerHTML='<div class="cc"><h3>No metrics detected</h3><p style="color:var(--t2)">Use AI Chat to explore.</p></div>';return}
+  if(!chartMetrics.length){g.innerHTML='<div class="cc"><h3>No metrics detected</h3><p style="color:var(--t2)">Use Chat to explore your data.</p></div>';return}
   var h='<div class="cc" style="grid-column:span 2"><h3>Key Metrics Trend ('+tView+')</h3><canvas id="mt"></canvas></div>';
   chartMetrics.slice(0,4).forEach(function(m,i){var label=EVENT_LABELS[m.toLowerCase()]||m;h+='<div class="cc"><h3>'+tr(label,40)+'</h3><canvas id="c'+i+'"></canvas></div>'});
   var topDim=findBestDimension();
