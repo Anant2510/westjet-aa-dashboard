@@ -1,0 +1,3 @@
+# IntelliSight — never commit the API key file
+# The deploy workflow generates it from a GitHub Secret at build time
+config.js

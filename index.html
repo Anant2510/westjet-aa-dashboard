@@ -7,6 +7,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+<!-- Optional: external config file for pre-configured deployments -->
+<script>window.INTELLISIGHT_KEY=window.INTELLISIGHT_KEY||'';</script>
+<script src="config.js" onerror="console.log('No config.js found — manual key entry required.')"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 :root{
@@ -151,6 +154,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 
 .tc{display:none;height:100%;overflow:hidden}.tc.a{display:flex;flex-direction:column}
 .ti{display:none}
+.hid{display:none!important}
 
 /* ============================================================
    SETUP CARD — embedded inside the chat welcome area
@@ -260,7 +264,10 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 <input class="fsi" placeholder="Search columns..." oninput="doFS(this.value)">
 <div id="fco"></div>
 </div>
-<div class="ti" id="tki">API Connected &#10003;</div>
+<div style="padding:8px;border-top:1px solid var(--brd);flex-shrink:0" id="sbReconfigWrap" class="hid">
+  <button onclick="doReconfigure()" style="width:100%;padding:7px 10px;background:none;border:1px solid var(--brd);border-radius:7px;font-size:11px;color:var(--t3);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px" onmouseover="this.style.borderColor='var(--acc)';this.style.color='var(--acc)'" onmouseout="this.style.borderColor='var(--brd)';this.style.color='var(--t3)'">&#9881; Reconfigure</button>
+</div>
+<div class="ti" id="tki">Connected &#10003;</div>
 </div>
 <div class="mc">
 <div class="tb">
@@ -300,6 +307,9 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
     <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
       <button class="btn btn-sm" id="vb" onclick="doValidate()">Validate Key</button>
       <span class="status-pill pending" id="keyStatus"><span class="status-dot"></span> Awaiting key</span>
+    </div>
+    <div id="changeKeyRow" style="display:none;margin-top:8px">
+      <button onclick="forgetKey()" style="background:none;border:none;color:var(--acc);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;padding:0">&#x21bb; Change / forget stored key</button>
     </div>
   </div>
 
@@ -375,20 +385,83 @@ var KEY_EVENTS=[];
 var selF=new Set(),tView='monthly',chInst={},chHist=[];
 var KEY_VALIDATED=false, DATA_LOADED=false;
 
-// ===== AUTO-DETECT API KEY FROM URL PARAMETER =====
+// ===== MULTI-SOURCE KEY RESOLUTION =====
+// Priority: 1) config.js  2) localStorage  3) URL ?key= param  4) URL #key= hash
+// Once resolved, key is persisted to localStorage for future visits.
 (function(){
-  var params=new URLSearchParams(window.location.search);
-  var urlKey=params.get('key');
-  if(urlKey&&urlKey.indexOf('sk-ant-')===0){
-    AK=urlKey;
-    if(window.history&&window.history.replaceState){
-      var clean=window.location.origin+window.location.pathname+window.location.hash;
-      window.history.replaceState(null,'',clean);
+  var resolved='';
+
+  // Source 1: config.js (window.INTELLISIGHT_KEY set by external file)
+  if(window.INTELLISIGHT_KEY && window.INTELLISIGHT_KEY.length>10){
+    resolved=window.INTELLISIGHT_KEY;
+    console.log('Key loaded from config.js');
+  }
+
+  // Source 2: localStorage (persisted from a previous session)
+  if(!resolved){
+    try{
+      var stored=localStorage.getItem('intellisight_ak');
+      if(stored && stored.length>10){resolved=stored;console.log('Key loaded from localStorage')}
+    }catch(e){}
+  }
+
+  // Source 3: URL query param ?key=...
+  if(!resolved){
+    var params=new URLSearchParams(window.location.search);
+    var urlKey=params.get('key');
+    if(urlKey && urlKey.length>10){
+      resolved=urlKey;
+      console.log('Key loaded from URL query param');
+      // Clean the URL so key isn't visible in browser bar
+      if(window.history&&window.history.replaceState){
+        var clean=window.location.origin+window.location.pathname+window.location.hash;
+        window.history.replaceState(null,'',clean);
+      }
     }
+  }
+
+  // Source 4: URL hash fragment #key=... (less prone to link corruption)
+  if(!resolved){
+    var hash=window.location.hash;
+    var hm=hash.match(/[#&]key=([^&]+)/);
+    if(hm && hm[1].length>10){
+      resolved=decodeURIComponent(hm[1]);
+      console.log('Key loaded from URL hash fragment');
+      // Clean the hash
+      if(window.history&&window.history.replaceState){
+        var cleanHash=hash.replace(/[#&]key=[^&]+/,'');
+        window.history.replaceState(null,'',window.location.pathname+window.location.search+(cleanHash||''));
+      }
+    }
+  }
+
+  // Source 5: Base64-encoded param ?bkey=... (survives link-sharing corruption)
+  if(!resolved){
+    var params2=new URLSearchParams(window.location.search);
+    var b64Key=params2.get('bkey');
+    if(b64Key){
+      try{
+        var decoded=atob(b64Key);
+        if(decoded.length>10){resolved=decoded;console.log('Key loaded from Base64 URL param')}
+      }catch(e){}
+      if(window.history&&window.history.replaceState){
+        var clean2=window.location.origin+window.location.pathname+window.location.hash;
+        window.history.replaceState(null,'',clean2);
+      }
+    }
+  }
+
+  if(resolved){
+    AK=resolved;
+    // Persist for future visits
+    try{localStorage.setItem('intellisight_ak',resolved)}catch(e){}
     document.addEventListener('DOMContentLoaded',function(){
-      document.getElementById('ak').value=urlKey;
+      document.getElementById('ak').value='••••••••••••••••';
+      document.getElementById('ak').disabled=true;
+      document.getElementById('vb').style.display='none';
+      document.getElementById('changeKeyRow').style.display='';
       KEY_VALIDATED=true;
-      showKeyStatus('ok','Key auto-detected');
+      showKeyStatus('ok','Key loaded automatically');
       checkLaunchReady();
     });
   }
@@ -465,7 +538,12 @@ async function doValidate(){
     if(r.ok){
       AK=k;KEY_VALIDATED=true;
       showKeyStatus('ok','Connected');
+      document.getElementById('ak').value='••••••••••••••••';
       document.getElementById('ak').disabled=true;
+      document.getElementById('vb').style.display='none';
+      document.getElementById('changeKeyRow').style.display='';
+      // Persist key for future visits
+      try{localStorage.setItem('intellisight_ak',k)}catch(e){}
       checkLaunchReady();
     }else{
       var d=await r.json();
@@ -476,6 +554,26 @@ async function doValidate(){
   b.disabled=false;b.textContent='Validate Key';
 }
 document.getElementById('ak').addEventListener('keydown',function(e){if(e.key==='Enter')doValidate()});
+
+// ===== FORGET / CHANGE STORED KEY =====
+function forgetKey(){
+  try{localStorage.removeItem('intellisight_ak')}catch(e){}
+  AK='';KEY_VALIDATED=false;
+  var akEl=document.getElementById('ak');
+  akEl.value='';akEl.disabled=false;akEl.placeholder='Enter your LLM secret key...';
+  document.getElementById('vb').style.display='';
+  document.getElementById('changeKeyRow').style.display='none';
+  showKeyStatus('pending','Awaiting key');
+  checkLaunchReady();
+  akEl.focus();
+}
+
+// ===== RECONFIGURE (post-launch) =====
+function doReconfigure(){
+  // Clear stored key, reload page to re-show setup card
+  try{localStorage.removeItem('intellisight_ak')}catch(e){}
+  window.location.reload();
+}
 
 // ===== FILE UPLOAD =====
 var fd=document.getElementById('fd'),fii=document.getElementById('fi');
@@ -612,6 +710,8 @@ function doLaunch(){
 
     // Enable sidebar navigation
     document.querySelectorAll('.nb.disabled-nav').forEach(function(b){b.classList.remove('disabled-nav')});
+    // Show reconfigure button
+    document.getElementById('sbReconfigWrap').classList.remove('hid');
 
     // Build schema & context
     detectEvarLabels();buildSchema();buildRevBookingCtx();buildFilters();renderDash();genRecs();
