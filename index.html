@@ -248,6 +248,21 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 .setup-divider span{font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 .hw{background:var(--bg2);border-radius:9px;padding:12px 14px;margin-bottom:16px;font-size:12px;line-height:1.65;color:var(--t2);border-left:3px solid var(--acc)}.hw b{color:var(--t1)}
 
+/* Dataset summary card */
+.ds-card{background:#fff;border:1px solid var(--brd);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.ds-card-header{padding:12px 18px;background:linear-gradient(135deg,#082340,#16395e);display:flex;align-items:center}
+.ds-card-badge{display:flex;align-items:center;gap:7px;color:#8fa3bf;font-size:12px;font-weight:600}
+.ds-card-badge svg{color:#22c55e}
+.ds-card-table{width:100%;border-collapse:collapse;font-size:13px}
+.ds-card-table tr{border-bottom:1px solid var(--bg3)}
+.ds-card-table tr:last-child{border-bottom:none}
+.ds-card-label{padding:9px 18px;color:var(--t3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px;width:130px;white-space:nowrap;vertical-align:top}
+.ds-card-value{padding:9px 18px 9px 0;color:var(--t1);font-weight:500}
+.ds-card-actions{padding:16px 18px;background:var(--bg2);display:flex;flex-direction:column;gap:10px;align-items:center}
+.ds-card-alt{display:flex;align-items:center;gap:8px}
+.ds-card-alt-btn{background:none;border:none;color:var(--acc);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;font-weight:500}
+.ds-card-alt-btn:hover{color:var(--acc2)}
+
 /* Auto-load progress */
 .lp-autoload{background:var(--bg2);border-radius:10px;padding:14px 16px;border:1px solid var(--brd)}
 .lp-autoload-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
@@ -476,7 +491,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
       </div>
       <!-- END KEY SECTION -->
 
-      <!-- Auto-load progress bar -->
+      <!-- Auto-load: shows progress, then dataset summary card -->
       <div id="autoLoadBar" class="lp-autoload">
         <div class="lp-autoload-row">
           <div class="lp-autoload-icon">
@@ -484,22 +499,44 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
           </div>
           <div class="lp-autoload-text">
             <div id="autoLoadLabel" style="font-size:13px;font-weight:600;color:var(--navy)">Loading sample dataset&hellip;</div>
-            <div id="autoLoadSub" style="font-size:11px;color:var(--t3);margin-top:2px">Fetching WestJet Analytics demo data from repository</div>
+            <div id="autoLoadSub" style="font-size:11px;color:var(--t3);margin-top:2px">Fetching from repository</div>
           </div>
         </div>
         <div class="lp-autoload-track"><div class="lp-autoload-fill" id="autoLoadFill"></div></div>
       </div>
 
-      <!-- Launch button (enabled once data loads) -->
-      <button class="lp-launch" id="launchBtn" disabled onclick="doLaunch()" style="margin-top:16px">Launch IntelliSight &rarr;</button>
-
-      <!-- Small collapsible: load your own data -->
-      <div style="margin-top:14px;text-align:center">
-        <button onclick="toggleCustomData()" id="customDataToggle" style="background:none;border:none;color:var(--t3);font-size:12px;cursor:pointer;font-family:inherit;transition:color .15s">
-          &#9662; Or load your own dataset
-        </button>
+      <!-- Dataset summary card — shown after load -->
+      <div id="datasetCard" class="ds-card" style="display:none">
+        <div class="ds-card-header">
+          <div class="ds-card-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Sample dataset loaded
+          </div>
+        </div>
+        <table class="ds-card-table">
+          <tr><td class="ds-card-label">Dataset</td><td class="ds-card-value" id="dsName">WestJet — Adobe Analytics Data Warehouse Export</td></tr>
+          <tr><td class="ds-card-label">Source</td><td class="ds-card-value" id="dsSource">Adobe Analytics (Data Warehouse)</td></tr>
+          <tr><td class="ds-card-label">Period</td><td class="ds-card-value" id="dsPeriod">—</td></tr>
+          <tr><td class="ds-card-label">Rows</td><td class="ds-card-value" id="dsRows">—</td></tr>
+          <tr><td class="ds-card-label">Columns</td><td class="ds-card-value" id="dsCols">—</td></tr>
+          <tr><td class="ds-card-label">Key dimensions</td><td class="ds-card-value" id="dsDims">—</td></tr>
+          <tr><td class="ds-card-label">Key metrics</td><td class="ds-card-value" id="dsMets">—</td></tr>
+        </table>
+        <div class="ds-card-actions">
+          <button class="lp-launch" id="launchBtn" disabled onclick="doLaunch()">Explore this dataset &rarr;</button>
+          <div class="ds-card-alt">
+            <span style="color:var(--t3);font-size:12px">or</span>
+            <button onclick="toggleCustomData()" id="customDataToggle" class="ds-card-alt-btn">load different data</button>
+          </div>
+        </div>
       </div>
-      <div id="customDataPanel" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--brd)">
+
+      <!-- Collapsible: load your own data -->
+      <div id="customDataPanel" style="display:none;margin-top:14px;padding:18px;background:#fff;border:1px solid var(--brd);border-radius:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <span style="font-size:13px;font-weight:600;color:var(--navy)">Load your own dataset</span>
+          <button onclick="toggleCustomData()" style="background:none;border:none;color:var(--t3);font-size:18px;cursor:pointer;line-height:1">&times;</button>
+        </div>
         <div class="ds-tabs">
           <button class="ds-tab active" onclick="switchDS('upload',this)">&#128193; Upload File</button>
           <button class="ds-tab" onclick="switchDS('cloud',this)">&#9729;&#65039; Cloud URL</button>
@@ -639,16 +676,61 @@ var KEY_VALIDATED=false, DATA_LOADED=false;
 
 // ===== DEFAULT DATASET (hosted in same repo) =====
 var DEFAULT_DATASET_URL='westjet_analytics_demo_latest_03March.csv';
+var DATASET_META={name:'',source:'',period:'',rows:0,cols:0,dims:'',mets:''};
 
 // Toggle custom data panel
 function toggleCustomData(){
   var panel=document.getElementById('customDataPanel');
-  var btn=document.getElementById('customDataToggle');
   if(panel.style.display==='none'){
-    panel.style.display='';btn.innerHTML='&#9652; Hide custom data options';
+    panel.style.display='';
   }else{
-    panel.style.display='none';btn.innerHTML='&#9662; Or load your own dataset';
+    panel.style.display='none';
   }
+}
+
+// Build dataset metadata after parsing
+function buildDatasetMeta(fileName){
+  var dates=DATA.map(function(r){return r['Date']||''}).filter(function(d){return d}).sort();
+  var minDate=dates[0]||'?',maxDate=dates[dates.length-1]||'?';
+  // Count key events with data
+  var metCount=KEY_EVENTS.length;
+  // Count eVars with data
+  var dimCount=EVARS.filter(function(e){
+    var v=DATA.slice(0,50).map(function(r){return r[e]}).filter(function(x){return x&&x!==''});
+    return v.length>5;
+  }).length;
+  // Friendly dimension list
+  var dimNames=[];
+  var dimGuesses={'eVar4':'Channel','eVar5':'Device','eVar13':'Loyalty','eVar14':'Cabin','eVar17':'Route','eVar15':'Origin','eVar16':'Destination'};
+  EVARS.slice(0,20).forEach(function(e){if(dimGuesses[e])dimNames.push(dimGuesses[e])});
+  // Friendly metric list
+  var metNames=[];
+  var metGuesses={'event1':'Page Views','event2':'Visits','event7':'Bookings','event9':'Revenue','event10':'Cart Adds','event13':'Purchases'};
+  KEY_EVENTS.slice(0,20).forEach(function(e){if(metGuesses[e])metNames.push(metGuesses[e])});
+
+  DATASET_META={
+    name:fileName||'Adobe Analytics Export',
+    source:'Adobe Analytics (Data Warehouse)',
+    period:minDate+' to '+maxDate,
+    rows:DATA.length,
+    cols:COLS.length,
+    dims:dimNames.slice(0,5).join(', ')+' + '+(dimCount-Math.min(dimNames.length,5))+' more',
+    mets:metNames.slice(0,4).join(', ')+' + '+(metCount-Math.min(metNames.length,4))+' more'
+  };
+}
+
+// Show the dataset summary card
+function showDatasetCard(){
+  document.getElementById('autoLoadBar').style.display='none';
+  var card=document.getElementById('datasetCard');
+  card.style.display='';
+  document.getElementById('dsName').textContent=DATASET_META.name;
+  document.getElementById('dsSource').textContent=DATASET_META.source;
+  document.getElementById('dsPeriod').textContent=DATASET_META.period;
+  document.getElementById('dsRows').textContent=DATASET_META.rows.toLocaleString();
+  document.getElementById('dsCols').textContent=DATASET_META.cols.toLocaleString()+' ('+EVARS.length+' eVars, '+EVENTS.length+' events, '+PROPS.length+' props)';
+  document.getElementById('dsDims').textContent=DATASET_META.dims;
+  document.getElementById('dsMets').textContent=DATASET_META.mets;
 }
 
 // Auto-fetch the default dataset on page load
@@ -673,15 +755,11 @@ function autoFetchDataset(){
         COLS=res.meta.fields||[];
         classifyCols();
         fill.style.width='100%';
-        bar.classList.add('done');
-        label.textContent='\u2713 '+DATA.length.toLocaleString()+' rows \u00d7 '+COLS.length+' columns loaded';
-        sub.textContent='WestJet Analytics — 2023\u20132024 dataset ready';
         DATA_LOADED=true;
+        buildDatasetMeta('WestJet \u2014 Adobe Analytics Data Warehouse Export');
+        // Show summary card instead of auto-launching
+        setTimeout(function(){showDatasetCard()},400);
         checkLaunchReady();
-        // Auto-launch if key is also ready
-        if(KEY_VALIDATED){
-          setTimeout(function(){doLaunch()},600);
-        }
       },
       error:function(err){
         bar.classList.add('fail');
@@ -694,9 +772,7 @@ function autoFetchDataset(){
     label.textContent='Could not load default dataset';
     sub.textContent=e.message+' \u2014 try loading your own dataset below';
     fill.style.width='100%';
-    // Show custom data panel as fallback
     document.getElementById('customDataPanel').style.display='';
-    document.getElementById('customDataToggle').innerHTML='&#9652; Load your own dataset';
   });
 }
 
@@ -837,6 +913,8 @@ function doFile(f){
       info.textContent='\u2713 '+f.name+' \u2014 '+DATA.length.toLocaleString()+' rows \u00d7 '+COLS.length+' cols';
       info.style.color='var(--grn)';
       DATA_LOADED=true;
+      buildDatasetMeta(f.name.replace(/\.(csv|tsv|txt)$/i,''));
+      showDatasetCard();
       showDataStatus('ok',DATA.length.toLocaleString()+' rows loaded');
       checkLaunchReady();
     },
@@ -883,6 +961,8 @@ async function doCloudFetch(){
         info.textContent='\u2713 '+fname+' \u2014 '+DATA.length.toLocaleString()+' rows \u00d7 '+COLS.length+' cols';
         info.style.color='var(--grn)';
         DATA_LOADED=true;
+        buildDatasetMeta(fname.replace(/\.(csv|tsv|txt)$/i,''));
+        showDatasetCard();
         showDataStatus('ok',DATA.length.toLocaleString()+' rows loaded');
         checkLaunchReady();
       },
@@ -936,10 +1016,25 @@ function doLaunch(){
   card.style.opacity='0';card.style.transform='translateY(-10px)';
   setTimeout(function(){
     card.style.display='none';
-    // Show the welcome chat message
+    // Show the welcome chat message with dataset info
     var welcome=document.createElement('div');
     welcome.className='cm as';
-    welcome.innerHTML='<div class="sn">IntelliSight</div><div class="bb"><p>&#128075; Welcome to IntelliSight. Your entire dataset (<b>'+DATA.length.toLocaleString()+' rows</b>) is loaded in-browser and ready to query.</p><p><b>How this works:</b> An analysis function runs locally on your full data &rarr; precise results are computed in-browser &rarr; you get actionable insights. No raw data leaves your browser.</p><p>Try asking:</p><ul><li>"What are the top 10 routes by revenue?"</li><li>"Show monthly booking trend as a line chart"</li><li>"Compare revenue by loyalty tier"</li><li>"What day of the week gets the most traffic?"</li><li>"Show add-to-cart vs purchase conversion funnel"</li></ul></div>';
+    welcome.innerHTML='<div class="sn">IntelliSight</div><div class="bb">'
+      +'<p>&#128075; Welcome to IntelliSight. Your dataset is loaded and ready to explore.</p>'
+      +'<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:12px 14px;margin:10px 0;font-size:12px;line-height:1.7">'
+      +'<div style="font-weight:700;color:var(--navy);margin-bottom:4px;font-size:13px">'+esc(DATASET_META.name)+'</div>'
+      +'<div style="color:var(--t2)"><b>Period:</b> '+esc(DATASET_META.period)+'</div>'
+      +'<div style="color:var(--t2)"><b>Size:</b> '+DATASET_META.rows.toLocaleString()+' rows &times; '+DATASET_META.cols.toLocaleString()+' columns</div>'
+      +'<div style="color:var(--t2)"><b>Dimensions:</b> '+esc(DATASET_META.dims)+'</div>'
+      +'<div style="color:var(--t2)"><b>Metrics:</b> '+esc(DATASET_META.mets)+'</div>'
+      +'</div>'
+      +'<p>All analysis runs locally in your browser. No raw data leaves your machine.</p>'
+      +'<p><b>Try asking:</b></p><ul>'
+      +'<li>"What are the top 10 routes by revenue?"</li>'
+      +'<li>"Show monthly booking trend as a line chart"</li>'
+      +'<li>"Compare revenue by loyalty tier"</li>'
+      +'<li>"What day of the week gets the most traffic?"</li>'
+      +'</ul></div>';
     document.getElementById('chMs').appendChild(welcome);
 
     // Enable chat input
