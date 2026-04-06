@@ -248,6 +248,17 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 .setup-divider span{font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 .hw{background:var(--bg2);border-radius:9px;padding:12px 14px;margin-bottom:16px;font-size:12px;line-height:1.65;color:var(--t2);border-left:3px solid var(--acc)}.hw b{color:var(--t1)}
 
+/* Auto-load progress */
+.lp-autoload{background:var(--bg2);border-radius:10px;padding:14px 16px;border:1px solid var(--brd)}
+.lp-autoload-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.lp-autoload-icon{flex-shrink:0}
+.lp-autoload-icon svg{animation:spin 1.2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lp-autoload-track{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.lp-autoload-fill{height:100%;background:linear-gradient(90deg,var(--acc),#00b4d8);border-radius:3px;transition:width .4s ease;width:0}
+.lp-autoload.done .lp-autoload-icon svg{animation:none;stroke:var(--grn)}
+.lp-autoload.fail .lp-autoload-icon svg{animation:none;stroke:var(--red)}
+
 /* Launch button override for landing page */
 .lp-launch{width:100%;padding:14px;background:var(--acc);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s,transform .1s;font-family:inherit;letter-spacing:.3px}
 .lp-launch:hover{background:var(--acc2)}.lp-launch:active{transform:scale(.98)}.lp-launch:disabled{opacity:.4;cursor:not-allowed}
@@ -439,13 +450,10 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
     </div>
   </div>
 
-  <!-- CONNECT YOUR DATA -->
+  <!-- AUTO-LOAD DATA SECTION -->
   <div class="lp-connect">
-    <div class="lp-sh">Get started</div>
-    <div class="lp-h2">Connect your data</div>
-    <p class="lp-p">Upload a CSV file or link a cloud storage URL to begin your analytics session.</p>
+    <div class="lp-connect-inner" style="max-width:100%">
 
-    <div class="lp-connect-inner">
       <!-- KEY SECTION — hidden when key is pre-configured -->
       <div id="keySectionWrap">
         <div class="setup-section">
@@ -468,17 +476,34 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
       </div>
       <!-- END KEY SECTION -->
 
-      <div class="setup-section">
-        <div class="setup-section-title">
-          <div class="setup-section-num" id="dataStepNum">2</div>
-          <div class="setup-section-label">Link your raw data</div>
+      <!-- Auto-load progress bar -->
+      <div id="autoLoadBar" class="lp-autoload">
+        <div class="lp-autoload-row">
+          <div class="lp-autoload-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8613C" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="lp-autoload-text">
+            <div id="autoLoadLabel" style="font-size:13px;font-weight:600;color:var(--navy)">Loading sample dataset&hellip;</div>
+            <div id="autoLoadSub" style="font-size:11px;color:var(--t3);margin-top:2px">Fetching WestJet Analytics demo data from repository</div>
+          </div>
         </div>
+        <div class="lp-autoload-track"><div class="lp-autoload-fill" id="autoLoadFill"></div></div>
+      </div>
 
+      <!-- Launch button (enabled once data loads) -->
+      <button class="lp-launch" id="launchBtn" disabled onclick="doLaunch()" style="margin-top:16px">Launch IntelliSight &rarr;</button>
+
+      <!-- Small collapsible: load your own data -->
+      <div style="margin-top:14px;text-align:center">
+        <button onclick="toggleCustomData()" id="customDataToggle" style="background:none;border:none;color:var(--t3);font-size:12px;cursor:pointer;font-family:inherit;transition:color .15s">
+          &#9662; Or load your own dataset
+        </button>
+      </div>
+      <div id="customDataPanel" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--brd)">
         <div class="ds-tabs">
-          <button class="ds-tab active" onclick="switchDS('upload',this)">&#128193; Upload Files</button>
-          <button class="ds-tab" onclick="switchDS('cloud',this)">&#9729;&#65039; Cloud Storage</button>
+          <button class="ds-tab active" onclick="switchDS('upload',this)">&#128193; Upload File</button>
+          <button class="ds-tab" onclick="switchDS('cloud',this)">&#9729;&#65039; Cloud URL</button>
         </div>
-
         <div class="ds-panel active" id="ds-upload">
           <div class="fd" id="fd" onclick="document.getElementById('fi').click()">
             <div class="ic">&#128196;</div>
@@ -488,15 +513,13 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
           <div class="fi-status" id="fin"></div>
           <div class="pb" id="pb"><div class="fl" id="pf"></div></div>
         </div>
-
         <div class="ds-panel" id="ds-cloud">
           <div class="cloud-info">
-            <b>Provide a publicly accessible URL</b> to a CSV or TSV file hosted on your cloud storage. The file is fetched directly into your browser.
+            <b>Provide a direct URL</b> to a CSV file on cloud storage (S3, Azure, GCS, or any public link).
             <div class="cloud-examples">
-              <span class="cloud-ex">Amazon S3</span>
+              <span class="cloud-ex">S3</span>
               <span class="cloud-ex">Azure Blob</span>
-              <span class="cloud-ex">Google Cloud</span>
-              <span class="cloud-ex">Dropbox</span>
+              <span class="cloud-ex">GCS</span>
               <span class="cloud-ex">SharePoint</span>
             </div>
           </div>
@@ -507,11 +530,9 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
           <div class="fi-status" id="cloudFin"></div>
           <div class="pb" id="cloudPb"><div class="fl" id="cloudPf"></div></div>
         </div>
-
         <span class="status-pill pending" id="dataStatus" style="margin-top:10px"><span class="status-dot"></span> No data linked</span>
       </div>
 
-      <button class="lp-launch" id="launchBtn" disabled onclick="doLaunch()">Launch IntelliSight &rarr;</button>
     </div>
   </div>
 
@@ -610,14 +631,87 @@ var KEY_VALIDATED=false, DATA_LOADED=false;
       // Hide the entire key section — user never sees it
       var keyWrap=document.getElementById('keySectionWrap');
       if(keyWrap) keyWrap.style.display='none';
-      // Hide step number on data section (no need for "Step 2" when there's only one step)
-      var dsn=document.getElementById('dataStepNum');
-      if(dsn) dsn.style.display='none';
       KEY_VALIDATED=true;
       checkLaunchReady();
     });
   }
 })();
+
+// ===== DEFAULT DATASET (hosted in same repo) =====
+var DEFAULT_DATASET_URL='westjet_analytics_demo_latest_03March.csv';
+
+// Toggle custom data panel
+function toggleCustomData(){
+  var panel=document.getElementById('customDataPanel');
+  var btn=document.getElementById('customDataToggle');
+  if(panel.style.display==='none'){
+    panel.style.display='';btn.innerHTML='&#9652; Hide custom data options';
+  }else{
+    panel.style.display='none';btn.innerHTML='&#9662; Or load your own dataset';
+  }
+}
+
+// Auto-fetch the default dataset on page load
+function autoFetchDataset(){
+  var fill=document.getElementById('autoLoadFill');
+  var label=document.getElementById('autoLoadLabel');
+  var sub=document.getElementById('autoLoadSub');
+  var bar=document.getElementById('autoLoadBar');
+  fill.style.width='15%';
+
+  fetch(DEFAULT_DATASET_URL).then(function(resp){
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    fill.style.width='45%';
+    label.textContent='Downloading dataset\u2026';
+    return resp.text();
+  }).then(function(text){
+    fill.style.width='70%';
+    label.textContent='Parsing CSV data\u2026';
+    Papa.parse(text,{header:true,skipEmptyLines:true,dynamicTyping:true,
+      complete:function(res){
+        DATA=res.data.filter(function(r){return Object.values(r).some(function(v){return v!==null&&v!==''})});
+        COLS=res.meta.fields||[];
+        classifyCols();
+        fill.style.width='100%';
+        bar.classList.add('done');
+        label.textContent='\u2713 '+DATA.length.toLocaleString()+' rows \u00d7 '+COLS.length+' columns loaded';
+        sub.textContent='WestJet Analytics — 2023\u20132024 dataset ready';
+        DATA_LOADED=true;
+        checkLaunchReady();
+        // Auto-launch if key is also ready
+        if(KEY_VALIDATED){
+          setTimeout(function(){doLaunch()},600);
+        }
+      },
+      error:function(err){
+        bar.classList.add('fail');
+        label.textContent='Parse error';
+        sub.textContent=err.message+' \u2014 try loading your own dataset below';
+      }
+    });
+  }).catch(function(e){
+    bar.classList.add('fail');
+    label.textContent='Could not load default dataset';
+    sub.textContent=e.message+' \u2014 try loading your own dataset below';
+    fill.style.width='100%';
+    // Show custom data panel as fallback
+    document.getElementById('customDataPanel').style.display='';
+    document.getElementById('customDataToggle').innerHTML='&#9652; Load your own dataset';
+  });
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  // Bind file upload handlers
+  var fdEl=document.getElementById('fd'),fiEl=document.getElementById('fi');
+  if(fdEl){
+    fdEl.ondragover=function(e){e.preventDefault();fdEl.classList.add('dg')};
+    fdEl.ondragleave=function(){fdEl.classList.remove('dg')};
+    fdEl.ondrop=function(e){e.preventDefault();fdEl.classList.remove('dg');doFile(e.dataTransfer.files[0])};
+  }
+  if(fiEl) fiEl.onchange=function(e){if(e.target.files[0])doFile(e.target.files[0])};
+  // Start auto-fetch
+  autoFetchDataset();
+});
 
 // FRIENDLY NAMES
 var EVENT_LABELS={
@@ -727,12 +821,6 @@ function doReconfigure(){
 }
 
 // ===== FILE UPLOAD =====
-var fd=document.getElementById('fd'),fii=document.getElementById('fi');
-fd.ondragover=function(e){e.preventDefault();fd.classList.add('dg')};
-fd.ondragleave=function(){fd.classList.remove('dg')};
-fd.ondrop=function(e){e.preventDefault();fd.classList.remove('dg');doFile(e.dataTransfer.files[0])};
-fii.onchange=function(e){if(e.target.files[0])doFile(e.target.files[0])};
-
 function doFile(f){
   if(!f)return;
   var info=document.getElementById('fin'),pb=document.getElementById('pb'),pf=document.getElementById('pf');
