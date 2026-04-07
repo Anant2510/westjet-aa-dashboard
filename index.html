@@ -316,7 +316,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 
 <div id="landingPage">
   <div style="min-height:100vh;display:flex;flex-direction:column;background:#f0f2f5;font-family:'Inter',system-ui,sans-serif;">
-    <div style="flex:1;padding:24px 32px 40px;max-width:1280px;margin:0 auto;width:100%;box-sizing:border-box">
+    <div style="flex:1;padding:24px 48px 40px;max-width:1400px;margin:0 auto;width:100%;box-sizing:border-box">
       <div style="border-radius:16px;overflow:hidden;position:relative;background:linear-gradient(105deg,#5a2d82 0%,#7b3fa0 20%,#a0416a 42%,#c95230 65%,#e8621a 80%,#f07020 100%);padding:40px 48px;min-height:240px;display:flex;align-items:center;margin-bottom:24px">
         <div style="position:relative;z-index:1;flex:1;max-width:620px">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -455,6 +455,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 <div class="mc">
 <div class="tb">
 <h2 id="pt">Analytics Chat</h2>
+<div id="dataInfoBar" class="hid" style="display:none;font-size:11px;color:var(--t3);padding:0 4px;max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title=""><span id="dataInfoText"></span></div>
 <div class="tt" id="tto" style="display:none">
 <button class="ttb" onclick="doTime('weekly',this)">Weekly</button>
 <button class="ttb a" onclick="doTime('monthly',this)">Monthly</button>
@@ -557,15 +558,8 @@ var KEY_VALIDATED=false, DATA_LOADED=false;
 
   if(resolved){
     AK=resolved;
-    // Persist for future visits
     try{localStorage.setItem('intellisight_ak',resolved)}catch(e){}
-    document.addEventListener('DOMContentLoaded',function(){
-      // Hide the entire key section — user never sees it
-      var keyWrap=document.getElementById('keySectionWrap');
-      if(keyWrap) keyWrap.style.display='none';
-      KEY_VALIDATED=true;
-      checkLaunchReady();
-    });
+    KEY_VALIDATED=true;
   }
 })();
 
@@ -614,73 +608,38 @@ function buildDatasetMeta(fileName){
   };
 }
 
-// Show the dataset summary card
-function showDatasetCard(){
-  document.getElementById('autoLoadBar').style.display='none';
-  var card=document.getElementById('datasetCard');
-  card.style.display='';
-  document.getElementById('dsName').textContent=DATASET_META.name;
-  document.getElementById('dsSource').textContent=DATASET_META.source;
-  document.getElementById('dsPeriod').textContent=DATASET_META.period;
-  document.getElementById('dsRows').textContent=DATASET_META.rows.toLocaleString();
-  document.getElementById('dsCols').textContent=DATASET_META.cols.toLocaleString()+' ('+EVARS.length+' eVars, '+EVENTS.length+' events, '+PROPS.length+' props)';
-  document.getElementById('dsDims').textContent=DATASET_META.dims;
-  document.getElementById('dsMets').textContent=DATASET_META.mets;
+// Update the dataset info bar in the toolbar (visible on all tabs)
+function updateDataInfoBar(){
+  var bar=document.getElementById('dataInfoBar');
+  var txt=document.getElementById('dataInfoText');
+  if(!bar||!txt||!DATASET_META.rows)return;
+  bar.style.display='';bar.classList.remove('hid');
+  txt.textContent=DATASET_META.name+' \u2014 '+DATASET_META.period+' \u2014 '+DATASET_META.rows.toLocaleString()+' rows \u00d7 '+DATASET_META.cols.toLocaleString()+' cols';
+  bar.title=DATASET_META.name+'\n'+DATASET_META.period+'\n'+DATASET_META.rows.toLocaleString()+' rows, '+DATASET_META.cols.toLocaleString()+' columns\nDimensions: '+DATASET_META.dims+'\nMetrics: '+DATASET_META.mets;
 }
 
-// Auto-fetch the default dataset on page load
+// Auto-fetch the default dataset silently on page load
 function autoFetchDataset(){
-  var fill=document.getElementById('autoLoadFill');
-  var label=document.getElementById('autoLoadLabel');
-  var sub=document.getElementById('autoLoadSub');
-  var bar=document.getElementById('autoLoadBar');
-  fill.style.width='15%';
-
+  console.log('Auto-fetching dataset...');
   fetch(DEFAULT_DATASET_URL).then(function(resp){
     if(!resp.ok) throw new Error('HTTP '+resp.status);
-    fill.style.width='45%';
-    label.textContent='Downloading dataset\u2026';
     return resp.text();
   }).then(function(text){
-    fill.style.width='70%';
-    label.textContent='Parsing CSV data\u2026';
     Papa.parse(text,{header:true,skipEmptyLines:true,dynamicTyping:true,
       complete:function(res){
         DATA=res.data.filter(function(r){return Object.values(r).some(function(v){return v!==null&&v!==''})});
         COLS=res.meta.fields||[];
         classifyCols();
-        fill.style.width='100%';
         DATA_LOADED=true;
         buildDatasetMeta('WestJet \u2014 Adobe Analytics Data Warehouse Export');
-        // Show summary card instead of auto-launching
-        setTimeout(function(){showDatasetCard()},400);
-        checkLaunchReady();
+        console.log('Dataset loaded: '+DATA.length+' rows');
       },
-      error:function(err){
-        bar.classList.add('fail');
-        label.textContent='Parse error';
-        sub.textContent=err.message+' \u2014 try loading your own dataset below';
-      }
+      error:function(err){console.error('Parse error:',err.message)}
     });
-  }).catch(function(e){
-    bar.classList.add('fail');
-    label.textContent='Could not load default dataset';
-    sub.textContent=e.message+' \u2014 try loading your own dataset below';
-    fill.style.width='100%';
-    document.getElementById('customDataPanel').style.display='';
-  });
+  }).catch(function(e){console.error('Fetch error:',e.message)});
 }
 
 document.addEventListener('DOMContentLoaded',function(){
-  // Bind file upload handlers
-  var fdEl=document.getElementById('fd'),fiEl=document.getElementById('fi');
-  if(fdEl){
-    fdEl.ondragover=function(e){e.preventDefault();fdEl.classList.add('dg')};
-    fdEl.ondragleave=function(){fdEl.classList.remove('dg')};
-    fdEl.ondrop=function(e){e.preventDefault();fdEl.classList.remove('dg');doFile(e.dataTransfer.files[0])};
-  }
-  if(fiEl) fiEl.onchange=function(e){if(e.target.files[0])doFile(e.target.files[0])};
-  // Start auto-fetch
   autoFetchDataset();
 });
 
@@ -725,16 +684,18 @@ var EVENT_LABELS={
 // ===== SETUP: STATUS HELPERS =====
 function showKeyStatus(state,text){
   var el=document.getElementById('keyStatus');
+  if(!el)return;
   el.className='status-pill '+state;
   el.innerHTML='<span class="status-dot"></span> '+text;
 }
 function showDataStatus(state,text){
   var el=document.getElementById('dataStatus');
+  if(!el)return;
   el.className='status-pill '+state;
   el.innerHTML='<span class="status-dot"></span> '+text;
 }
 function checkLaunchReady(){
-  document.getElementById('launchBtn').disabled=!(KEY_VALIDATED&&DATA_LOADED);
+  // No-op: launch is triggered by launchApp() from the landing page
 }
 
 // ===== DATA SOURCE TAB SWITCHING =====
@@ -742,12 +703,12 @@ function switchDS(panel,btn){
   document.querySelectorAll('.ds-tab').forEach(function(t){t.classList.remove('active')});
   document.querySelectorAll('.ds-panel').forEach(function(p){p.classList.remove('active')});
   btn.classList.add('active');
-  document.getElementById('ds-'+panel).classList.add('active');
+  var dsPanel=document.getElementById('ds-'+panel);if(dsPanel)dsPanel.classList.add('active');
 }
 
 // ===== VALIDATE KEY =====
 async function doValidate(){
-  var k=document.getElementById('ak').value.trim(),b=document.getElementById('vb'),e=document.getElementById('ae');
+  var akI=document.getElementById('ak');if(!akI)return;var k=akI.value.trim(),b=document.getElementById('vb'),e=document.getElementById('ae');if(!b||!e)return;
   if(k.indexOf('sk-ant-')!==0){e.textContent='Invalid key format.';e.classList.add('s');showKeyStatus('fail','Invalid key');return}
   b.disabled=true;b.textContent='Validating...';e.classList.remove('s');showKeyStatus('pending','Validating...');
   try{
@@ -770,19 +731,12 @@ async function doValidate(){
   }catch(x){e.textContent='Network error: '+x.message;e.classList.add('s');showKeyStatus('fail','Network error')}
   b.disabled=false;b.textContent='Validate Key';
 }
-document.getElementById('ak').addEventListener('keydown',function(e){if(e.key==='Enter')doValidate()});
+var akEl=document.getElementById('ak');if(akEl)akEl.addEventListener('keydown',function(e){if(e.key==='Enter')doValidate()});
 
 // ===== FORGET / CHANGE STORED KEY =====
 function forgetKey(){
   try{localStorage.removeItem('intellisight_ak')}catch(e){}
   AK='';KEY_VALIDATED=false;
-  var akEl=document.getElementById('ak');
-  akEl.value='';akEl.disabled=false;akEl.placeholder='Enter key...';
-  document.getElementById('vb').style.display='';
-  document.getElementById('changeKeyRow').style.display='none';
-  showKeyStatus('pending','Awaiting key');
-  checkLaunchReady();
-  akEl.focus();
 }
 
 // ===== RECONFIGURE (post-launch) =====
@@ -904,49 +858,7 @@ function classifyCols(){
 function getPlottableMetrics(){return METS.concat(KEY_EVENTS)}
 
 // ===== LAUNCH — transition from setup to active app =====
-function doLaunch(){
-  // Hide setup card, show welcome message
-  var card=document.getElementById('setupCard');
-  card.style.transition='opacity .3s,transform .3s';
-  card.style.opacity='0';card.style.transform='translateY(-10px)';
-  setTimeout(function(){
-    card.style.display='none';
-    // Show the welcome chat message with dataset info
-    var welcome=document.createElement('div');
-    welcome.className='cm as';
-    welcome.innerHTML='<div class="sn">IntelliSight</div><div class="bb">'
-      +'<p>&#128075; Welcome to IntelliSight. Your dataset is loaded and ready to explore.</p>'
-      +'<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:12px 14px;margin:10px 0;font-size:12px;line-height:1.7">'
-      +'<div style="font-weight:700;color:var(--navy);margin-bottom:4px;font-size:13px">'+esc(DATASET_META.name)+'</div>'
-      +'<div style="color:var(--t2)"><b>Period:</b> '+esc(DATASET_META.period)+'</div>'
-      +'<div style="color:var(--t2)"><b>Size:</b> '+DATASET_META.rows.toLocaleString()+' rows &times; '+DATASET_META.cols.toLocaleString()+' columns</div>'
-      +'<div style="color:var(--t2)"><b>Dimensions:</b> '+esc(DATASET_META.dims)+'</div>'
-      +'<div style="color:var(--t2)"><b>Metrics:</b> '+esc(DATASET_META.mets)+'</div>'
-      +'</div>'
-      +'<p>All analysis runs locally in your browser. No raw data leaves your machine.</p>'
-      +'<p><b>Try asking:</b></p><ul>'
-      +'<li>"What are the top 10 routes by revenue?"</li>'
-      +'<li>"Show monthly booking trend as a line chart"</li>'
-      +'<li>"Compare revenue by loyalty tier"</li>'
-      +'<li>"What day of the week gets the most traffic?"</li>'
-      +'</ul></div>';
-    document.getElementById('chMs').appendChild(welcome);
-
-    // Enable chat input
-    document.getElementById('chatInputArea').style.display='';
-    document.getElementById('chi').disabled=false;
-    document.getElementById('chi').placeholder='Ask anything about your data...';
-    document.getElementById('csb').disabled=false;
-
-    // Enable sidebar navigation
-    document.querySelectorAll('.nb.disabled-nav').forEach(function(b){b.classList.remove('disabled-nav')});
-    // Show reconfigure button
-    document.getElementById('sbReconfigWrap').classList.remove('hid');
-
-    // Build schema & context
-    detectEvarLabels();buildSchema();buildRevBookingCtx();buildFilters();renderDash();genRecs();
-  },300);
-}
+function doLaunch(){launchApp();}
 
 // ===== SCHEMA & CONTEXT =====
 function buildSchema(){
@@ -1390,6 +1302,53 @@ async function genRecs(){
 document.getElementById('chi').oninput=function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'};
 </script>
 
-<script>function launchApp(){var lp=document.getElementById("landingPage"), ap=document.getElementById("ap"); if(lp) lp.classList.add("hid"); if(ap) ap.classList.remove("hid"); window.scrollTo({top:0,behavior:"smooth"});}</script>
+<script>
+function launchApp(){
+  var lp=document.getElementById('landingPage'),ap=document.getElementById('ap');
+  if(lp) lp.style.display='none';
+  if(ap) ap.classList.remove('hid');
+  window.scrollTo({top:0,behavior:'smooth'});
+  // Wait for data if not yet loaded
+  function initApp(){
+    if(!DATA_LOADED){setTimeout(initApp,200);return}
+    // Build everything
+    detectEvarLabels();buildSchema();buildRevBookingCtx();buildFilters();renderDash();genRecs();
+    // Enable chat
+    var cia=document.getElementById('chatInputArea');if(cia)cia.style.display='';
+    var chi=document.getElementById('chi');if(chi){chi.disabled=false;chi.placeholder='Ask anything about your data...';}
+    var csb=document.getElementById('csb');if(csb)csb.disabled=false;
+    // Enable sidebar nav
+    document.querySelectorAll('.nb.disabled-nav').forEach(function(b){b.classList.remove('disabled-nav')});
+    var rcfg=document.getElementById('sbReconfigWrap');if(rcfg)rcfg.classList.remove('hid');
+    // Update dataset info bar on all tabs
+    updateDataInfoBar();
+    // Show welcome message with dataset info
+    var chMs=document.getElementById('chMs');
+    if(chMs){
+      var old=document.getElementById('setupCard');if(old)old.style.display='none';
+      var welcome=document.createElement('div');
+      welcome.className='cm as';
+      welcome.innerHTML='<div class="sn">IntelliSight</div><div class="bb">'
+        +'<p>&#128075; Welcome to IntelliSight. Your dataset is loaded and ready to explore.</p>'
+        +'<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:12px 14px;margin:10px 0;font-size:12px;line-height:1.7">'
+        +'<div style="font-weight:700;color:var(--navy);margin-bottom:4px;font-size:13px">'+esc(DATASET_META.name)+'</div>'
+        +'<div style="color:var(--t2)"><b>Period:</b> '+esc(DATASET_META.period)+'</div>'
+        +'<div style="color:var(--t2)"><b>Size:</b> '+DATASET_META.rows.toLocaleString()+' rows &times; '+DATASET_META.cols.toLocaleString()+' columns</div>'
+        +'<div style="color:var(--t2)"><b>Dimensions:</b> '+esc(DATASET_META.dims)+'</div>'
+        +'<div style="color:var(--t2)"><b>Metrics:</b> '+esc(DATASET_META.mets)+'</div>'
+        +'</div>'
+        +'<p>All analysis runs locally in your browser. No raw data leaves your machine.</p>'
+        +'<p><b>Try asking:</b></p><ul>'
+        +'<li>"What are the top 10 routes by revenue?"</li>'
+        +'<li>"Show monthly booking trend as a line chart"</li>'
+        +'<li>"Compare revenue by loyalty tier"</li>'
+        +'<li>"What day of the week gets the most traffic?"</li>'
+        +'</ul></div>';
+      chMs.appendChild(welcome);
+    }
+  }
+  initApp();
+}
+</script>
 </body>
 </html>
