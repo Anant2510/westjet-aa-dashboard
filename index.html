@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IntelliSight | From Data to Decisive Action</title>
+<title>IntelliSight</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
@@ -56,7 +56,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 .cf-footer-accent{position:absolute;bottom:-40px;right:-20px;width:140px;height:140px;background:#E8613C;border-radius:50%;opacity:.85}
 
 /* Layout */
-.app{display:flex;min-height:calc(100vh - 68px);margin-top:68px}
+.app{display:flex;min-height:calc(100vh - 56px);margin-top:56px}
 
 @media(max-width:1100px){
   .cf-nav{gap:14px}.cf-nav a{font-size:12px}
@@ -78,7 +78,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 .err{color:var(--red);font-size:13px;margin-top:4px;display:none}.err.s{display:block}
 
 /* MAIN APP */
-.sb{width:260px;min-width:260px;background:#fff;border-right:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden;position:sticky;top:68px;height:calc(100vh - 68px)}
+.sb{width:260px;min-width:260px;background:#fff;border-right:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden;position:sticky;top:56px;height:calc(100vh - 56px)}
 .sb-h{padding:14px 16px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
 .sb-h .lg{width:30px;height:30px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
 .sb-h .nm{font-size:14px;font-weight:700;color:var(--navy)}
@@ -92,7 +92,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 .fc:hover{border-color:var(--acc);color:var(--acc)}.fc.sel{background:var(--accg);border-color:var(--acc);color:var(--acc)}
 .fsi{width:100%;padding:6px 10px;background:var(--bg2);border:1px solid var(--brd);border-radius:6px;color:var(--t1);font-size:12px;margin-bottom:6px;font-family:inherit}.fsi:focus{outline:none;border-color:var(--acc)}
 
-.mc{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;height:calc(100vh - 68px);position:sticky;top:68px}
+.mc{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;height:calc(100vh - 56px);position:sticky;top:56px}
 .tb{padding:12px 22px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#fff}
 .tb h2{font-size:17px;font-weight:700;color:var(--navy)}
 .tt{display:flex;gap:3px;background:var(--bg2);padding:3px;border-radius:7px}
@@ -300,26 +300,141 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 </head>
 <body>
 
-<!-- COFORGE HEADER -->
-<header class="cf-header">
-  <a class="cf-logo" href="#">
-    <span class="co">C</span><span class="o2">o</span><span class="forge">forge</span>
-  </a>
-  <nav class="cf-nav">
-    <a href="#">Industries</a>
-    <a href="#">Services</a>
-    <a href="#">Artificial Intelligence</a>
-    <a href="#">About Us</a>
-    <a href="#">Investors</a>
-    <a href="#">Resources</a>
-    <a href="#">Careers</a>
-    <a href="#">Contact Us</a>
-    <svg class="cf-search" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a1628" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-  </nav>
+<!-- XPERION HEADER -->
+<header style="background:#ffffff;border-bottom:1px solid #e8ecf0;padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100">
+  <div style="display:flex;align-items:center;gap:12px">
+    <img src="data:image/png;base64,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" alt="Xperion" style="height:27px;width:auto;display:block">
+    <div style="width:1px;height:18px;background:#d1d9e0"></div>
+    <span style="font-size:14px;font-weight:500;color:#163457;letter-spacing:-0.1px">IntelliSight</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#64748b;background:#f8fafc;padding:5px 12px;border-radius:16px;border:1px solid #e2e8f0">
+    <div style="width:7px;height:7px;border-radius:50%;background:#16a34a;box-shadow:0 0 6px rgba(22,163,74,0.35)"></div>
+    <span>Ready</span>
+  </div>
 </header>
 
+
+<div id="landingPage">
+  <div style="min-height:100vh;display:flex;flex-direction:column;background:#f0f2f5;font-family:'Inter',system-ui,sans-serif;">
+    <div style="flex:1;padding:24px 32px 40px;max-width:1280px;margin:0 auto;width:100%;box-sizing:border-box">
+      <div style="border-radius:16px;overflow:hidden;position:relative;background:linear-gradient(105deg,#5a2d82 0%,#7b3fa0 20%,#a0416a 42%,#c95230 65%,#e8621a 80%,#f07020 100%);padding:40px 48px;min-height:240px;display:flex;align-items:center;margin-bottom:24px">
+        <div style="position:relative;z-index:1;flex:1;max-width:620px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+            <span style="font-size:20px;font-weight:800;color:#ffffff;letter-spacing:-0.3px">IntelliSight</span>
+            <span style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#ffffff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.3px">Accelerator</span>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:20px;font-weight:500">Executive Analytics Accelerator · Privacy-First Intelligence</div>
+          <h1 style="font-size:30px;font-weight:800;color:#ffffff;line-height:1.2;margin-bottom:16px;letter-spacing:-0.5px">AI-Powered Analytics Workspace to Turn<br>Raw Data into Executive Decisions</h1>
+          <p style="font-size:13px;color:rgba(255,255,255,0.82);line-height:1.7;margin-bottom:24px;max-width:520px">IntelliSight is a pre-built analytics accelerator within the Xperion Marketplace. It transforms raw datasets into dashboards, custom reports, strategic recommendations, and conversational answers — all through a clean, privacy-first interface designed for business users and analysts.</p>
+          <div style="display:flex;gap:12px;align-items:center">
+            <button onclick="launchApp()" style="background:#ffffff;color:#082340;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:-0.2px;transition:all 0.2s">Launch IntelliSight →</button>
+            <button onclick="document.getElementById('landingFeatures').scrollIntoView({behavior:'smooth'})" style="background:rgba(255,255,255,0.1);color:#ffffff;border:1px solid rgba(255,255,255,0.3);padding:12px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s">Learn More ↓</button>
+          </div>
+        </div>
+        <div style="position:absolute;right:40px;top:50%;transform:translateY(-50%);width:300px">
+          <div style="background:#ffffff;border-radius:12px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,0.25)">
+            <div style="display:flex;gap:5px;margin-bottom:12px"><div style="width:8px;height:8px;border-radius:50%;background:#ff5f57"></div><div style="width:8px;height:8px;border-radius:50%;background:#febc2e"></div><div style="width:8px;height:8px;border-radius:50%;background:#28c840"></div></div>
+            <div style="font-size:8px;font-weight:700;color:#8898aa;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Conversational Agent</div>
+            <div style="background:linear-gradient(180deg,#f8fafc 0%,#eef4fb 100%);border:1px solid #e2e8f0;border-radius:10px;padding:14px">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+                <div style="width:34px;height:34px;border-radius:10px;background:#082340;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800">AI</div>
+                <div>
+                  <div style="font-size:11px;font-weight:700;color:#082340;line-height:1.1">IntelliSight Agent</div>
+                  <div style="font-size:9px;color:#64748b;margin-top:2px">Ask questions. Get charts, insights, and actions.</div>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+                <div style="max-width:78%;background:#082340;color:#fff;padding:8px 10px;border-radius:12px 12px 4px 12px;font-size:9px;line-height:1.45">What changed in revenue last month, and where should I focus?</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px">
+                <div style="width:24px;height:24px;border-radius:8px;background:#F15B40;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;flex-shrink:0">iS</div>
+                <div style="flex:1;background:#ffffff;border:1px solid #e2e8f0;padding:10px 10px 9px;border-radius:12px 12px 12px 4px">
+                  <div style="font-size:9px;color:#475569;line-height:1.45;margin-bottom:8px">Revenue rose <strong style="color:#082340">12.4%</strong> MoM. West region led growth, while churn risk increased for low-frequency buyers.</div>
+                  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">
+                    <div style="background:#ecfdf5;border:1px solid #bbf7d0;border-radius:6px;padding:5px 4px;text-align:center"><div style="font-size:8px;color:#16a34a;font-weight:700">Revenue</div><div style="font-size:10px;color:#082340;font-weight:800">+12%</div></div>
+                    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:5px 4px;text-align:center"><div style="font-size:8px;color:#2563eb;font-weight:700">Orders</div><div style="font-size:10px;color:#082340;font-weight:800">18.2K</div></div>
+                    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;padding:5px 4px;text-align:center"><div style="font-size:8px;color:#ea580c;font-weight:700">Focus</div><div style="font-size:10px;color:#082340;font-weight:800">Churn</div></div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <span style="font-size:8px;color:#082340;background:#ffffff;border:1px solid #dbe3ee;padding:5px 8px;border-radius:999px">Summarize trends</span>
+                <span style="font-size:8px;color:#082340;background:#ffffff;border:1px solid #dbe3ee;padding:5px 8px;border-radius:999px">Explain churn</span>
+                <span style="font-size:8px;color:#082340;background:#ffffff;border:1px solid #dbe3ee;padding:5px 8px;border-radius:999px">Build a chart</span>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#ffffff;border-radius:12px;border:1px solid #e8ecf0;padding:16px 8px;margin-bottom:24px;display:grid;grid-template-columns:repeat(6,1fr)">
+        <div style="text-align:center;padding:8px 12px;border-right:1px solid #f0f2f5"><div style="font-size:22px;font-weight:800;color:#F15B40">100%</div><div style="font-size:11px;color:#94a3b8;margin-top:3px;line-height:1.3">In-browser processing</div></div>
+        <div style="text-align:center;padding:8px 12px;border-right:1px solid #f0f2f5"><div style="font-size:22px;font-weight:800;color:#082340">10K+</div><div style="font-size:11px;color:#94a3b8;margin-top:3px;line-height:1.3">Rows analyzed quickly</div></div>
+        <div style="text-align:center;padding:8px 12px;border-right:1px solid #f0f2f5"><div style="font-size:22px;font-weight:800;color:#F15B40">4</div><div style="font-size:11px;color:#94a3b8;margin-top:3px;line-height:1.3">Core analytics capabilities</div></div>
+        <div style="text-align:center;padding:8px 12px;border-right:1px solid #f0f2f5"><div style="font-size:22px;font-weight:800;color:#16a34a">0</div><div style="font-size:11px;color:#94a3b8;margin-top:3px;line-height:1.3">Server-side data storage</div></div>
+        <div style="text-align:center;padding:8px 12px;border-right:1px solid #f0f2f5"><div style="font-size:22px;font-weight:800;color:#082340">&lt;5s</div><div style="font-size:11px;color:#94a3b8;margin-top:3px;line-height:1.3">Time to first insight</div></div>
+        <div style="text-align:center;padding:8px 12px"><div style="font-size:22px;font-weight:800;color:#F15B40">24/7</div><div style="font-size:11px;color:#94a3b8;margin-top:3px;line-height:1.3">Self-service analytics</div></div>
+      </div>
+
+      <div id="landingFeatures" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+        <div style="background:#ffffff;border:1px solid #e8ecf0;border-radius:12px;padding:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#F15B40;text-transform:uppercase;margin-bottom:10px">About This Accelerator</div>
+          <h3 style="font-size:17px;font-weight:800;color:#082340;margin-bottom:12px;letter-spacing:-0.3px">What is IntelliSight?</h3>
+          <p style="font-size:13px;color:#475569;line-height:1.75;margin-bottom:12px">IntelliSight is a pre-built AI analytics accelerator within the <strong style="color:#082340">Xperion Marketplace</strong> — designed to turn raw business data into a decision-ready experience.</p>
+          <p style="font-size:13px;color:#475569;line-height:1.75;margin-bottom:12px">It combines conversational analytics, dashboarding, custom report generation, and recommendation logic in a single interface so business teams can move from data to action faster.</p>
+          <p style="font-size:13px;color:#475569;line-height:1.75">The result is <strong style="color:#082340">faster analysis, sharper business visibility, and privacy-first execution</strong> without a heavy setup burden.</p>
+        </div>
+        <div style="background:#ffffff;border:1px solid #e8ecf0;border-radius:12px;padding:24px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#F15B40;text-transform:uppercase;margin-bottom:10px">Business Use Cases</div>
+          <h3 style="font-size:17px;font-weight:800;color:#082340;margin-bottom:16px;letter-spacing:-0.3px">Built for decision makers and analysts</h3>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:#fafbfc;border-radius:8px;border-left:3px solid #F15B40"><span style="font-size:18px;flex-shrink:0">📊</span><div><div style="font-size:13px;font-weight:700;color:#082340;margin-bottom:2px">Executive KPI visibility</div><div style="font-size:12px;color:#64748b;line-height:1.5">Auto-generate summaries, trends, and high-priority actions from performance data.</div></div></div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:#fafbfc;border-radius:8px;border-left:3px solid #082340"><span style="font-size:18px;flex-shrink:0">💬</span><div><div style="font-size:13px;font-weight:700;color:#082340;margin-bottom:2px">Conversational analytics</div><div style="font-size:12px;color:#64748b;line-height:1.5">Ask natural-language questions and get data-backed answers with charts and tables.</div></div></div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:#fafbfc;border-radius:8px;border-left:3px solid #16a34a"><span style="font-size:18px;flex-shrink:0">📈</span><div><div style="font-size:13px;font-weight:700;color:#082340;margin-bottom:2px">Custom reporting</div><div style="font-size:12px;color:#64748b;line-height:1.5">Build focused reports on dimensions and metrics without waiting for manual dashboard development.</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#ffffff;border:1px solid #e8ecf0;border-radius:12px;overflow:hidden;margin-bottom:20px">
+        <div style="padding:20px 24px;border-bottom:1px solid #f0f2f5">
+          <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#F15B40;text-transform:uppercase;margin-bottom:4px">How It Works</div>
+          <h2 style="font-size:17px;font-weight:800;color:#082340;letter-spacing:-0.3px">Three analytics engines working together</h2>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr">
+          <div style="padding:24px"><div style="width:40px;height:40px;background:#fff4f1;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:20px">🧠</div><div style="font-size:10px;font-weight:700;color:#F15B40;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Engine 01</div><div style="font-size:14px;font-weight:700;color:#082340;margin-bottom:8px">Data interpreter</div><div style="font-size:12px;color:#64748b;line-height:1.6">Reads and profiles source data, detects relevant dimensions and metrics, and prepares the analytical context.</div><div style="margin-top:10px;font-size:11px;font-weight:600;color:#94a3b8">→ Structured data understanding</div></div>
+          <div style="display:flex;align-items:center;padding:0 4px;color:#e2e8f0;font-size:16px">▸</div>
+          <div style="padding:24px;border-left:1px solid #f0f2f5;border-right:1px solid #f0f2f5"><div style="width:40px;height:40px;background:#fff4f1;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:20px">📊</div><div style="font-size:10px;font-weight:700;color:#F15B40;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Engine 02</div><div style="font-size:14px;font-weight:700;color:#082340;margin-bottom:8px">Analytics engine</div><div style="font-size:12px;color:#64748b;line-height:1.6">Computes KPI summaries, trend analysis, breakdowns, and chart-ready outputs directly from the dataset.</div><div style="margin-top:10px;font-size:11px;font-weight:600;color:#94a3b8">→ Fast insight generation</div></div>
+          <div style="display:flex;align-items:center;padding:0 4px;color:#e2e8f0;font-size:16px">▸</div>
+          <div style="padding:24px"><div style="width:40px;height:40px;background:#fff4f1;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:20px">🎯</div><div style="font-size:10px;font-weight:700;color:#F15B40;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Engine 03</div><div style="font-size:14px;font-weight:700;color:#082340;margin-bottom:8px">Decision layer</div><div style="font-size:12px;color:#64748b;line-height:1.6">Turns computed findings into recommendations, business actions, and conversational answers for stakeholders.</div><div style="margin-top:10px;font-size:11px;font-weight:600;color:#94a3b8">→ Actionable next steps</div></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:#ffffff;border:1px solid #e8ecf0;border-radius:10px;padding:16px;display:flex;gap:10px"><span style="font-size:18px;flex-shrink:0">📋</span><div><div style="font-size:13px;font-weight:700;color:#082340;margin-bottom:3px">Executive summaries</div><div style="font-size:11px;color:#64748b;line-height:1.5">Surface what matters most for business and leadership reviews.</div></div></div>
+          <div style="background:#ffffff;border:1px solid #e8ecf0;border-radius:10px;padding:16px;display:flex;gap:10px"><span style="font-size:18px;flex-shrink:0">🧩</span><div><div style="font-size:13px;font-weight:700;color:#082340;margin-bottom:3px">Flexible ingestion</div><div style="font-size:11px;color:#64748b;line-height:1.5">Load sample data or connect your own source to begin analysis.</div></div></div>
+          <div style="background:#ffffff;border:1px solid #e8ecf0;border-radius:10px;padding:16px;display:flex;gap:10px"><span style="font-size:18px;flex-shrink:0">💡</span><div><div style="font-size:13px;font-weight:700;color:#082340;margin-bottom:3px">AI recommendations</div><div style="font-size:11px;color:#64748b;line-height:1.5">Translate trends into prioritized next actions for the business.</div></div></div>
+          <div style="background:#ffffff;border:1px solid #e8ecf0;border-radius:10px;padding:16px;display:flex;gap:10px"><span style="font-size:18px;flex-shrink:0">🔐</span><div><div style="font-size:13px;font-weight:700;color:#082340;margin-bottom:3px">Privacy first</div><div style="font-size:11px;color:#64748b;line-height:1.5">Keep analytics processing local and avoid unnecessary server-side storage.</div></div></div>
+        </div>
+        <div style="background:linear-gradient(120deg,#082340 0%,#0d3a6b 60%,#1a3a50 100%);border-radius:12px;padding:28px 28px;display:flex;flex-direction:column;justify-content:center">
+          <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(241,91,64,0.9);text-transform:uppercase;margin-bottom:8px">Xperion Marketplace</div>
+          <div style="font-size:20px;font-weight:800;color:#ffffff;margin-bottom:8px;letter-spacing:-0.3px">Launch IntelliSight</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:20px;line-height:1.5">A privacy-first analytics accelerator for dashboards, insights, recommendations, and chat.</div>
+          <button onclick="launchApp()" style="background:#F15B40;color:#fff;border:none;padding:13px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;align-self:flex-start;transition:all 0.2s">Launch IntelliSight →</button>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid #e8ecf0">
+        <div style="font-size:11px;color:#94a3b8">© 2026 Xperion · IntelliSight</div>
+        <div style="font-size:11px;color:#94a3b8">Privacy-first analytics accelerator</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MAIN APP — visible from the start, chat tab active -->
-<div class="app" id="ap">
+<div class="app hid" id="ap">
 <div class="sb">
 <div class="sb-h"><div class="lg" style="background:#0a1628;font-size:11px"><span>iS</span></div><div class="nm">IntelliSight</div></div>
 <div class="sb-n">
@@ -354,270 +469,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 <div class="chtc">
 <div class="chm" id="chMs">
 
-<!-- LANDING PAGE — VoyagerAI format + Option C architecture -->
-<div id="setupCard" class="lp">
-
-  <!-- HERO — VoyagerAI style -->
-  <div class="lp-hero">
-    <div class="lp-hero-top">
-      <div class="lp-hero-left">
-        <div class="lp-hero-badge">
-          <div class="lp-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
-          <div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span class="lp-badge-name">IntelliSight</span>
-              <span class="lp-badge-tag">Agent</span>
-            </div>
-            <div class="lp-badge-sub">Conversational Analytics &middot; Adobe Experience Cloud</div>
-          </div>
-        </div>
-        <h1><span>Conversational</span> Analytics Agent for Data-Driven Decisions at Scale</h1>
-        <p class="lp-sub">IntelliSight is a privacy-first analytics agent that transforms raw Adobe Analytics datasets into executive dashboards, strategic recommendations, and on-demand insights — all running 100% in your browser.</p>
-        <div class="lp-hero-ctas">
-          <a class="lp-hero-cta primary" onclick="document.getElementById('autoLoadBar').scrollIntoView({behavior:'smooth'})">&#9889; Explore Demo Data</a>
-          <a class="lp-hero-cta outline" onclick="document.querySelector('.lp-arch').scrollIntoView({behavior:'smooth'})">View Architecture &rarr;</a>
-        </div>
-      </div>
-      <div class="lp-hero-right">
-        <div>
-          <div class="lp-hero-logo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-          </div>
-          <div class="lp-hero-logo-label">
-            <div class="name">IntelliSight</div>
-            <div class="sub">Analytics Agent</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- KPI STRIP -->
-  <div class="lp-kpis">
-    <div class="lp-kpi"><div class="lp-kpi-val" style="color:#E8613C">100%</div><div class="lp-kpi-label">In-browser processing</div></div>
-    <div class="lp-kpi"><div class="lp-kpi-val" style="color:#00b4d8">10K+</div><div class="lp-kpi-label">Rows analyzed per query</div></div>
-    <div class="lp-kpi"><div class="lp-kpi-val" style="color:#E8613C">302</div><div class="lp-kpi-label">Columns auto-classified</div></div>
-    <div class="lp-kpi"><div class="lp-kpi-val" style="color:#7F77DD">4</div><div class="lp-kpi-label">Intelligent capabilities</div></div>
-    <div class="lp-kpi"><div class="lp-kpi-val" style="color:#22c55e">0</div><div class="lp-kpi-label">Data sent to servers</div></div>
-    <div class="lp-kpi"><div class="lp-kpi-val" style="color:#E8613C">&lt;5s</div><div class="lp-kpi-label">Time to first insight</div></div>
-  </div>
-
-  <!-- ARCHITECTURE DIAGRAM -->
-  <div class="lp-arch">
-    <div class="lp-sh">Architecture</div>
-    <div class="lp-h2">How IntelliSight works</div>
-    <p class="lp-p">A layered conversational agent that keeps your data private while delivering enterprise-grade analytics.</p>
-    <svg class="lp-arch-svg" viewBox="0 0 640 340">
-      <defs>
-        <marker id="aa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-          <path d="M2 1L8 5L2 9" fill="none" stroke="#5a7a9a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </marker>
-      </defs>
-      <!-- Experience layer -->
-      <rect x="40" y="12" width="560" height="44" rx="10" fill="#E8613C" fill-opacity=".08" stroke="#E8613C" stroke-width=".5"/>
-      <text x="320" y="30" text-anchor="middle" fill="#E8613C" font-size="12" font-weight="700" font-family="Inter,sans-serif">EXPERIENCE LAYER</text>
-      <text x="320" y="46" text-anchor="middle" fill="#99553a" font-size="10" font-family="Inter,sans-serif">Natural language chat &bull; Inline charts &bull; Markdown tables</text>
-      <!-- Arrows -->
-      <line x1="200" y1="56" x2="200" y2="74" stroke="#8492a6" stroke-width=".5" marker-end="url(#aa)"/>
-      <line x1="320" y1="56" x2="320" y2="74" stroke="#8492a6" stroke-width=".5" marker-end="url(#aa)"/>
-      <line x1="440" y1="56" x2="440" y2="74" stroke="#8492a6" stroke-width=".5" marker-end="url(#aa)"/>
-      <!-- Agent layer container -->
-      <rect x="40" y="78" width="560" height="96" rx="12" fill="none" stroke="#0a1628" stroke-width=".5" stroke-dasharray="4 3"/>
-      <text x="60" y="96" fill="#4a5568" font-size="11" font-weight="700" font-family="Inter,sans-serif" letter-spacing=".5">INTELLIGENT AGENT LAYER</text>
-      <!-- 3 sub-agents -->
-      <rect x="60" y="108" width="160" height="52" rx="8" fill="#082340" fill-opacity=".06" stroke="#0a1628" stroke-width=".5"/>
-      <text x="140" y="128" text-anchor="middle" fill="#0a1628" font-size="12" font-weight="600" font-family="Inter,sans-serif">Code synthesis</text>
-      <text x="140" y="144" text-anchor="middle" fill="#8492a6" font-size="10" font-family="Inter,sans-serif">Generates analysis scripts</text>
-      <rect x="240" y="108" width="160" height="52" rx="8" fill="#082340" fill-opacity=".06" stroke="#0a1628" stroke-width=".5"/>
-      <text x="320" y="128" text-anchor="middle" fill="#0a1628" font-size="12" font-weight="600" font-family="Inter,sans-serif">Result interpreter</text>
-      <text x="320" y="144" text-anchor="middle" fill="#8492a6" font-size="10" font-family="Inter,sans-serif">Explains findings</text>
-      <rect x="420" y="108" width="160" height="52" rx="8" fill="#082340" fill-opacity=".06" stroke="#0a1628" stroke-width=".5"/>
-      <text x="500" y="128" text-anchor="middle" fill="#0a1628" font-size="12" font-weight="600" font-family="Inter,sans-serif">Strategy engine</text>
-      <text x="500" y="144" text-anchor="middle" fill="#8492a6" font-size="10" font-family="Inter,sans-serif">Generates actions</text>
-      <!-- Arrow -->
-      <line x1="320" y1="174" x2="320" y2="194" stroke="#8492a6" stroke-width=".5" marker-end="url(#aa)"/>
-      <!-- Compute engine -->
-      <rect x="40" y="198" width="560" height="44" rx="10" fill="#6c3fbf" fill-opacity=".06" stroke="#7F77DD" stroke-width=".5"/>
-      <text x="320" y="216" text-anchor="middle" fill="#534AB7" font-size="12" font-weight="700" font-family="Inter,sans-serif">IN-BROWSER COMPUTE ENGINE</text>
-      <text x="320" y="232" text-anchor="middle" fill="#7F77DD" font-size="10" font-family="Inter,sans-serif">All analysis runs locally &bull; Raw data never leaves your machine</text>
-      <!-- Arrow -->
-      <line x1="320" y1="242" x2="320" y2="262" stroke="#8492a6" stroke-width=".5" marker-end="url(#aa)"/>
-      <!-- Data layer -->
-      <rect x="40" y="266" width="560" height="44" rx="10" fill="#0a1628" fill-opacity=".05" stroke="#0a1628" stroke-width=".5"/>
-      <text x="320" y="284" text-anchor="middle" fill="#0a1628" font-size="12" font-weight="700" font-family="Inter,sans-serif">DATA LAYER</text>
-      <text x="320" y="300" text-anchor="middle" fill="#8492a6" font-size="10" font-family="Inter,sans-serif">CSV upload or cloud storage &bull; Parsed and indexed in-browser</text>
-      <!-- Output icons -->
-      <rect x="60" y="322" width="110" height="12" rx="6" fill="#E8613C" fill-opacity=".1"/>
-      <text x="115" y="332" text-anchor="middle" fill="#E8613C" font-size="9" font-weight="600" font-family="Inter,sans-serif">DASHBOARD</text>
-      <rect x="188" y="322" width="110" height="12" rx="6" fill="#00b4d8" fill-opacity=".12"/>
-      <text x="243" y="332" text-anchor="middle" fill="#0096b7" font-size="9" font-weight="600" font-family="Inter,sans-serif">CHAT</text>
-      <rect x="316" y="322" width="110" height="12" rx="6" fill="#7F77DD" fill-opacity=".1"/>
-      <text x="371" y="332" text-anchor="middle" fill="#534AB7" font-size="9" font-weight="600" font-family="Inter,sans-serif">INSIGHTS</text>
-      <rect x="444" y="322" width="140" height="12" rx="6" fill="#0a1628" fill-opacity=".06"/>
-      <text x="514" y="332" text-anchor="middle" fill="#4a5568" font-size="9" font-weight="600" font-family="Inter,sans-serif">CUSTOM REPORTS</text>
-    </svg>
-  </div>
-
-  <!-- FEATURE CARDS -->
-  <div class="lp-feat">
-    <div class="lp-feat-grid">
-      <div class="lp-fc">
-        <div class="lp-fc-icon" style="background:rgba(232,97,60,.08)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8613C" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        </div>
-        <h3>Executive dashboard</h3>
-        <p>Auto-generated KPIs, trend charts, and dimension breakdowns from your raw data.</p>
-      </div>
-      <div class="lp-fc">
-        <div class="lp-fc-icon" style="background:rgba(0,180,216,.08)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00b4d8" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        </div>
-        <h3>Analytics chat</h3>
-        <p>Ask questions in plain English. Get answers with inline charts computed from your full dataset.</p>
-      </div>
-      <div class="lp-fc">
-        <div class="lp-fc-icon" style="background:rgba(127,119,221,.08)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7F77DD" stroke-width="2"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 00-4 12.9V17h8v-2.1A7 7 0 0012 2z"/></svg>
-        </div>
-        <h3>Strategic recommendations</h3>
-        <p>Priority-ranked insights with YoY analysis, conversion funnel, and channel optimization.</p>
-      </div>
-      <div class="lp-fc">
-        <div class="lp-fc-icon" style="background:rgba(34,197,94,.08)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a1628" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        </div>
-        <h3>Custom reports</h3>
-        <p>Select any dimension or metric from the sidebar to build your own visualizations on demand.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- PRIVACY BAR -->
-  <div class="lp-priv">
-    <div class="lp-priv-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      100% in-browser processing
-    </div>
-    <div class="lp-priv-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      Raw data never leaves your machine
-    </div>
-    <div class="lp-priv-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      No server-side storage
-    </div>
-  </div>
-
-  <!-- AUTO-LOAD DATA SECTION -->
-  <div class="lp-connect">
-    <div class="lp-connect-inner" style="max-width:100%">
-
-      <!-- KEY SECTION — hidden when key is pre-configured -->
-      <div id="keySectionWrap">
-        <div class="setup-section">
-          <div class="setup-section-title">
-            <div class="setup-section-num">1</div>
-            <div class="setup-section-label">Connect your engine</div>
-          </div>
-          <label>Secret Key</label>
-          <input type="password" id="ak" placeholder="Enter key..." autocomplete="off">
-          <div class="err" id="ae"></div>
-          <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
-            <button class="btn btn-sm" id="vb" onclick="doValidate()">Validate Key</button>
-            <span class="status-pill pending" id="keyStatus"><span class="status-dot"></span> Awaiting key</span>
-          </div>
-          <div id="changeKeyRow" style="display:none;margin-top:8px">
-            <button onclick="forgetKey()" style="background:none;border:none;color:var(--acc);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;padding:0">&#x21bb; Change stored key</button>
-          </div>
-        </div>
-        <div class="setup-divider"><span>then</span></div>
-      </div>
-      <!-- END KEY SECTION -->
-
-      <!-- Auto-load: shows progress, then dataset summary card -->
-      <div id="autoLoadBar" class="lp-autoload">
-        <div class="lp-autoload-row">
-          <div class="lp-autoload-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8613C" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </div>
-          <div class="lp-autoload-text">
-            <div id="autoLoadLabel" style="font-size:13px;font-weight:600;color:var(--navy)">Loading sample dataset&hellip;</div>
-            <div id="autoLoadSub" style="font-size:11px;color:var(--t3);margin-top:2px">Fetching from repository</div>
-          </div>
-        </div>
-        <div class="lp-autoload-track"><div class="lp-autoload-fill" id="autoLoadFill"></div></div>
-      </div>
-
-      <!-- Dataset summary card — shown after load -->
-      <div id="datasetCard" class="ds-card" style="display:none">
-        <div class="ds-card-header">
-          <div class="ds-card-badge">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            Sample dataset loaded
-          </div>
-        </div>
-        <table class="ds-card-table">
-          <tr><td class="ds-card-label">Dataset</td><td class="ds-card-value" id="dsName">WestJet — Adobe Analytics Data Warehouse Export</td></tr>
-          <tr><td class="ds-card-label">Source</td><td class="ds-card-value" id="dsSource">Adobe Analytics (Data Warehouse)</td></tr>
-          <tr><td class="ds-card-label">Period</td><td class="ds-card-value" id="dsPeriod">—</td></tr>
-          <tr><td class="ds-card-label">Rows</td><td class="ds-card-value" id="dsRows">—</td></tr>
-          <tr><td class="ds-card-label">Columns</td><td class="ds-card-value" id="dsCols">—</td></tr>
-          <tr><td class="ds-card-label">Key dimensions</td><td class="ds-card-value" id="dsDims">—</td></tr>
-          <tr><td class="ds-card-label">Key metrics</td><td class="ds-card-value" id="dsMets">—</td></tr>
-        </table>
-        <div class="ds-card-actions">
-          <button class="lp-launch" id="launchBtn" disabled onclick="doLaunch()">Explore this dataset &rarr;</button>
-          <div class="ds-card-alt">
-            <span style="color:var(--t3);font-size:12px">or</span>
-            <button onclick="toggleCustomData()" id="customDataToggle" class="ds-card-alt-btn">load different data</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Collapsible: load your own data -->
-      <div id="customDataPanel" style="display:none;margin-top:14px;padding:18px;background:#fff;border:1px solid var(--brd);border-radius:10px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <span style="font-size:13px;font-weight:600;color:var(--navy)">Load your own dataset</span>
-          <button onclick="toggleCustomData()" style="background:none;border:none;color:var(--t3);font-size:18px;cursor:pointer;line-height:1">&times;</button>
-        </div>
-        <div class="ds-tabs">
-          <button class="ds-tab active" onclick="switchDS('upload',this)">&#128193; Upload File</button>
-          <button class="ds-tab" onclick="switchDS('cloud',this)">&#9729;&#65039; Cloud URL</button>
-        </div>
-        <div class="ds-panel active" id="ds-upload">
-          <div class="fd" id="fd" onclick="document.getElementById('fi').click()">
-            <div class="ic">&#128196;</div>
-            <div class="lb">Drop CSV / TSV file here or <strong>click to browse</strong></div>
-          </div>
-          <input type="file" id="fi" accept=".csv,.tsv,.txt" style="display:none">
-          <div class="fi-status" id="fin"></div>
-          <div class="pb" id="pb"><div class="fl" id="pf"></div></div>
-        </div>
-        <div class="ds-panel" id="ds-cloud">
-          <div class="cloud-info">
-            <b>Provide a direct URL</b> to a CSV file on cloud storage (S3, Azure, GCS, or any public link).
-            <div class="cloud-examples">
-              <span class="cloud-ex">S3</span>
-              <span class="cloud-ex">Azure Blob</span>
-              <span class="cloud-ex">GCS</span>
-              <span class="cloud-ex">SharePoint</span>
-            </div>
-          </div>
-          <label>File URL</label>
-          <input type="url" id="cloudUrl" placeholder="https://your-bucket.s3.amazonaws.com/data.csv">
-          <div class="err" id="cloudErr"></div>
-          <button class="btn btn-sm" id="cloudBtn" onclick="doCloudFetch()" style="margin-top:8px">Fetch File</button>
-          <div class="fi-status" id="cloudFin"></div>
-          <div class="pb" id="cloudPb"><div class="fl" id="cloudPf"></div></div>
-        </div>
-        <span class="status-pill pending" id="dataStatus" style="margin-top:10px"><span class="status-dot"></span> No data linked</span>
-      </div>
-
-    </div>
-  </div>
-
-</div>
-<!-- END LANDING PAGE -->
+<div id="setupCard"></div>
 
 </div>
 <div class="cia" id="chatInputArea" style="display:none">
@@ -1538,41 +1390,6 @@ async function genRecs(){
 document.getElementById('chi').oninput=function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'};
 </script>
 
-<!-- COFORGE FOOTER -->
-<footer class="cf-footer">
-  <div class="cf-footer-main">
-    <div class="cf-footer-col">
-      <a href="#">Privacy Policy</a>
-      <a href="#">Cookie Policy</a>
-      <a href="#">Terms of Use</a>
-    </div>
-    <div class="cf-footer-col">
-      <a href="#">Contact Us</a>
-      <a href="#">Careers</a>
-      <a href="#">Investors</a>
-      <a href="#">Resources</a>
-    </div>
-    <div class="cf-footer-col cf-footer-social-col">
-      <p class="cf-social-text">We are social.<br>Connect with us.</p>
-      <div class="cf-social-icons">
-        <a class="social-icon" href="#" title="Facebook">f</a>
-        <a class="social-icon" href="#" title="X">X</a>
-        <a class="social-icon" href="#" title="LinkedIn">in</a>
-        <a class="social-icon yt" href="#" title="YouTube">&#9654;</a>
-        <a class="social-icon" href="#" title="Instagram">&#9678;</a>
-      </div>
-    </div>
-  </div>
-  <div class="cf-footer-legal">
-    <p class="cf-nmls">Mortgage Licensing - NMLS ID.</p>
-    <p>Coforge BPS America Inc. (NMLS ID 1916526)</p>
-    <p>Coforge BPS Philippines, Inc. (NMLS ID 1617487)</p>
-    <p>Coforge Business Process Solutions Private Limited (NMLS ID 2023047)</p>
-  </div>
-  <div class="cf-footer-bottom">
-    <span>&copy; Coforge, 2026</span>
-    <div class="cf-footer-accent"></div>
-  </div>
-</footer>
+<script>function launchApp(){var lp=document.getElementById("landingPage"), ap=document.getElementById("ap"); if(lp) lp.classList.add("hid"); if(ap) ap.classList.remove("hid"); window.scrollTo({top:0,behavior:"smooth"});}</script>
 </body>
 </html>
