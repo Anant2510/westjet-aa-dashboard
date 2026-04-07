@@ -132,6 +132,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 .cty span{width:6px;height:6px;background:var(--acc);border-radius:50%;animation:bl 1.4s infinite both}
 .cty span:nth-child(2){animation-delay:.2s}.cty span:nth-child(3){animation-delay:.4s}
 @keyframes bl{0%,80%,100%{opacity:.3}40%{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{to{transform:rotate(360deg)}}
 .cia{padding:12px 22px;border-top:1px solid var(--brd);display:flex;gap:10px;flex-shrink:0;min-height:60px;background:#fff}
 .cia textarea{flex:1;padding:10px 13px;background:var(--bg2);border:1px solid var(--brd);border-radius:9px;color:var(--t1);font-size:13.5px;resize:none;font-family:inherit;min-height:42px;max-height:120px}
 .cia textarea:focus{outline:none;border-color:var(--acc)}
@@ -410,6 +412,48 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
         </div>
       </div>
 
+      <!-- SAMPLE DATASET INFO -->
+      <div id="lpDatasetSection" style="background:#ffffff;border:1px solid #e8ecf0;border-radius:12px;overflow:hidden;margin-bottom:20px">
+        <div style="padding:16px 24px;border-bottom:1px solid #f0f2f5;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#F15B40;text-transform:uppercase;margin-bottom:3px">Sample Dataset</div>
+            <div style="font-size:15px;font-weight:800;color:#082340;letter-spacing:-0.2px">Pre-loaded data ready to explore</div>
+          </div>
+          <div id="lpDataStatus" style="display:flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;background:#fef9f0;border:1px solid #fed7aa;font-size:11px;font-weight:600;color:#ea580c">
+            <div style="width:7px;height:7px;border-radius:50%;background:#ea580c;animation:pulse 1.5s infinite"></div>
+            Loading...
+          </div>
+        </div>
+        <div id="lpDatasetInfo" style="padding:20px 24px">
+          <div style="display:flex;align-items:center;gap:12px;color:#94a3b8;font-size:13px">
+            <div style="width:20px;height:20px;border:2px solid #e2e8f0;border-top-color:#F15B40;border-radius:50%;animation:spin 0.8s linear infinite"></div>
+            Fetching sample dataset from repository...
+          </div>
+        </div>
+        <div id="lpLoadOwnData" style="padding:12px 24px;background:#fafbfc;border-top:1px solid #f0f2f5;display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:12px;color:#94a3b8">Want to analyze your own data instead?</div>
+          <button onclick="toggleLpCustom()" id="lpCustomToggle" style="background:none;border:1px solid #e2e8f0;color:#475569;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s">Upload or fetch from cloud</button>
+        </div>
+        <div id="lpCustomPanel" style="display:none;padding:20px 24px;border-top:1px solid #f0f2f5;background:#fafbfc">
+          <div style="display:flex;gap:12px;margin-bottom:14px">
+            <div style="flex:1">
+              <div style="font-size:11px;font-weight:600;color:#475569;margin-bottom:6px">Upload from computer</div>
+              <div id="lpDropZone" onclick="document.getElementById('lpFileInput').click()" style="border:2px dashed #dde1ea;border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;font-size:12px;color:#94a3b8">
+                Drop CSV here or <strong style="color:#F15B40">browse</strong>
+              </div>
+              <input type="file" id="lpFileInput" accept=".csv,.tsv,.txt" style="display:none">
+              <div id="lpFileStatus" style="font-size:11px;margin-top:6px;display:none"></div>
+            </div>
+            <div style="flex:1">
+              <div style="font-size:11px;font-weight:600;color:#475569;margin-bottom:6px">Fetch from cloud URL</div>
+              <input type="url" id="lpCloudUrl" placeholder="https://bucket.s3.amazonaws.com/data.csv" style="width:100%;padding:9px 12px;border:1px solid #dde1ea;border-radius:8px;font-size:12px;font-family:inherit;margin-bottom:6px;box-sizing:border-box">
+              <button onclick="lpCloudFetch()" id="lpCloudBtn" style="background:#082340;color:#fff;border:none;padding:7px 16px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Fetch</button>
+              <span id="lpCloudStatus" style="font-size:11px;color:#94a3b8;margin-left:8px"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div style="background:#ffffff;border:1px solid #e8ecf0;border-radius:10px;padding:16px;display:flex;gap:10px"><span style="font-size:18px;flex-shrink:0">📋</span><div><div style="font-size:13px;font-weight:700;color:#082340;margin-bottom:3px">Executive summaries</div><div style="font-size:11px;color:#64748b;line-height:1.5">Surface what matters most for business and leadership reviews.</div></div></div>
@@ -633,14 +677,101 @@ function autoFetchDataset(){
         DATA_LOADED=true;
         buildDatasetMeta('WestJet \u2014 Adobe Analytics Data Warehouse Export');
         console.log('Dataset loaded: '+DATA.length+' rows');
+        updateLpDatasetCard();
       },
-      error:function(err){console.error('Parse error:',err.message)}
+      error:function(err){console.error('Parse error:',err.message);showLpDataError('Parse error: '+err.message)}
     });
-  }).catch(function(e){console.error('Fetch error:',e.message)});
+  }).catch(function(e){console.error('Fetch error:',e.message);showLpDataError(e.message)});
+}
+
+// Update the landing page dataset card with loaded data info
+function updateLpDatasetCard(){
+  var status=document.getElementById('lpDataStatus');
+  if(status){
+    status.style.background='#ecfdf5';status.style.borderColor='#bbf7d0';status.style.color='#16a34a';
+    status.innerHTML='<div style="width:7px;height:7px;border-radius:50%;background:#16a34a"></div> Ready';
+  }
+  var info=document.getElementById('lpDatasetInfo');
+  if(info){
+    info.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">'
+      +'<div><div style="font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Dataset</div><div style="font-size:13px;font-weight:600;color:#082340">'+esc(DATASET_META.name)+'</div><div style="font-size:11px;color:#64748b;margin-top:2px">'+esc(DATASET_META.source)+'</div></div>'
+      +'<div><div style="font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Period</div><div style="font-size:13px;font-weight:600;color:#082340">'+esc(DATASET_META.period)+'</div></div>'
+      +'<div><div style="font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Size</div><div style="font-size:13px;font-weight:600;color:#082340">'+DATASET_META.rows.toLocaleString()+' rows &times; '+DATASET_META.cols.toLocaleString()+' columns</div></div>'
+      +'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px;padding-top:14px;border-top:1px solid #f0f2f5">'
+      +'<div><div style="font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Key dimensions</div><div style="font-size:12px;color:#475569;line-height:1.5">'+esc(DATASET_META.dims)+'</div></div>'
+      +'<div><div style="font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Key metrics</div><div style="font-size:12px;color:#475569;line-height:1.5">'+esc(DATASET_META.mets)+'</div></div>'
+      +'</div>';
+  }
+}
+function showLpDataError(msg){
+  var status=document.getElementById('lpDataStatus');
+  if(status){status.style.background='#fef2f2';status.style.borderColor='#fecaca';status.style.color='#dc2626';status.innerHTML='<div style="width:7px;height:7px;border-radius:50%;background:#dc2626"></div> Error';}
+  var info=document.getElementById('lpDatasetInfo');
+  if(info) info.innerHTML='<div style="color:#dc2626;font-size:12px">'+esc(msg)+' — use the option below to load your own data.</div>';
+  var panel=document.getElementById('lpCustomPanel');
+  if(panel) panel.style.display='';
+}
+
+// Toggle custom data panel on landing page
+function toggleLpCustom(){
+  var panel=document.getElementById('lpCustomPanel');
+  if(panel) panel.style.display=panel.style.display==='none'?'':'none';
+}
+
+// Landing page file upload
+function lpFileUpload(f){
+  if(!f)return;
+  var status=document.getElementById('lpFileStatus');
+  if(status){status.style.display='block';status.style.color='#475569';status.textContent='Parsing '+f.name+'...';}
+  Papa.parse(f,{header:true,skipEmptyLines:true,dynamicTyping:true,
+    complete:function(res){
+      DATA=res.data.filter(function(r){return Object.values(r).some(function(v){return v!==null&&v!==''})});
+      COLS=res.meta.fields||[];classifyCols();DATA_LOADED=true;
+      buildDatasetMeta(f.name.replace(/\.(csv|tsv|txt)$/i,''));
+      updateLpDatasetCard();
+      if(status){status.style.color='#16a34a';status.textContent='\u2713 '+DATA.length.toLocaleString()+' rows loaded';}
+    },
+    error:function(err){if(status){status.style.color='#dc2626';status.textContent='Error: '+err.message;}}
+  });
+}
+
+// Landing page cloud fetch
+async function lpCloudFetch(){
+  var url=document.getElementById('lpCloudUrl');
+  var btn=document.getElementById('lpCloudBtn');
+  var st=document.getElementById('lpCloudStatus');
+  if(!url||!url.value.trim())return;
+  btn.disabled=true;btn.textContent='Fetching...';st.textContent='';
+  try{
+    var resp=await fetch(url.value.trim());
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    var text=await resp.text();
+    Papa.parse(text,{header:true,skipEmptyLines:true,dynamicTyping:true,
+      complete:function(res){
+        DATA=res.data.filter(function(r){return Object.values(r).some(function(v){return v!==null&&v!==''})});
+        COLS=res.meta.fields||[];classifyCols();DATA_LOADED=true;
+        var fname=url.value.trim().split('/').pop().split('?')[0]||'cloud-data';
+        buildDatasetMeta(fname.replace(/\.(csv|tsv|txt)$/i,''));
+        updateLpDatasetCard();
+        st.style.color='#16a34a';st.textContent='\u2713 '+DATA.length.toLocaleString()+' rows';
+        btn.disabled=false;btn.textContent='Fetch';
+      },
+      error:function(err){st.style.color='#dc2626';st.textContent=err.message;btn.disabled=false;btn.textContent='Fetch';}
+    });
+  }catch(e){st.style.color='#dc2626';st.textContent=e.message;btn.disabled=false;btn.textContent='Fetch';}
 }
 
 document.addEventListener('DOMContentLoaded',function(){
   autoFetchDataset();
+  // Bind landing page file upload
+  var lpDz=document.getElementById('lpDropZone'),lpFi=document.getElementById('lpFileInput');
+  if(lpDz){
+    lpDz.ondragover=function(e){e.preventDefault();lpDz.style.borderColor='#F15B40';lpDz.style.background='#fff4f1'};
+    lpDz.ondragleave=function(){lpDz.style.borderColor='#dde1ea';lpDz.style.background=''};
+    lpDz.ondrop=function(e){e.preventDefault();lpDz.style.borderColor='#dde1ea';lpDz.style.background='';lpFileUpload(e.dataTransfer.files[0])};
+  }
+  if(lpFi) lpFi.onchange=function(e){if(e.target.files[0])lpFileUpload(e.target.files[0])};
 });
 
 // FRIENDLY NAMES
