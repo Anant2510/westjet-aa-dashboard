@@ -782,8 +782,13 @@ function initAfterDataLoad(){
   var sel=document.getElementById('datasetSelector');
   if(sel)sel.style.display='none';
 
-  // Init the full app
-  detectEvarLabels();buildSchema();buildRevBookingCtx();buildFilters();renderDash();genRecs();
+  // Init the full app (with error recovery)
+  try{detectEvarLabels()}catch(e){console.warn('detectEvarLabels:',e)}
+  try{buildSchema()}catch(e){console.warn('buildSchema:',e)}
+  try{buildRevBookingCtx()}catch(e){console.warn('buildRevBookingCtx:',e)}
+  try{buildFilters()}catch(e){console.warn('buildFilters:',e)}
+  try{renderDash()}catch(e){console.warn('renderDash:',e)}
+  try{genRecs()}catch(e){console.warn('genRecs:',e)}
 
   // Enable chat
   var cia=document.getElementById('chatInputArea');if(cia)cia.style.display='';
@@ -933,16 +938,19 @@ var EVENT_LABELS={
 // ===== SETUP: STATUS HELPERS =====
 function showKeyStatus(state,text){
   var el=document.getElementById('keyStatus');
+  if(!el)return;
   el.className='status-pill '+state;
   el.innerHTML='<span class="status-dot"></span> '+text;
 }
 function showDataStatus(state,text){
   var el=document.getElementById('dataStatus');
+  if(!el)return;
   el.className='status-pill '+state;
   el.innerHTML='<span class="status-dot"></span> '+text;
 }
 function checkLaunchReady(){
-  document.getElementById('launchBtn').disabled=!(KEY_VALIDATED&&DATA_LOADED);
+  var btn=document.getElementById('launchBtn');
+  if(btn) btn.disabled=!(KEY_VALIDATED&&DATA_LOADED);
 }
 
 // ===== DATA SOURCE TAB SWITCHING =====
@@ -950,12 +958,12 @@ function switchDS(panel,btn){
   document.querySelectorAll('.ds-tab').forEach(function(t){t.classList.remove('active')});
   document.querySelectorAll('.ds-panel').forEach(function(p){p.classList.remove('active')});
   btn.classList.add('active');
-  document.getElementById('ds-'+panel).classList.add('active');
+  var dsP=document.getElementById('ds-'+panel);if(dsP)dsP.classList.add('active');
 }
 
 // ===== VALIDATE KEY =====
 async function doValidate(){
-  var k=document.getElementById('ak').value.trim(),b=document.getElementById('vb'),e=document.getElementById('ae');
+  var akI=document.getElementById('ak');if(!akI)return;var k=akI.value.trim(),b=document.getElementById('vb'),e=document.getElementById('ae');if(!b||!e)return;
   if(k.indexOf('sk-ant-')!==0){e.textContent='Invalid key format.';e.classList.add('s');showKeyStatus('fail','Invalid key');return}
   b.disabled=true;b.textContent='Validating...';e.classList.remove('s');showKeyStatus('pending','Validating...');
   try{
@@ -978,7 +986,7 @@ async function doValidate(){
   }catch(x){e.textContent='Network error: '+x.message;e.classList.add('s');showKeyStatus('fail','Network error')}
   b.disabled=false;b.textContent='Validate Key';
 }
-document.getElementById('ak').addEventListener('keydown',function(e){if(e.key==='Enter')doValidate()});
+var akEl=document.getElementById('ak');if(akEl)akEl.addEventListener('keydown',function(e){if(e.key==='Enter')doValidate()});
 
 // ===== FORGET / CHANGE STORED KEY =====
 function forgetKey(){
@@ -1115,6 +1123,7 @@ function getPlottableMetrics(){return METS.concat(KEY_EVENTS)}
 function doLaunch(){
   // Hide setup card, show welcome message
   var card=document.getElementById('setupCard');
+  if(!card)return;
   card.style.transition='opacity .3s,transform .3s';
   card.style.opacity='0';card.style.transform='translateY(-10px)';
   setTimeout(function(){
@@ -1141,18 +1150,21 @@ function doLaunch(){
     document.getElementById('chMs').appendChild(welcome);
 
     // Enable chat input
-    document.getElementById('chatInputArea').style.display='';
-    document.getElementById('chi').disabled=false;
-    document.getElementById('chi').placeholder='Ask anything about your data...';
-    document.getElementById('csb').disabled=false;
+    var cia2=document.getElementById('chatInputArea');if(cia2)cia2.style.display='';
+    var chi2=document.getElementById('chi');if(chi2){chi2.disabled=false;chi2.placeholder='Ask anything about your data...';}
+    var csb2=document.getElementById('csb');if(csb2)csb2.disabled=false;
 
     // Enable sidebar navigation
     document.querySelectorAll('.nb.disabled-nav').forEach(function(b){b.classList.remove('disabled-nav')});
-    // Show reconfigure button
-    document.getElementById('sbReconfigWrap').classList.remove('hid');
+    var rcfg2=document.getElementById('sbReconfigWrap');if(rcfg2)rcfg2.classList.remove('hid');
 
-    // Build schema & context
-    detectEvarLabels();buildSchema();buildRevBookingCtx();buildFilters();renderDash();genRecs();
+    // Build schema & context (with error recovery)
+    try{detectEvarLabels()}catch(e){console.warn('detectEvarLabels:',e)}
+    try{buildSchema()}catch(e){console.warn('buildSchema:',e)}
+    try{buildRevBookingCtx()}catch(e){console.warn('buildRevBookingCtx:',e)}
+    try{buildFilters()}catch(e){console.warn('buildFilters:',e)}
+    try{renderDash()}catch(e){console.warn('renderDash:',e)}
+    try{genRecs()}catch(e){console.warn('genRecs:',e)}
   },300);
 }
 
