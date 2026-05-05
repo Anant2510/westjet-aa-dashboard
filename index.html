@@ -783,6 +783,7 @@ function initAfterDataLoad(){
   if(sel)sel.style.display='none';
 
   // Init the full app (with error recovery)
+  try{applyDatasetLabels()}catch(e){console.warn('applyDatasetLabels:',e)}
   try{detectEvarLabels()}catch(e){console.warn('detectEvarLabels:',e)}
   try{buildSchema()}catch(e){console.warn('buildSchema:',e)}
   try{buildRevBookingCtx()}catch(e){console.warn('buildRevBookingCtx:',e)}
@@ -841,21 +842,24 @@ function toggleCustomData(){
 function buildDatasetMeta(fileName){
   var dates=DATA.map(function(r){return r['Date']||''}).filter(function(d){return d}).sort();
   var minDate=dates[0]||'?',maxDate=dates[dates.length-1]||'?';
-  // Count key events with data
   var metCount=KEY_EVENTS.length;
-  // Count eVars with data
   var dimCount=EVARS.filter(function(e){
     var v=DATA.slice(0,50).map(function(r){return r[e]}).filter(function(x){return x&&x!==''});
     return v.length>5;
   }).length;
-  // Friendly dimension list
+  // Use dataset-aware labels
+  var isBanking=SELECTED_DATASET==='fifththird';
+  var dimGuesses=isBanking
+    ?{'eVar4':'Channel','eVar5':'Device','eVar11':'Customer Type','eVar12':'Account Type','eVar13':'Segment','eVar15':'State','eVar18':'App Type','eVar19':'Funnel Stage'}
+    :{'eVar4':'Channel','eVar5':'Device','eVar13':'Loyalty','eVar14':'Cabin','eVar17':'Route','eVar15':'Origin','eVar16':'Destination'};
+  var metGuesses=isBanking
+    ?{'event1':'Page Views','event2':'Visits','event7':'Applications','event9':'Revenue','event10':'Product Adds','event13':'Conversions','event11':'Logins','event18':'Mobile Deposits'}
+    :{'event1':'Page Views','event2':'Visits','event7':'Bookings','event9':'Revenue','event10':'Cart Adds','event13':'Purchases'};
+
   var dimNames=[];
-  var dimGuesses={'eVar4':'Channel','eVar5':'Device','eVar13':'Loyalty','eVar14':'Cabin','eVar17':'Route','eVar15':'Origin','eVar16':'Destination'};
-  EVARS.slice(0,20).forEach(function(e){if(dimGuesses[e])dimNames.push(dimGuesses[e])});
-  // Friendly metric list
+  EVARS.slice(0,30).forEach(function(e){if(dimGuesses[e])dimNames.push(dimGuesses[e])});
   var metNames=[];
-  var metGuesses={'event1':'Page Views','event2':'Visits','event7':'Bookings','event9':'Revenue','event10':'Cart Adds','event13':'Purchases'};
-  KEY_EVENTS.slice(0,20).forEach(function(e){if(metGuesses[e])metNames.push(metGuesses[e])});
+  KEY_EVENTS.slice(0,30).forEach(function(e){if(metGuesses[e])metNames.push(metGuesses[e])});
 
   DATASET_META={
     name:fileName||'Adobe Analytics Export',
@@ -863,8 +867,8 @@ function buildDatasetMeta(fileName){
     period:minDate+' to '+maxDate,
     rows:DATA.length,
     cols:COLS.length,
-    dims:dimNames.slice(0,5).join(', ')+' + '+(dimCount-Math.min(dimNames.length,5))+' more',
-    mets:metNames.slice(0,4).join(', ')+' + '+(metCount-Math.min(metNames.length,4))+' more'
+    dims:dimNames.slice(0,5).join(', ')+(dimCount>5?' + '+(dimCount-Math.min(dimNames.length,5))+' more':''),
+    mets:metNames.slice(0,5).join(', ')+(metCount>5?' + '+(metCount-Math.min(metNames.length,5))+' more':'')
   };
 }
 
@@ -897,8 +901,8 @@ document.addEventListener('DOMContentLoaded',function(){
   if(fi) fi.onchange=function(e){if(e.target.files[0])dsFileUpload(e.target.files[0])};
 });
 
-// FRIENDLY NAMES
-var EVENT_LABELS={
+// FRIENDLY NAMES — dataset-aware
+var EVENT_LABELS_AIRLINE={
   event1:'Page Views',event2:'Visits',event3:'Unique Visitors',
   event4:'Instances',event5:'Click-throughs',event6:'Searches',
   event7:'Bookings',event8:'Booking Starts',event9:'Booking Revenue',
@@ -934,6 +938,46 @@ var EVENT_LABELS={
   event95:'Upsell Impressions',event96:'Upsell Conversions',event97:'Hotel Searches',
   event98:'Car Rental Searches',event99:'Package Bookings',event100:'Package Revenue'
 };
+var EVENT_LABELS_BANKING={
+  event1:'Page Views',event2:'Visits',event3:'Unique Visitors',
+  event4:'Account Views',event5:'Rate Comparisons',event6:'Calculator Uses',
+  event7:'Applications Started',event8:'Applications Completed',event9:'Revenue',
+  event10:'Product Adds',event11:'Logins',event12:'Fund Transfers',
+  event13:'Conversions',event14:'Chat Initiated',event15:'Branch Appointments',
+  event16:'Doc Downloads',event17:'Complaints Filed',event18:'Mobile Deposits',
+  event19:'Zelle Transactions',event20:'Bill Payments',
+  event21:'Account Openings',event22:'Card Activations',event23:'Loan Inquiries',
+  event24:'Rate Lock Requests',event25:'Pre-Approvals',event26:'Total Revenue',
+  event27:'Fee Revenue',event28:'Interest Income',event29:'Overdraft Events',
+  event30:'ATM Withdrawals',event31:'Wire Transfers',event32:'ACH Transfers',
+  event33:'Check Deposits',event34:'Statement Downloads',event35:'Alert Setups',
+  event36:'Password Resets',event37:'Fraud Alerts',event38:'Dispute Filings',
+  event39:'Rewards Earned',event40:'Rewards Redeemed',event41:'Tier Upgrades',
+  event42:'Rewards Views',event43:'Points Transfers',event44:'Cashback Earned',
+  event45:'Email Opens',event46:'Email Clicks',event47:'Email Unsubscribes',
+  event48:'Push Opens',event49:'Push Dismissals',event50:'App Opens',
+  event51:'App Crashes',event52:'Video Views',event53:'Video Completions',
+  event54:'Social Shares',event55:'Social Clicks',event56:'Live Chat Sessions',
+  event57:'Chat Resolved',event58:'Call Escalations',event59:'Survey Starts',
+  event60:'Survey Completes',event61:'NPS Score',event62:'CSAT Score',
+  event63:'Formal Complaints',event64:'Refund Requests',event65:'Refund Amount',
+  event66:'Vouchers Issued',event67:'Voucher Amount',event68:'Form Starts',
+  event69:'Form Completes',event70:'Form Errors',event71:'Form Abandons'
+};
+var EVENT_LABELS={};
+var EVAR_GUESSES_AIRLINE={'eVar1':'Page Name','eVar2':'Site Section','eVar3':'Server','eVar4':'Marketing Channel','eVar5':'Device Type','eVar6':'Operating System','eVar7':'Browser','eVar8':'Campaign','eVar9':'Search Term','eVar10':'Language','eVar11':'Country','eVar12':'Province','eVar13':'Loyalty Tier','eVar14':'Cabin Class','eVar15':'Origin Airport','eVar16':'Dest Airport','eVar17':'Route','eVar18':'Route Type','eVar19':'Platform','eVar20':'Departure Time'};
+var EVAR_GUESSES_BANKING={'eVar1':'Page Name','eVar2':'Site Section','eVar3':'Server','eVar4':'Marketing Channel','eVar5':'Device Type','eVar6':'Operating System','eVar7':'Browser','eVar8':'Campaign','eVar9':'Search Term','eVar10':'Language','eVar11':'Customer Type','eVar12':'Account Type','eVar13':'Customer Segment','eVar14':'Product Tier','eVar15':'State','eVar16':'City','eVar17':'Branch ID','eVar18':'Application Type','eVar19':'Funnel Stage','eVar20':'Content Type','eVar21':'Referral Source','eVar22':'Login Method','eVar23':'Transaction Type','eVar24':'Error Type','eVar25':'Chat Initiated','eVar26':'A/B Test Variant','eVar27':'Day Part','eVar28':'Session Depth','eVar29':'NPS Score','eVar30':'Cross-Sell Shown'};
+
+function applyDatasetLabels(){
+  if(SELECTED_DATASET==='fifththird'){
+    EVENT_LABELS=Object.assign({},EVENT_LABELS_BANKING);
+  } else if(SELECTED_DATASET==='westjet'){
+    EVENT_LABELS=Object.assign({},EVENT_LABELS_AIRLINE);
+  } else {
+    // Custom dataset: use generic labels
+    EVENT_LABELS=Object.assign({},EVENT_LABELS_AIRLINE);
+  }
+}
 
 // ===== SETUP: STATUS HELPERS =====
 function showKeyStatus(state,text){
@@ -1159,6 +1203,7 @@ function doLaunch(){
     var rcfg2=document.getElementById('sbReconfigWrap');if(rcfg2)rcfg2.classList.remove('hid');
 
     // Build schema & context (with error recovery)
+    try{applyDatasetLabels()}catch(e){console.warn('applyDatasetLabels:',e)}
     try{detectEvarLabels()}catch(e){console.warn('detectEvarLabels:',e)}
     try{buildSchema()}catch(e){console.warn('buildSchema:',e)}
     try{buildRevBookingCtx()}catch(e){console.warn('buildRevBookingCtx:',e)}
@@ -1170,6 +1215,7 @@ function doLaunch(){
 
 // ===== SCHEMA & CONTEXT =====
 function buildSchema(){
+  var isBanking=SELECTED_DATASET==='fifththird';
   var keyEvts=KEY_EVENTS.slice(0,30).map(function(c){
     var vs=DATA.map(function(r){return parseFloat(r[c])||0});
     var s=vs.reduce(function(a,b){return a+b},0);
@@ -1182,23 +1228,37 @@ function buildSchema(){
     var uk=Object.keys(u);
     return c+' ("'+lbl+'"): '+uk.length+' unique, eg: '+uk.slice(0,5).join('|');
   });
-  var sampleCols=['Date','eVar1','eVar4','eVar5','eVar13','eVar15','eVar16','eVar17','event1','event2','event7','event9','event10','event13','event26'];
+  var sampleCols=isBanking
+    ?['Date','eVar1','eVar4','eVar5','eVar11','eVar12','eVar13','eVar15','eVar18','eVar19','event1','event2','event7','event8','event9','event13']
+    :['Date','eVar1','eVar4','eVar5','eVar13','eVar15','eVar16','eVar17','event1','event2','event7','event9','event10','event13','event26'];
   var existCols=sampleCols.filter(function(c){return COLS.indexOf(c)>=0});
   var miniSample=DATA.slice(0,2).map(function(r){var o={};existCols.forEach(function(c){o[c]=r[c]});return o});
   var dates=DATA.map(function(r){return r['Date']||''}).filter(function(d){return d}).sort();
   var minDate=dates[0]||'?',maxDate=dates[dates.length-1]||'?';
-  SCHEMA='DATASET: '+DATA.length+' rows x '+COLS.length+' cols, date range: '+minDate+' to '+maxDate+'\n\n';
-  SCHEMA+='CRITICAL: Access columns using EXACT names below. E.g. r["event9"] for revenue, r["eVar17"] for route.\n\n';
+  SCHEMA='DATASET: '+DATA.length+' rows x '+COLS.length+' cols, date range: '+minDate+' to '+maxDate+'\n';
+  SCHEMA+='INDUSTRY: '+(isBanking?'Banking & Financial Services':'Airlines & Travel')+'\n\n';
+  SCHEMA+='CRITICAL: Access columns using EXACT names below. E.g. r["event9"] for revenue.\n\n';
   SCHEMA+='NUMERIC METRIC COLUMNS (access as r["event1"], r["event9"], etc.):\n'+keyEvts.join('\n')+'\n\n';
-  SCHEMA+='DIMENSION COLUMNS (access as r["eVar4"], r["eVar17"], etc.):\n'+keyDims.join('\n')+'\n\n';
+  SCHEMA+='DIMENSION COLUMNS (access as r["eVar4"], etc.):\n'+keyDims.join('\n')+'\n\n';
   SCHEMA+='KEY COLUMN MAPPING:\n';
-  SCHEMA+='- Revenue: r["event9"] (booking revenue) or r["event26"] (total revenue)\n';
-  SCHEMA+='- Route: r["eVar17"] (format: "YYC-MIA")\n';
-  SCHEMA+='- Origin airport: r["eVar15"], Destination: r["eVar16"]\n';
+  SCHEMA+='- Revenue: r["event9"]\n';
   SCHEMA+='- Date: r["Date"] (format: "YYYY-MM-DD", range: '+minDate+' to '+maxDate+')\n';
   SCHEMA+='- Marketing Channel: r["eVar4"]\n';
-  SCHEMA+='- Device: r["eVar5"], Loyalty: r["eVar13"], Cabin: r["eVar14"]\n';
-  SCHEMA+='- Bookings: r["event7"], Purchases: r["event13"], Cart Adds: r["event10"]\n';
+  SCHEMA+='- Device: r["eVar5"]\n';
+  if(isBanking){
+    SCHEMA+='- Customer Type: r["eVar11"], Account Type: r["eVar12"]\n';
+    SCHEMA+='- Customer Segment: r["eVar13"] (Mass Market, Emerging Affluent, Affluent, HNW, Small Business)\n';
+    SCHEMA+='- Product Tier: r["eVar14"], State: r["eVar15"], City: r["eVar16"]\n';
+    SCHEMA+='- Application Type: r["eVar18"], Funnel Stage: r["eVar19"]\n';
+    SCHEMA+='- Applications Started: r["event7"], Applications Completed: r["event8"]\n';
+    SCHEMA+='- Conversions: r["event13"], Product Adds: r["event10"]\n';
+    SCHEMA+='- Logins: r["event11"], Transfers: r["event12"], Mobile Deposits: r["event18"]\n';
+  } else {
+    SCHEMA+='- Route: r["eVar17"] (format: "YYC-MIA")\n';
+    SCHEMA+='- Origin airport: r["eVar15"], Destination: r["eVar16"]\n';
+    SCHEMA+='- Loyalty: r["eVar13"], Cabin: r["eVar14"]\n';
+    SCHEMA+='- Bookings: r["event7"], Purchases: r["event13"], Cart Adds: r["event10"]\n';
+  }
   SCHEMA+='- Page Views: r["event1"], Visits: r["event2"]\n\n';
   SCHEMA+='ALL COLS: '+COLS.join(', ')+'\n\n';
   SCHEMA+='Sample:\n'+JSON.stringify(miniSample);
@@ -1363,7 +1423,7 @@ function findBestDimension(){
 
 var EVAR_LABELS={};
 function detectEvarLabels(){
-  var guesses={'eVar1':'Page Name','eVar2':'Site Section','eVar3':'Server','eVar4':'Marketing Channel','eVar5':'Device Type','eVar6':'Operating System','eVar7':'Browser','eVar8':'Campaign','eVar9':'Search Term','eVar10':'Language','eVar11':'Country','eVar12':'Province','eVar13':'Loyalty Tier','eVar14':'Cabin Class','eVar15':'Origin Airport','eVar16':'Dest Airport','eVar17':'Route','eVar18':'Route Type','eVar19':'Platform','eVar20':'Departure Time','eVar21':'Day of Week','eVar22':'Season','eVar25':'Booking Type','eVar26':'Traveler Type','eVar27':'Trip Purpose','eVar32':'Carrier','eVar35':'Payment Method','eVar36':'Auth State'};
+  var guesses=SELECTED_DATASET==='fifththird'?EVAR_GUESSES_BANKING:EVAR_GUESSES_AIRLINE;
   EVARS.forEach(function(e){if(guesses[e]){EVAR_LABELS[e]=guesses[e];return}var vals=DATA.slice(0,200).map(function(r){return r[e]}).filter(function(v){return v&&v!==''&&v!=='N/A'});var uniq=new Set(vals);if(uniq.size>=2&&uniq.size<=30){EVAR_LABELS[e]=e}});
 }
 function dimLabel(col){return EVAR_LABELS[col]||col}
@@ -1394,41 +1454,57 @@ function updCust(){
 var REV_BOOKING_CTX='';
 function buildRevBookingCtx(){
   var dc=getDateCol();
-  var totRev=0,totBook=0,totPurch=0,totCart=0,totVisit=0,totPV=0;
-  var byRoute={},byChannel={},byMonth={},byYear={};
+  var isBanking=SELECTED_DATASET==='fifththird';
+  var totRev=0,totConv=0,totPurch=0,totCart=0,totVisit=0,totPV=0;
+  var byDim={},byChannel={},byMonth={},byYear={};
+  var dimCol=isBanking?'eVar15':'eVar17'; // State vs Route
+  var dimLabel2=isBanking?'State':'Route';
+  var convLabel=isBanking?'Applications':'Bookings';
   DATA.forEach(function(r){
-    var rev=parseFloat(r['event9'])||0;var book=parseFloat(r['event7'])||0;
+    var rev=parseFloat(r['event9'])||0;var conv=parseFloat(r['event7'])||0;
     var purch=parseFloat(r['event13'])||0;var cart=parseFloat(r['event10'])||0;
     var vis=parseFloat(r['event2'])||0;var pv=parseFloat(r['event1'])||0;
-    totRev+=rev;totBook+=book;totPurch+=purch;totCart+=cart;totVisit+=vis;totPV+=pv;
-    var rt=r['eVar17']||'';
-    if(rt){if(!byRoute[rt])byRoute[rt]={rev:0,book:0,count:0};byRoute[rt].rev+=rev;byRoute[rt].book+=book;byRoute[rt].count++}
+    totRev+=rev;totConv+=conv;totPurch+=purch;totCart+=cart;totVisit+=vis;totPV+=pv;
+    var dm=r[dimCol]||'';
+    if(dm){if(!byDim[dm])byDim[dm]={rev:0,conv:0,count:0};byDim[dm].rev+=rev;byDim[dm].conv+=conv;byDim[dm].count++}
     var ch=r['eVar4']||'';
-    if(ch){if(!byChannel[ch])byChannel[ch]={rev:0,book:0,count:0};byChannel[ch].rev+=rev;byChannel[ch].book+=book;byChannel[ch].count++}
+    if(ch){if(!byChannel[ch])byChannel[ch]={rev:0,conv:0,count:0};byChannel[ch].rev+=rev;byChannel[ch].conv+=conv;byChannel[ch].count++}
     var d=String(r[dc]||'');var mo=d.slice(0,7);
-    if(mo.length===7){if(!byMonth[mo])byMonth[mo]={rev:0,book:0};byMonth[mo].rev+=rev;byMonth[mo].book+=book}
+    if(mo.length===7){if(!byMonth[mo])byMonth[mo]={rev:0,conv:0};byMonth[mo].rev+=rev;byMonth[mo].conv+=conv}
     var yr=d.slice(0,4);
-    if(yr.length===4){if(!byYear[yr])byYear[yr]={rev:0,book:0,purch:0};byYear[yr].rev+=rev;byYear[yr].book+=book;byYear[yr].purch+=purch}
+    if(yr.length===4){if(!byYear[yr])byYear[yr]={rev:0,conv:0,purch:0};byYear[yr].rev+=rev;byYear[yr].conv+=conv;byYear[yr].purch+=purch}
   });
-  var topRoutes=Object.entries(byRoute).sort(function(a,b){return b[1].rev-a[1].rev}).slice(0,10);
+  var topDims=Object.entries(byDim).sort(function(a,b){return b[1].rev-a[1].rev}).slice(0,10);
   var topChannels=Object.entries(byChannel).sort(function(a,b){return b[1].rev-a[1].rev}).slice(0,10);
   var months=Object.keys(byMonth).sort();var last12=months.slice(-12);
-  REV_BOOKING_CTX='\n\nPRE-COMPUTED REVENUE & BOOKING DATA (always available):\n';
+  REV_BOOKING_CTX='\n\nPRE-COMPUTED REVENUE & CONVERSION DATA (always available):\n';
+  REV_BOOKING_CTX+='Dataset: '+(isBanking?'Banking (Fifth Third)':'Airline (WestJet)')+'\n';
   REV_BOOKING_CTX+='Total Revenue (event9): $'+Math.round(totRev).toLocaleString()+'\n';
-  REV_BOOKING_CTX+='Total Bookings (event7): '+Math.round(totBook).toLocaleString()+'\n';
-  REV_BOOKING_CTX+='Total Purchases (event13): '+Math.round(totPurch).toLocaleString()+'\n';
-  REV_BOOKING_CTX+='Total Cart Additions (event10): '+Math.round(totCart).toLocaleString()+'\n';
+  REV_BOOKING_CTX+='Total '+convLabel+' (event7): '+Math.round(totConv).toLocaleString()+'\n';
+  REV_BOOKING_CTX+='Total Conversions (event13): '+Math.round(totPurch).toLocaleString()+'\n';
+  REV_BOOKING_CTX+='Total '+(isBanking?'Product Adds':'Cart Additions')+' (event10): '+Math.round(totCart).toLocaleString()+'\n';
   REV_BOOKING_CTX+='Total Visits (event2): '+Math.round(totVisit).toLocaleString()+'\n';
   REV_BOOKING_CTX+='Total Page Views (event1): '+Math.round(totPV).toLocaleString()+'\n';
   REV_BOOKING_CTX+='AOV: $'+(totPurch>0?(totRev/totPurch).toFixed(2):'N/A')+'\n\n';
   REV_BOOKING_CTX+='BY YEAR:\n';
-  Object.keys(byYear).sort().forEach(function(yr){REV_BOOKING_CTX+=yr+': Revenue=$'+Math.round(byYear[yr].rev).toLocaleString()+', Bookings='+Math.round(byYear[yr].book).toLocaleString()+', Purchases='+Math.round(byYear[yr].purch).toLocaleString()+'\n'});
-  REV_BOOKING_CTX+='\nTOP 10 ROUTES BY REVENUE:\n';
-  topRoutes.forEach(function(e){REV_BOOKING_CTX+=e[0]+': Revenue=$'+Math.round(e[1].rev).toLocaleString()+', Bookings='+Math.round(e[1].book).toLocaleString()+'\n'});
+  Object.keys(byYear).sort().forEach(function(yr){REV_BOOKING_CTX+=yr+': Revenue=$'+Math.round(byYear[yr].rev).toLocaleString()+', '+convLabel+'='+Math.round(byYear[yr].conv).toLocaleString()+', Conversions='+Math.round(byYear[yr].purch).toLocaleString()+'\n'});
+  REV_BOOKING_CTX+='\nTOP 10 '+dimLabel2.toUpperCase()+'S BY REVENUE:\n';
+  topDims.forEach(function(e){REV_BOOKING_CTX+=e[0]+': Revenue=$'+Math.round(e[1].rev).toLocaleString()+', '+convLabel+'='+Math.round(e[1].conv).toLocaleString()+'\n'});
   REV_BOOKING_CTX+='\nTOP CHANNELS BY REVENUE:\n';
-  topChannels.forEach(function(e){REV_BOOKING_CTX+=e[0]+': Revenue=$'+Math.round(e[1].rev).toLocaleString()+', Bookings='+Math.round(e[1].book).toLocaleString()+'\n'});
+  topChannels.forEach(function(e){REV_BOOKING_CTX+=e[0]+': Revenue=$'+Math.round(e[1].rev).toLocaleString()+', '+convLabel+'='+Math.round(e[1].conv).toLocaleString()+'\n'});
   REV_BOOKING_CTX+='\nMONTHLY REVENUE TREND (last 12 months):\n';
   last12.forEach(function(mo){REV_BOOKING_CTX+=mo+': $'+Math.round(byMonth[mo].rev).toLocaleString()+'\n'});
+  if(isBanking){
+    REV_BOOKING_CTX+='\nBANKING-SPECIFIC CONTEXT:\n';
+    REV_BOOKING_CTX+='- eVar11 = Customer Type (New Visitor, Authenticated, Pre-Qualified)\n';
+    REV_BOOKING_CTX+='- eVar12 = Account Type (Checking, Savings, Credit Card, Mortgage, Auto Loan, CD)\n';
+    REV_BOOKING_CTX+='- eVar13 = Customer Segment (Mass Market, Emerging Affluent, Affluent, HNW, Small Business)\n';
+    REV_BOOKING_CTX+='- eVar14 = Product Tier (Essential, Preferred, Premium, Private Client)\n';
+    REV_BOOKING_CTX+='- eVar15 = State, eVar16 = City, eVar17 = Branch ID\n';
+    REV_BOOKING_CTX+='- eVar18 = Application Type, eVar19 = Funnel Stage\n';
+    REV_BOOKING_CTX+='- event7 = Applications Started, event8 = Applications Completed\n';
+    REV_BOOKING_CTX+='- event11 = Logins, event12 = Transfers, event18 = Mobile Deposits, event19 = Zelle\n';
+  }
 }
 
 async function doSend(){
@@ -1438,7 +1514,11 @@ async function doSend(){
   var sb=document.getElementById('csb');sb.disabled=true;
   var tid=addTyp();
   try{
-    var cp='You are a data analyst. Write a JS function to answer the user question.\n\nDATA is a JS array of objects (one per row). Access columns using EXACT names like r["event9"], r["eVar17"], r["Date"].\n\n'+SCHEMA+REV_BOOKING_CTX+'\n\nUSER QUESTION: "'+msg+'"\n\nWrite: function analyze(DATA) { ... return result; }\nRules:\n- Access columns as r["event9"] NOT r.revenue or r["Booking Revenue"]\n- Revenue = parseFloat(r["event9"])||0, Route = r["eVar17"], Date = r["Date"]\n- parseFloat() all numeric event columns, they may be strings\n- Handle nulls, missing data, empty strings\n- For charts include labels[] and values[] arrays\n- Max 20 items. No external libs.\n- For "last N months" filter: compare r["Date"] against date strings like "2024-08-01"\n\nRespond with ONLY ```js ... ``` block.';
+    var isBanking=SELECTED_DATASET==='fifththird';
+    var colHints=isBanking
+      ?'- Revenue = parseFloat(r["event9"])||0, State = r["eVar15"], Date = r["Date"]\n- Customer Segment = r["eVar13"], Account Type = r["eVar12"], Funnel Stage = r["eVar19"]\n- Applications = parseFloat(r["event7"])||0, Conversions = parseFloat(r["event13"])||0'
+      :'- Revenue = parseFloat(r["event9"])||0, Route = r["eVar17"], Date = r["Date"]\n- Loyalty = r["eVar13"], Cabin = r["eVar14"]';
+    var cp='You are a data analyst. Write a JS function to answer the user question.\n\nDATA is a JS array of objects (one per row). Access columns using EXACT names like r["event9"], r["eVar4"], r["Date"].\nIndustry: '+(isBanking?'Banking & Financial Services':'Airlines & Travel')+'\n\n'+SCHEMA+REV_BOOKING_CTX+'\n\nUSER QUESTION: "'+msg+'"\n\nWrite: function analyze(DATA) { ... return result; }\nRules:\n- Access columns as r["event9"] NOT r.revenue\n'+colHints+'\n- parseFloat() all numeric event columns, they may be strings\n- Handle nulls, missing data, empty strings\n- For charts include labels[] and values[] arrays\n- Max 20 items. No external libs.\n- For "last N months" filter: compare r["Date"] against date strings like "2024-08-01"\n\nRespond with ONLY ```js ... ``` block.';
     var codeR=await callAI([{role:'user',content:cp}],1500);
     var jm=codeR.match(/```(?:js|javascript)?\s*([\s\S]*?)```/);
     var res,local=false;
@@ -1527,7 +1607,9 @@ async function genRecs(){
     metricStats[label]={total:Math.round(tot),year1:Math.round(s1),year2:Math.round(s2),yoy:s1>0?Number(((s2-s1)/s1*100).toFixed(1)):0};
   });
   var dimBreakdowns={};
-  var keyDims=['eVar4','eVar5','eVar13','eVar14','eVar18','eVar25'];
+  var keyDims=SELECTED_DATASET==='fifththird'
+    ?['eVar4','eVar5','eVar11','eVar12','eVar13','eVar15','eVar18','eVar19']
+    :['eVar4','eVar5','eVar13','eVar14','eVar18','eVar25'];
   keyDims.forEach(function(ev){
     if(COLS.indexOf(ev)<0)return;var label=EVAR_LABELS[ev]||ev;var ct={};
     var revCol=EVENTS.indexOf('event9')>=0?'event9':EVENTS.indexOf('event26')>=0?'event26':null;
@@ -1576,7 +1658,8 @@ async function genRecs(){
     if(s>0)ecomCols[col]={total:Math.round(s),y1:Math.round(s1),y2:Math.round(s2),yoy:s1>0?Number(((s2-s1)/s1*100).toFixed(2)):0};
   });
   try{
-    var prompt='You are a senior digital analytics strategist for an airline website. Analyze this data and provide 6 specific, actionable recommendations.\n\n';
+    var isBk=SELECTED_DATASET==='fifththird';
+    var prompt='You are a senior digital analytics strategist for '+(isBk?'a banking/financial services website (Fifth Third Bank)':'an airline website')+'. Analyze this data and provide 6 specific, actionable recommendations.\n\n';
     prompt+='ANALYSIS PERIOD: '+y1+' vs '+y2+' (2 years)\n';
     prompt+='TOTAL ROWS: '+DATA.length+'\n\n';
     prompt+='KEY METRICS BY YEAR:\n'+JSON.stringify(metricStats,null,1)+'\n\n';
@@ -1589,7 +1672,7 @@ async function genRecs(){
     prompt+='2. Always mention the time period ('+y1+' vs '+y2+') and cite exact YoY % changes.\n';
     prompt+='3. For each insight, cite specific numbers from the data above.\n';
     prompt+='4. Cart Abandonment Rate formula used: (Cart Additions - Purchases) / Cart Additions * 100\n';
-    prompt+='5. Cover these areas: cart abandonment, revenue/AOV trends, conversion funnel, channel optimization, device/platform, loyalty/engagement\n\n';
+    prompt+='5. Cover these areas: '+(isBk?'application funnel conversion, revenue/product mix, digital adoption (mobile/Zelle), customer segment optimization, channel attribution, account type performance':'cart abandonment, revenue/AOV trends, conversion funnel, channel optimization, device/platform, loyalty/engagement')+'\n\n';
     prompt+='Return a JSON array of 6 objects: {title, priority (high/medium/low), insight (2-3 sentences citing exact numbers and YoY changes), recommendation (2-3 actionable sentences), metric (what to track)}.\n';
     prompt+='Return ONLY the JSON array.';
     var r=await callAI([{role:'user',content:prompt}],4000);
