@@ -131,9 +131,21 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 .cty{display:flex;gap:4px;padding:8px 14px}
 .cty span{width:6px;height:6px;background:var(--acc);border-radius:50%;animation:bl 1.4s infinite both}
 .cty span:nth-child(2){animation-delay:.2s}.cty span:nth-child(3){animation-delay:.4s}
+/* Dataset selector cards */
+.ds-option{display:flex;align-items:center;gap:14px;padding:14px 16px;background:#fff;border:1px solid #e8ecf0;border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:10px}
+.ds-option:hover{border-color:#F15B40;box-shadow:0 2px 12px rgba(241,91,64,.08);transform:translateY(-1px)}
+.ds-option.selected{border-color:#F15B40;background:#fff7f5}
+.ds-option-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ds-option-body{flex:1;min-width:0}
+.ds-option-title{font-size:14px;font-weight:700;color:#082340;margin-bottom:2px}
+.ds-option-meta{font-size:11px;color:#94a3b8;font-weight:500;margin-bottom:4px}
+.ds-option-desc{font-size:11px;color:#64748b}
+.ds-option-tags{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.ds-tag{padding:2px 8px;background:#f0f2f5;border-radius:4px;font-size:10px;color:#475569;font-weight:500}
+.ds-option-arrow{font-size:18px;color:#cbd5e1;flex-shrink:0;transition:color .15s}
+.ds-option:hover .ds-option-arrow{color:#F15B40}
+
 @keyframes bl{0%,80%,100%{opacity:.3}40%{opacity:1}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes spin{to{transform:rotate(360deg)}}
 .cia{padding:12px 22px;border-top:1px solid var(--brd);display:flex;gap:10px;flex-shrink:0;min-height:60px;background:#fff}
 .cia textarea{flex:1;padding:10px 13px;background:var(--bg2);border:1px solid var(--brd);border-radius:9px;color:var(--t1);font-size:13.5px;resize:none;font-family:inherit;min-height:42px;max-height:120px}
 .cia textarea:focus{outline:none;border-color:var(--acc)}
@@ -318,7 +330,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 
 <div id="landingPage">
   <div style="min-height:100vh;display:flex;flex-direction:column;background:#f0f2f5;font-family:'Inter',system-ui,sans-serif;">
-    <div style="flex:1;padding:24px 48px 40px;max-width:1400px;margin:0 auto;width:100%;box-sizing:border-box">
+    <div style="flex:1;padding:24px 32px 40px;max-width:1280px;margin:0 auto;width:100%;box-sizing:border-box">
       <div style="border-radius:16px;overflow:hidden;position:relative;background:linear-gradient(105deg,#5a2d82 0%,#7b3fa0 20%,#a0416a 42%,#c95230 65%,#e8621a 80%,#f07020 100%);padding:40px 48px;min-height:240px;display:flex;align-items:center;margin-bottom:24px">
         <div style="position:relative;z-index:1;flex:1;max-width:620px">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -412,48 +424,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
         </div>
       </div>
 
-      <!-- SAMPLE DATASET INFO -->
-      <div id="lpDatasetSection" style="background:#ffffff;border:1px solid #e8ecf0;border-radius:12px;overflow:hidden;margin-bottom:20px">
-        <div style="padding:16px 24px;border-bottom:1px solid #f0f2f5;display:flex;align-items:center;justify-content:space-between">
-          <div>
-            <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#F15B40;text-transform:uppercase;margin-bottom:3px">Sample Dataset</div>
-            <div style="font-size:15px;font-weight:800;color:#082340;letter-spacing:-0.2px">Pre-loaded data ready to explore</div>
-          </div>
-          <div id="lpDataStatus" style="display:flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;background:#fef9f0;border:1px solid #fed7aa;font-size:11px;font-weight:600;color:#ea580c">
-            <div style="width:7px;height:7px;border-radius:50%;background:#ea580c;animation:pulse 1.5s infinite"></div>
-            Loading...
-          </div>
-        </div>
-        <div id="lpDatasetInfo" style="padding:20px 24px">
-          <div style="display:flex;align-items:center;gap:12px;color:#94a3b8;font-size:13px">
-            <div style="width:20px;height:20px;border:2px solid #e2e8f0;border-top-color:#F15B40;border-radius:50%;animation:spin 0.8s linear infinite"></div>
-            Fetching sample dataset from repository...
-          </div>
-        </div>
-        <div id="lpLoadOwnData" style="padding:12px 24px;background:#fafbfc;border-top:1px solid #f0f2f5;display:flex;align-items:center;justify-content:space-between">
-          <div style="font-size:12px;color:#94a3b8">Want to analyze your own data instead?</div>
-          <button onclick="toggleLpCustom()" id="lpCustomToggle" style="background:none;border:1px solid #e2e8f0;color:#475569;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s">Upload or fetch from cloud</button>
-        </div>
-        <div id="lpCustomPanel" style="display:none;padding:20px 24px;border-top:1px solid #f0f2f5;background:#fafbfc">
-          <div style="display:flex;gap:12px;margin-bottom:14px">
-            <div style="flex:1">
-              <div style="font-size:11px;font-weight:600;color:#475569;margin-bottom:6px">Upload from computer</div>
-              <div id="lpDropZone" onclick="document.getElementById('lpFileInput').click()" style="border:2px dashed #dde1ea;border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;font-size:12px;color:#94a3b8">
-                Drop CSV here or <strong style="color:#F15B40">browse</strong>
-              </div>
-              <input type="file" id="lpFileInput" accept=".csv,.tsv,.txt" style="display:none">
-              <div id="lpFileStatus" style="font-size:11px;margin-top:6px;display:none"></div>
-            </div>
-            <div style="flex:1">
-              <div style="font-size:11px;font-weight:600;color:#475569;margin-bottom:6px">Fetch from cloud URL</div>
-              <input type="url" id="lpCloudUrl" placeholder="https://bucket.s3.amazonaws.com/data.csv" style="width:100%;padding:9px 12px;border:1px solid #dde1ea;border-radius:8px;font-size:12px;font-family:inherit;margin-bottom:6px;box-sizing:border-box">
-              <button onclick="lpCloudFetch()" id="lpCloudBtn" style="background:#082340;color:#fff;border:none;padding:7px 16px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Fetch</button>
-              <span id="lpCloudStatus" style="font-size:11px;color:#94a3b8;margin-left:8px"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div style="background:#ffffff;border:1px solid #e8ecf0;border-radius:10px;padding:16px;display:flex;gap:10px"><span style="font-size:18px;flex-shrink:0">📋</span><div><div style="font-size:13px;font-weight:700;color:#082340;margin-bottom:3px">Executive summaries</div><div style="font-size:11px;color:#64748b;line-height:1.5">Surface what matters most for business and leadership reviews.</div></div></div>
@@ -499,7 +469,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 <div class="mc">
 <div class="tb">
 <h2 id="pt">Analytics Chat</h2>
-<div id="dataInfoBar" class="hid" style="display:none;font-size:11px;color:var(--t3);padding:0 4px;max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title=""><span id="dataInfoText"></span></div>
+<div id="dataInfoBar" style="display:none;font-size:11px;color:var(--t3);padding:0 4px;max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span id="dataInfoText"></span></div>
 <div class="tt" id="tto" style="display:none">
 <button class="ttb" onclick="doTime('weekly',this)">Weekly</button>
 <button class="ttb a" onclick="doTime('monthly',this)">Monthly</button>
@@ -514,7 +484,84 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 <div class="chtc">
 <div class="chm" id="chMs">
 
-<div id="setupCard"></div>
+<div id="setupCard">
+  <div id="datasetSelector" style="max-width:560px;margin:20px auto;padding:0">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:linear-gradient(135deg,#082340,#16395e);border-radius:12px;margin-bottom:12px">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F15B40" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </div>
+      <h3 style="font-size:18px;font-weight:700;color:#082340;margin:0 0 6px">Select a Dataset to Begin</h3>
+      <p style="font-size:13px;color:#94a3b8;margin:0;line-height:1.5">Choose a pre-loaded demo dataset or upload your own.<br>All analysis runs locally in your browser.</p>
+    </div>
+
+    <!-- Option 1: WestJet -->
+    <div class="ds-option" onclick="selectDataset('westjet')" id="dsOpt-westjet">
+      <div class="ds-option-icon" style="background:rgba(241,91,64,0.08)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F15B40" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      </div>
+      <div class="ds-option-body">
+        <div class="ds-option-title">WestJet Airlines</div>
+        <div class="ds-option-meta">Adobe Analytics · Airlines & Travel</div>
+        <div class="ds-option-desc">10,776 rows · 302 columns · Jan 2023 – Dec 2024</div>
+        <div class="ds-option-tags"><span class="ds-tag">Bookings</span><span class="ds-tag">Revenue</span><span class="ds-tag">Routes</span><span class="ds-tag">Loyalty</span></div>
+      </div>
+      <div class="ds-option-arrow">→</div>
+    </div>
+
+    <!-- Option 2: Fifth Third -->
+    <div class="ds-option" onclick="selectDataset('fifththird')" id="dsOpt-fifththird">
+      <div class="ds-option-icon" style="background:rgba(8,35,64,0.06)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#082340" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+      </div>
+      <div class="ds-option-body">
+        <div class="ds-option-title">Fifth Third Bank</div>
+        <div class="ds-option-meta">Adobe Analytics · Banking & Financial Services</div>
+        <div class="ds-option-desc">12,000 rows · 289 columns · Jan 2024 – Dec 2025</div>
+        <div class="ds-option-tags"><span class="ds-tag">Accounts</span><span class="ds-tag">Applications</span><span class="ds-tag">Segments</span><span class="ds-tag">Channels</span></div>
+      </div>
+      <div class="ds-option-arrow">→</div>
+    </div>
+
+    <!-- Option 3: Custom -->
+    <div class="ds-option" onclick="toggleCustomUpload()" id="dsOpt-custom" style="border-style:dashed">
+      <div class="ds-option-icon" style="background:rgba(127,119,221,0.08)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7F77DD" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+      </div>
+      <div class="ds-option-body">
+        <div class="ds-option-title">Custom Dataset</div>
+        <div class="ds-option-meta">Upload CSV or fetch from cloud URL</div>
+        <div class="ds-option-desc">Bring your own Adobe Analytics export</div>
+      </div>
+      <div class="ds-option-arrow">+</div>
+    </div>
+
+    <!-- Custom upload panel (hidden) -->
+    <div id="customUploadPanel" style="display:none;margin-top:12px;padding:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px">
+      <div style="display:flex;gap:12px">
+        <div style="flex:1">
+          <div style="font-size:11px;font-weight:600;color:#475569;margin-bottom:6px">Upload from computer</div>
+          <div id="dsDropZone" onclick="document.getElementById('dsFileInput').click()" style="border:2px dashed #dde1ea;border-radius:8px;padding:14px;text-align:center;cursor:pointer;font-size:12px;color:#94a3b8;transition:all 0.15s">
+            Drop CSV or <strong style="color:#F15B40">browse</strong>
+          </div>
+          <input type="file" id="dsFileInput" accept=".csv,.tsv,.txt" style="display:none">
+        </div>
+        <div style="flex:1">
+          <div style="font-size:11px;font-weight:600;color:#475569;margin-bottom:6px">Cloud URL</div>
+          <input type="url" id="dsCloudUrl" placeholder="https://..." style="width:100%;padding:8px 10px;border:1px solid #dde1ea;border-radius:8px;font-size:12px;font-family:inherit;box-sizing:border-box;margin-bottom:6px">
+          <button onclick="dsCloudFetch()" style="background:#082340;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Fetch</button>
+        </div>
+      </div>
+      <div id="dsUploadStatus" style="font-size:11px;margin-top:8px;display:none"></div>
+    </div>
+
+    <!-- Loading state (hidden) -->
+    <div id="dsLoadingState" style="display:none;text-align:center;padding:24px;margin-top:12px">
+      <div style="width:28px;height:28px;border:3px solid #e2e8f0;border-top-color:#F15B40;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px"></div>
+      <div id="dsLoadingLabel" style="font-size:13px;font-weight:600;color:#082340">Loading dataset...</div>
+      <div id="dsLoadingSub" style="font-size:11px;color:#94a3b8;margin-top:4px"></div>
+    </div>
+  </div>
+</div>
 
 </div>
 <div class="cia" id="chatInputArea" style="display:none">
@@ -602,14 +649,178 @@ var KEY_VALIDATED=false, DATA_LOADED=false;
 
   if(resolved){
     AK=resolved;
+    // Persist for future visits
     try{localStorage.setItem('intellisight_ak',resolved)}catch(e){}
-    KEY_VALIDATED=true;
+    document.addEventListener('DOMContentLoaded',function(){
+      // Hide the entire key section — user never sees it
+      var keyWrap=document.getElementById('keySectionWrap');
+      if(keyWrap) keyWrap.style.display='none';
+      KEY_VALIDATED=true;
+      checkLaunchReady();
+    });
   }
 })();
 
-// ===== DEFAULT DATASET (hosted in same repo) =====
+// ===== DATASET REGISTRY =====
+var DATASETS = {
+  westjet: { url:'westjet_analytics_demo_latest_03March.csv', name:'WestJet \u2014 Adobe Analytics Data Warehouse Export', source:'Adobe Analytics (Data Warehouse)' },
+  fifththird: { url:'fifththird_analytics_demo_2024_2025.csv', name:'Fifth Third Bank \u2014 Adobe Analytics Digital Banking Export', source:'Adobe Analytics (Data Warehouse)' }
+};
 var DEFAULT_DATASET_URL='westjet_analytics_demo_latest_03March.csv';
 var DATASET_META={name:'',source:'',period:'',rows:0,cols:0,dims:'',mets:''};
+var SELECTED_DATASET='';
+
+// Toggle custom upload panel
+function toggleCustomUpload(){
+  var panel=document.getElementById('customUploadPanel');
+  if(panel) panel.style.display=panel.style.display==='none'?'':'none';
+}
+
+// Select a preloaded dataset
+function selectDataset(key){
+  if(!DATASETS[key])return;
+  SELECTED_DATASET=key;
+  // Highlight selected card
+  document.querySelectorAll('.ds-option').forEach(function(el){el.classList.remove('selected')});
+  var opt=document.getElementById('dsOpt-'+key);
+  if(opt)opt.classList.add('selected');
+  // Show loading state
+  var sel=document.getElementById('datasetSelector');
+  var loading=document.getElementById('dsLoadingState');
+  var label=document.getElementById('dsLoadingLabel');
+  var sub=document.getElementById('dsLoadingSub');
+  document.querySelectorAll('.ds-option').forEach(function(el){el.style.pointerEvents='none';el.style.opacity='0.5'});
+  if(loading)loading.style.display='';
+  if(label)label.textContent='Loading '+DATASETS[key].name.split(' \u2014 ')[0]+' dataset\u2026';
+  if(sub)sub.textContent='Fetching from repository';
+
+  fetch(DATASETS[key].url).then(function(resp){
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    if(sub)sub.textContent='Parsing CSV data\u2026';
+    return resp.text();
+  }).then(function(text){
+    Papa.parse(text,{header:true,skipEmptyLines:true,dynamicTyping:true,
+      complete:function(res){
+        DATA=res.data.filter(function(r){return Object.values(r).some(function(v){return v!==null&&v!==''})});
+        COLS=res.meta.fields||[];
+        classifyCols();
+        DATA_LOADED=true;
+        buildDatasetMeta(DATASETS[key].name);
+        DATASET_META.source=DATASETS[key].source;
+        initAfterDataLoad();
+      },
+      error:function(err){showDsError('Parse error: '+err.message)}
+    });
+  }).catch(function(e){showDsError(e.message)});
+}
+
+// Custom file upload
+function dsFileUpload(f){
+  if(!f)return;
+  var st=document.getElementById('dsUploadStatus');
+  if(st){st.style.display='block';st.style.color='#475569';st.textContent='Parsing '+f.name+'\u2026';}
+  var loading=document.getElementById('dsLoadingState');
+  if(loading)loading.style.display='';
+  document.getElementById('dsLoadingLabel').textContent='Parsing '+f.name+'\u2026';
+  Papa.parse(f,{header:true,skipEmptyLines:true,dynamicTyping:true,
+    complete:function(res){
+      DATA=res.data.filter(function(r){return Object.values(r).some(function(v){return v!==null&&v!==''})});
+      COLS=res.meta.fields||[];classifyCols();DATA_LOADED=true;
+      SELECTED_DATASET='custom';
+      buildDatasetMeta(f.name.replace(/\.(csv|tsv|txt)$/i,''));
+      if(st){st.style.color='#16a34a';st.textContent='\u2713 '+DATA.length.toLocaleString()+' rows loaded';}
+      initAfterDataLoad();
+    },
+    error:function(err){showDsError(err.message)}
+  });
+}
+
+// Cloud fetch
+async function dsCloudFetch(){
+  var url=document.getElementById('dsCloudUrl');
+  if(!url||!url.value.trim())return;
+  var loading=document.getElementById('dsLoadingState');
+  if(loading)loading.style.display='';
+  document.getElementById('dsLoadingLabel').textContent='Fetching from cloud\u2026';
+  try{
+    var resp=await fetch(url.value.trim());
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    var text=await resp.text();
+    Papa.parse(text,{header:true,skipEmptyLines:true,dynamicTyping:true,
+      complete:function(res){
+        DATA=res.data.filter(function(r){return Object.values(r).some(function(v){return v!==null&&v!==''})});
+        COLS=res.meta.fields||[];classifyCols();DATA_LOADED=true;SELECTED_DATASET='custom';
+        var fname=url.value.trim().split('/').pop().split('?')[0]||'cloud-data';
+        buildDatasetMeta(fname.replace(/\.(csv|tsv|txt)$/i,''));
+        initAfterDataLoad();
+      },
+      error:function(err){showDsError(err.message)}
+    });
+  }catch(e){showDsError(e.message)}
+}
+
+function showDsError(msg){
+  var loading=document.getElementById('dsLoadingState');
+  if(loading)loading.style.display='none';
+  document.querySelectorAll('.ds-option').forEach(function(el){el.style.pointerEvents='';el.style.opacity=''});
+  alert('Error loading dataset: '+msg);
+}
+
+// Update the dataset info bar in the toolbar (visible on all tabs)
+function updateDataInfoBar(){
+  var bar=document.getElementById('dataInfoBar');
+  var txt=document.getElementById('dataInfoText');
+  if(!bar||!txt||!DATASET_META.rows)return;
+  bar.style.display='';
+  txt.textContent=DATASET_META.name+' \u2014 '+DATASET_META.period+' \u2014 '+DATASET_META.rows.toLocaleString()+' rows \u00d7 '+DATASET_META.cols.toLocaleString()+' cols';
+  bar.title=DATASET_META.name+'\n'+DATASET_META.period+'\n'+DATASET_META.rows.toLocaleString()+' rows, '+DATASET_META.cols.toLocaleString()+' columns\nDimensions: '+DATASET_META.dims+'\nMetrics: '+DATASET_META.mets;
+}
+
+// After data loads: hide selector, init app, show chat
+function initAfterDataLoad(){
+  // Hide the dataset selector
+  var sel=document.getElementById('datasetSelector');
+  if(sel)sel.style.display='none';
+
+  // Init the full app
+  detectEvarLabels();buildSchema();buildRevBookingCtx();buildFilters();renderDash();genRecs();
+
+  // Enable chat
+  var cia=document.getElementById('chatInputArea');if(cia)cia.style.display='';
+  var chi=document.getElementById('chi');if(chi){chi.disabled=false;chi.placeholder='Ask anything about your data\u2026';}
+  var csb=document.getElementById('csb');if(csb)csb.disabled=false;
+
+  // Enable sidebar nav
+  document.querySelectorAll('.nb.disabled-nav').forEach(function(b){b.classList.remove('disabled-nav')});
+  var rcfg=document.getElementById('sbReconfigWrap');if(rcfg)rcfg.classList.remove('hid');
+
+  // Update dataset info bar
+  updateDataInfoBar();
+
+  // Show welcome message with dataset info
+  var chMs=document.getElementById('chMs');
+  if(chMs){
+    var welcome=document.createElement('div');
+    welcome.className='cm as';
+    welcome.innerHTML='<div class="sn">IntelliSight</div><div class="bb">'
+      +'<p>&#128075; Welcome to IntelliSight. Your dataset is loaded and ready to explore.</p>'
+      +'<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:12px 14px;margin:10px 0;font-size:12px;line-height:1.7">'
+      +'<div style="font-weight:700;color:var(--navy);margin-bottom:4px;font-size:13px">'+esc(DATASET_META.name)+'</div>'
+      +'<div style="color:var(--t2)"><b>Period:</b> '+esc(DATASET_META.period)+'</div>'
+      +'<div style="color:var(--t2)"><b>Size:</b> '+DATASET_META.rows.toLocaleString()+' rows &times; '+DATASET_META.cols.toLocaleString()+' columns</div>'
+      +'<div style="color:var(--t2)"><b>Dimensions:</b> '+esc(DATASET_META.dims)+'</div>'
+      +'<div style="color:var(--t2)"><b>Metrics:</b> '+esc(DATASET_META.mets)+'</div>'
+      +'</div>'
+      +'<p>All analysis runs locally in your browser. No raw data leaves your machine.</p>'
+      +'<p><b>Try asking:</b></p><ul>'
+      +'<li>"What are the top performing channels?"</li>'
+      +'<li>"Show monthly revenue trend as a line chart"</li>'
+      +'<li>"Compare conversion by customer segment"</li>'
+      +'<li>"What day of the week gets the most traffic?"</li>'
+      +'</ul></div>';
+    chMs.appendChild(welcome);
+  }
+}
 
 // Toggle custom data panel
 function toggleCustomData(){
@@ -652,126 +863,33 @@ function buildDatasetMeta(fileName){
   };
 }
 
-// Update the dataset info bar in the toolbar (visible on all tabs)
-function updateDataInfoBar(){
-  var bar=document.getElementById('dataInfoBar');
-  var txt=document.getElementById('dataInfoText');
-  if(!bar||!txt||!DATASET_META.rows)return;
-  bar.style.display='';bar.classList.remove('hid');
-  txt.textContent=DATASET_META.name+' \u2014 '+DATASET_META.period+' \u2014 '+DATASET_META.rows.toLocaleString()+' rows \u00d7 '+DATASET_META.cols.toLocaleString()+' cols';
-  bar.title=DATASET_META.name+'\n'+DATASET_META.period+'\n'+DATASET_META.rows.toLocaleString()+' rows, '+DATASET_META.cols.toLocaleString()+' columns\nDimensions: '+DATASET_META.dims+'\nMetrics: '+DATASET_META.mets;
+// Show the dataset summary card
+function showDatasetCard(){
+  document.getElementById('autoLoadBar').style.display='none';
+  var card=document.getElementById('datasetCard');
+  card.style.display='';
+  document.getElementById('dsName').textContent=DATASET_META.name;
+  document.getElementById('dsSource').textContent=DATASET_META.source;
+  document.getElementById('dsPeriod').textContent=DATASET_META.period;
+  document.getElementById('dsRows').textContent=DATASET_META.rows.toLocaleString();
+  document.getElementById('dsCols').textContent=DATASET_META.cols.toLocaleString()+' ('+EVARS.length+' eVars, '+EVENTS.length+' events, '+PROPS.length+' props)';
+  document.getElementById('dsDims').textContent=DATASET_META.dims;
+  document.getElementById('dsMets').textContent=DATASET_META.mets;
 }
 
-// Auto-fetch the default dataset silently on page load
-function autoFetchDataset(){
-  console.log('Auto-fetching dataset...');
-  fetch(DEFAULT_DATASET_URL).then(function(resp){
-    if(!resp.ok) throw new Error('HTTP '+resp.status);
-    return resp.text();
-  }).then(function(text){
-    Papa.parse(text,{header:true,skipEmptyLines:true,dynamicTyping:true,
-      complete:function(res){
-        DATA=res.data.filter(function(r){return Object.values(r).some(function(v){return v!==null&&v!==''})});
-        COLS=res.meta.fields||[];
-        classifyCols();
-        DATA_LOADED=true;
-        buildDatasetMeta('WestJet \u2014 Adobe Analytics Data Warehouse Export');
-        console.log('Dataset loaded: '+DATA.length+' rows');
-        updateLpDatasetCard();
-      },
-      error:function(err){console.error('Parse error:',err.message);showLpDataError('Parse error: '+err.message)}
-    });
-  }).catch(function(e){console.error('Fetch error:',e.message);showLpDataError(e.message)});
-}
-
-// Update the landing page dataset card with loaded data info
-function updateLpDatasetCard(){
-  var status=document.getElementById('lpDataStatus');
-  if(status){
-    status.style.background='#ecfdf5';status.style.borderColor='#bbf7d0';status.style.color='#16a34a';
-    status.innerHTML='<div style="width:7px;height:7px;border-radius:50%;background:#16a34a"></div> Ready';
-  }
-  var info=document.getElementById('lpDatasetInfo');
-  if(info){
-    info.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">'
-      +'<div><div style="font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Dataset</div><div style="font-size:13px;font-weight:600;color:#082340">'+esc(DATASET_META.name)+'</div><div style="font-size:11px;color:#64748b;margin-top:2px">'+esc(DATASET_META.source)+'</div></div>'
-      +'<div><div style="font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Period</div><div style="font-size:13px;font-weight:600;color:#082340">'+esc(DATASET_META.period)+'</div></div>'
-      +'<div><div style="font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Size</div><div style="font-size:13px;font-weight:600;color:#082340">'+DATASET_META.rows.toLocaleString()+' rows &times; '+DATASET_META.cols.toLocaleString()+' columns</div></div>'
-      +'</div>'
-      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px;padding-top:14px;border-top:1px solid #f0f2f5">'
-      +'<div><div style="font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Key dimensions</div><div style="font-size:12px;color:#475569;line-height:1.5">'+esc(DATASET_META.dims)+'</div></div>'
-      +'<div><div style="font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Key metrics</div><div style="font-size:12px;color:#475569;line-height:1.5">'+esc(DATASET_META.mets)+'</div></div>'
-      +'</div>';
-  }
-}
-function showLpDataError(msg){
-  var status=document.getElementById('lpDataStatus');
-  if(status){status.style.background='#fef2f2';status.style.borderColor='#fecaca';status.style.color='#dc2626';status.innerHTML='<div style="width:7px;height:7px;border-radius:50%;background:#dc2626"></div> Error';}
-  var info=document.getElementById('lpDatasetInfo');
-  if(info) info.innerHTML='<div style="color:#dc2626;font-size:12px">'+esc(msg)+' — use the option below to load your own data.</div>';
-  var panel=document.getElementById('lpCustomPanel');
-  if(panel) panel.style.display='';
-}
-
-// Toggle custom data panel on landing page
-function toggleLpCustom(){
-  var panel=document.getElementById('lpCustomPanel');
-  if(panel) panel.style.display=panel.style.display==='none'?'':'none';
-}
-
-// Landing page file upload
-function lpFileUpload(f){
-  if(!f)return;
-  var status=document.getElementById('lpFileStatus');
-  if(status){status.style.display='block';status.style.color='#475569';status.textContent='Parsing '+f.name+'...';}
-  Papa.parse(f,{header:true,skipEmptyLines:true,dynamicTyping:true,
-    complete:function(res){
-      DATA=res.data.filter(function(r){return Object.values(r).some(function(v){return v!==null&&v!==''})});
-      COLS=res.meta.fields||[];classifyCols();DATA_LOADED=true;
-      buildDatasetMeta(f.name.replace(/\.(csv|tsv|txt)$/i,''));
-      updateLpDatasetCard();
-      if(status){status.style.color='#16a34a';status.textContent='\u2713 '+DATA.length.toLocaleString()+' rows loaded';}
-    },
-    error:function(err){if(status){status.style.color='#dc2626';status.textContent='Error: '+err.message;}}
-  });
-}
-
-// Landing page cloud fetch
-async function lpCloudFetch(){
-  var url=document.getElementById('lpCloudUrl');
-  var btn=document.getElementById('lpCloudBtn');
-  var st=document.getElementById('lpCloudStatus');
-  if(!url||!url.value.trim())return;
-  btn.disabled=true;btn.textContent='Fetching...';st.textContent='';
-  try{
-    var resp=await fetch(url.value.trim());
-    if(!resp.ok) throw new Error('HTTP '+resp.status);
-    var text=await resp.text();
-    Papa.parse(text,{header:true,skipEmptyLines:true,dynamicTyping:true,
-      complete:function(res){
-        DATA=res.data.filter(function(r){return Object.values(r).some(function(v){return v!==null&&v!==''})});
-        COLS=res.meta.fields||[];classifyCols();DATA_LOADED=true;
-        var fname=url.value.trim().split('/').pop().split('?')[0]||'cloud-data';
-        buildDatasetMeta(fname.replace(/\.(csv|tsv|txt)$/i,''));
-        updateLpDatasetCard();
-        st.style.color='#16a34a';st.textContent='\u2713 '+DATA.length.toLocaleString()+' rows';
-        btn.disabled=false;btn.textContent='Fetch';
-      },
-      error:function(err){st.style.color='#dc2626';st.textContent=err.message;btn.disabled=false;btn.textContent='Fetch';}
-    });
-  }catch(e){st.style.color='#dc2626';st.textContent=e.message;btn.disabled=false;btn.textContent='Fetch';}
-}
+// Auto-fetch the default dataset on page load
+// No auto-fetch — user selects dataset from the chat screen
+function autoFetchDataset(){ /* no-op: replaced by dataset selector */ }
 
 document.addEventListener('DOMContentLoaded',function(){
-  autoFetchDataset();
-  // Bind landing page file upload
-  var lpDz=document.getElementById('lpDropZone'),lpFi=document.getElementById('lpFileInput');
-  if(lpDz){
-    lpDz.ondragover=function(e){e.preventDefault();lpDz.style.borderColor='#F15B40';lpDz.style.background='#fff4f1'};
-    lpDz.ondragleave=function(){lpDz.style.borderColor='#dde1ea';lpDz.style.background=''};
-    lpDz.ondrop=function(e){e.preventDefault();lpDz.style.borderColor='#dde1ea';lpDz.style.background='';lpFileUpload(e.dataTransfer.files[0])};
+  // Bind dataset selector file upload handlers
+  var dz=document.getElementById('dsDropZone'),fi=document.getElementById('dsFileInput');
+  if(dz){
+    dz.ondragover=function(e){e.preventDefault();dz.style.borderColor='#F15B40';dz.style.background='#fff4f1'};
+    dz.ondragleave=function(){dz.style.borderColor='#dde1ea';dz.style.background=''};
+    dz.ondrop=function(e){e.preventDefault();dz.style.borderColor='#dde1ea';dz.style.background='';dsFileUpload(e.dataTransfer.files[0])};
   }
-  if(lpFi) lpFi.onchange=function(e){if(e.target.files[0])lpFileUpload(e.target.files[0])};
+  if(fi) fi.onchange=function(e){if(e.target.files[0])dsFileUpload(e.target.files[0])};
 });
 
 // FRIENDLY NAMES
@@ -815,18 +933,16 @@ var EVENT_LABELS={
 // ===== SETUP: STATUS HELPERS =====
 function showKeyStatus(state,text){
   var el=document.getElementById('keyStatus');
-  if(!el)return;
   el.className='status-pill '+state;
   el.innerHTML='<span class="status-dot"></span> '+text;
 }
 function showDataStatus(state,text){
   var el=document.getElementById('dataStatus');
-  if(!el)return;
   el.className='status-pill '+state;
   el.innerHTML='<span class="status-dot"></span> '+text;
 }
 function checkLaunchReady(){
-  // No-op: launch is triggered by launchApp() from the landing page
+  document.getElementById('launchBtn').disabled=!(KEY_VALIDATED&&DATA_LOADED);
 }
 
 // ===== DATA SOURCE TAB SWITCHING =====
@@ -834,12 +950,12 @@ function switchDS(panel,btn){
   document.querySelectorAll('.ds-tab').forEach(function(t){t.classList.remove('active')});
   document.querySelectorAll('.ds-panel').forEach(function(p){p.classList.remove('active')});
   btn.classList.add('active');
-  var dsPanel=document.getElementById('ds-'+panel);if(dsPanel)dsPanel.classList.add('active');
+  document.getElementById('ds-'+panel).classList.add('active');
 }
 
 // ===== VALIDATE KEY =====
 async function doValidate(){
-  var akI=document.getElementById('ak');if(!akI)return;var k=akI.value.trim(),b=document.getElementById('vb'),e=document.getElementById('ae');if(!b||!e)return;
+  var k=document.getElementById('ak').value.trim(),b=document.getElementById('vb'),e=document.getElementById('ae');
   if(k.indexOf('sk-ant-')!==0){e.textContent='Invalid key format.';e.classList.add('s');showKeyStatus('fail','Invalid key');return}
   b.disabled=true;b.textContent='Validating...';e.classList.remove('s');showKeyStatus('pending','Validating...');
   try{
@@ -862,12 +978,19 @@ async function doValidate(){
   }catch(x){e.textContent='Network error: '+x.message;e.classList.add('s');showKeyStatus('fail','Network error')}
   b.disabled=false;b.textContent='Validate Key';
 }
-var akEl=document.getElementById('ak');if(akEl)akEl.addEventListener('keydown',function(e){if(e.key==='Enter')doValidate()});
+document.getElementById('ak').addEventListener('keydown',function(e){if(e.key==='Enter')doValidate()});
 
 // ===== FORGET / CHANGE STORED KEY =====
 function forgetKey(){
   try{localStorage.removeItem('intellisight_ak')}catch(e){}
   AK='';KEY_VALIDATED=false;
+  var akEl=document.getElementById('ak');
+  akEl.value='';akEl.disabled=false;akEl.placeholder='Enter key...';
+  document.getElementById('vb').style.display='';
+  document.getElementById('changeKeyRow').style.display='none';
+  showKeyStatus('pending','Awaiting key');
+  checkLaunchReady();
+  akEl.focus();
 }
 
 // ===== RECONFIGURE (post-launch) =====
@@ -989,7 +1112,49 @@ function classifyCols(){
 function getPlottableMetrics(){return METS.concat(KEY_EVENTS)}
 
 // ===== LAUNCH — transition from setup to active app =====
-function doLaunch(){launchApp();}
+function doLaunch(){
+  // Hide setup card, show welcome message
+  var card=document.getElementById('setupCard');
+  card.style.transition='opacity .3s,transform .3s';
+  card.style.opacity='0';card.style.transform='translateY(-10px)';
+  setTimeout(function(){
+    card.style.display='none';
+    // Show the welcome chat message with dataset info
+    var welcome=document.createElement('div');
+    welcome.className='cm as';
+    welcome.innerHTML='<div class="sn">IntelliSight</div><div class="bb">'
+      +'<p>&#128075; Welcome to IntelliSight. Your dataset is loaded and ready to explore.</p>'
+      +'<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:12px 14px;margin:10px 0;font-size:12px;line-height:1.7">'
+      +'<div style="font-weight:700;color:var(--navy);margin-bottom:4px;font-size:13px">'+esc(DATASET_META.name)+'</div>'
+      +'<div style="color:var(--t2)"><b>Period:</b> '+esc(DATASET_META.period)+'</div>'
+      +'<div style="color:var(--t2)"><b>Size:</b> '+DATASET_META.rows.toLocaleString()+' rows &times; '+DATASET_META.cols.toLocaleString()+' columns</div>'
+      +'<div style="color:var(--t2)"><b>Dimensions:</b> '+esc(DATASET_META.dims)+'</div>'
+      +'<div style="color:var(--t2)"><b>Metrics:</b> '+esc(DATASET_META.mets)+'</div>'
+      +'</div>'
+      +'<p>All analysis runs locally in your browser. No raw data leaves your machine.</p>'
+      +'<p><b>Try asking:</b></p><ul>'
+      +'<li>"What are the top 10 routes by revenue?"</li>'
+      +'<li>"Show monthly booking trend as a line chart"</li>'
+      +'<li>"Compare revenue by loyalty tier"</li>'
+      +'<li>"What day of the week gets the most traffic?"</li>'
+      +'</ul></div>';
+    document.getElementById('chMs').appendChild(welcome);
+
+    // Enable chat input
+    document.getElementById('chatInputArea').style.display='';
+    document.getElementById('chi').disabled=false;
+    document.getElementById('chi').placeholder='Ask anything about your data...';
+    document.getElementById('csb').disabled=false;
+
+    // Enable sidebar navigation
+    document.querySelectorAll('.nb.disabled-nav').forEach(function(b){b.classList.remove('disabled-nav')});
+    // Show reconfigure button
+    document.getElementById('sbReconfigWrap').classList.remove('hid');
+
+    // Build schema & context
+    detectEvarLabels();buildSchema();buildRevBookingCtx();buildFilters();renderDash();genRecs();
+  },300);
+}
 
 // ===== SCHEMA & CONTEXT =====
 function buildSchema(){
@@ -1433,53 +1598,6 @@ async function genRecs(){
 document.getElementById('chi').oninput=function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'};
 </script>
 
-<script>
-function launchApp(){
-  var lp=document.getElementById('landingPage'),ap=document.getElementById('ap');
-  if(lp) lp.style.display='none';
-  if(ap) ap.classList.remove('hid');
-  window.scrollTo({top:0,behavior:'smooth'});
-  // Wait for data if not yet loaded
-  function initApp(){
-    if(!DATA_LOADED){setTimeout(initApp,200);return}
-    // Build everything
-    detectEvarLabels();buildSchema();buildRevBookingCtx();buildFilters();renderDash();genRecs();
-    // Enable chat
-    var cia=document.getElementById('chatInputArea');if(cia)cia.style.display='';
-    var chi=document.getElementById('chi');if(chi){chi.disabled=false;chi.placeholder='Ask anything about your data...';}
-    var csb=document.getElementById('csb');if(csb)csb.disabled=false;
-    // Enable sidebar nav
-    document.querySelectorAll('.nb.disabled-nav').forEach(function(b){b.classList.remove('disabled-nav')});
-    var rcfg=document.getElementById('sbReconfigWrap');if(rcfg)rcfg.classList.remove('hid');
-    // Update dataset info bar on all tabs
-    updateDataInfoBar();
-    // Show welcome message with dataset info
-    var chMs=document.getElementById('chMs');
-    if(chMs){
-      var old=document.getElementById('setupCard');if(old)old.style.display='none';
-      var welcome=document.createElement('div');
-      welcome.className='cm as';
-      welcome.innerHTML='<div class="sn">IntelliSight</div><div class="bb">'
-        +'<p>&#128075; Welcome to IntelliSight. Your dataset is loaded and ready to explore.</p>'
-        +'<div style="background:var(--bg2);border:1px solid var(--brd);border-radius:9px;padding:12px 14px;margin:10px 0;font-size:12px;line-height:1.7">'
-        +'<div style="font-weight:700;color:var(--navy);margin-bottom:4px;font-size:13px">'+esc(DATASET_META.name)+'</div>'
-        +'<div style="color:var(--t2)"><b>Period:</b> '+esc(DATASET_META.period)+'</div>'
-        +'<div style="color:var(--t2)"><b>Size:</b> '+DATASET_META.rows.toLocaleString()+' rows &times; '+DATASET_META.cols.toLocaleString()+' columns</div>'
-        +'<div style="color:var(--t2)"><b>Dimensions:</b> '+esc(DATASET_META.dims)+'</div>'
-        +'<div style="color:var(--t2)"><b>Metrics:</b> '+esc(DATASET_META.mets)+'</div>'
-        +'</div>'
-        +'<p>All analysis runs locally in your browser. No raw data leaves your machine.</p>'
-        +'<p><b>Try asking:</b></p><ul>'
-        +'<li>"What are the top 10 routes by revenue?"</li>'
-        +'<li>"Show monthly booking trend as a line chart"</li>'
-        +'<li>"Compare revenue by loyalty tier"</li>'
-        +'<li>"What day of the week gets the most traffic?"</li>'
-        +'</ul></div>';
-      chMs.appendChild(welcome);
-    }
-  }
-  initApp();
-}
-</script>
+<script>function launchApp(){var lp=document.getElementById("landingPage"), ap=document.getElementById("ap"); if(lp) lp.classList.add("hid"); if(ap) ap.classList.remove("hid"); window.scrollTo({top:0,behavior:"smooth"});}</script>
 </body>
 </html>
