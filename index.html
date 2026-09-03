@@ -575,6 +575,11 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg0
 </div>
 
 <script>
+var MODEL='claude-sonnet-5';
+// Sonnet 5 runs adaptive thinking by default and max_tokens caps thinking+text
+// combined. This app never displays thinking, so turn it off to keep the full
+// budget for the answer. Set THINKING=null to let the model think instead.
+var THINKING={type:'disabled'};
 var AK='',DATA=[],COLS=[],CTYPE={},SCHEMA='';
 var EVARS=[],PROPS=[],EVENTS=[],METS=[],DIMS=[],DATECOLS=[];
 var KEY_EVENTS=[];
@@ -1011,7 +1016,7 @@ async function doValidate(){
   if(k.indexOf('sk-ant-')!==0){e.textContent='Invalid key format.';e.classList.add('s');showKeyStatus('fail','Invalid key');return}
   b.disabled=true;b.textContent='Validating...';e.classList.remove('s');showKeyStatus('pending','Validating...');
   try{
-    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:30,messages:[{role:'user',content:'Reply OK'}]})});
+    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(Object.assign({model:MODEL,max_tokens:64,messages:[{role:'user',content:'Reply OK'}]},THINKING?{thinking:THINKING}:{}))});
     if(r.ok){
       AK=k;KEY_VALIDATED=true;
       showKeyStatus('ok','Connected');
@@ -1023,9 +1028,11 @@ async function doValidate(){
       try{localStorage.setItem('intellisight_ak',k)}catch(e){}
       checkLaunchReady();
     }else{
-      var d=await r.json();
-      e.textContent=(d.error&&d.error.message)||'Validation failed.';e.classList.add('s');
-      showKeyStatus('fail','Failed');
+      var d={};try{d=await r.json()}catch(_){}
+      var vm=(d.error&&d.error.message)||'Validation failed.';
+      if(r.status===404)vm='Key looks fine, but model "'+MODEL+'" is unavailable ('+vm+').';
+      e.textContent=vm;e.classList.add('s');
+      showKeyStatus('fail',r.status===404?'Model unavailable':'Failed');
     }
   }catch(x){e.textContent='Network error: '+x.message;e.classList.add('s');showKeyStatus('fail','Network error')}
   b.disabled=false;b.textContent='Validate Key';
@@ -1519,7 +1526,7 @@ async function doSend(){
       ?'- Revenue = parseFloat(r["event9"])||0, State = r["eVar15"], Date = r["Date"]\n- Customer Segment = r["eVar13"], Account Type = r["eVar12"], Funnel Stage = r["eVar19"]\n- Applications = parseFloat(r["event7"])||0, Conversions = parseFloat(r["event13"])||0'
       :'- Revenue = parseFloat(r["event9"])||0, Route = r["eVar17"], Date = r["Date"]\n- Loyalty = r["eVar13"], Cabin = r["eVar14"]';
     var cp='You are a data analyst. Write a JS function to answer the user question.\n\nDATA is a JS array of objects (one per row). Access columns using EXACT names like r["event9"], r["eVar4"], r["Date"].\nIndustry: '+(isBanking?'Banking & Financial Services':'Airlines & Travel')+'\n\n'+SCHEMA+REV_BOOKING_CTX+'\n\nUSER QUESTION: "'+msg+'"\n\nWrite: function analyze(DATA) { ... return result; }\nRules:\n- Access columns as r["event9"] NOT r.revenue\n'+colHints+'\n- parseFloat() all numeric event columns, they may be strings\n- Handle nulls, missing data, empty strings\n- For charts include labels[] and values[] arrays\n- Max 20 items. No external libs.\n- For "last N months" filter: compare r["Date"] against date strings like "2024-08-01"\n\nRespond with ONLY ```js ... ``` block.';
-    var codeR=await callAI([{role:'user',content:cp}],1500);
+    var codeR=await callAI([{role:'user',content:cp}],2200);
     var jm=codeR.match(/```(?:js|javascript)?\s*([\s\S]*?)```/);
     var res,local=false;
     if(jm){try{var fn=new Function('DATA',jm[1]+'\nreturn analyze(DATA);');res=fn(DATA);local=true}catch(ex){res={error:'Code error: '+ex.message}}}
@@ -1534,20 +1541,30 @@ async function doSend(){
     chHist.push({role:'user',content:msg});
     var ctx=chHist.slice(-4).map(function(m){return{role:m.role,content:m.content}});
     ctx[ctx.length-1]={role:'user',content:ip};
-    var fr=await callAI(ctx,3000);
+    var fr=await callAI(ctx,4200);
     chHist.push({role:'assistant',content:fr});
     remTyp(tid);addMsg('a',fr,true,local);
-  }catch(e){remTyp(tid);addMsg('a','\u26a0\ufe0f Error: '+e.message+'. Try rephrasing.')}
+  }catch(e){remTyp(tid);addMsg('a','\u26a0\ufe0f '+e.message)}
   sb.disabled=false;
 }
 
 async function callAI(msgs,mt){
   var maxRetries=3;
   for(var attempt=0;attempt<maxRetries;attempt++){
-    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:mt||2000,messages:msgs})});
+    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(Object.assign({model:MODEL,max_tokens:mt||3000,messages:msgs},THINKING?{thinking:THINKING}:{}))});
     if(r.status===429){var wait=Math.pow(2,attempt+1)*5;console.log('Rate limited, waiting '+wait+'s before retry '+(attempt+1));await new Promise(function(ok){setTimeout(ok,wait*1000)});continue}
-    if(!r.ok){var d=await r.json();throw new Error((d.error&&d.error.message)||'API error '+r.status)}
-    var data=await r.json();return data.content.map(function(c){return c.text||''}).join('');
+    if(!r.ok){
+      var d={};try{d=await r.json()}catch(_){}
+      var em=(d.error&&d.error.message)||('HTTP '+r.status);
+      if(r.status===404)em='Model "'+MODEL+'" is unavailable (API said: '+em+'). It may have been retired \u2014 update the MODEL constant near the top of the script.';
+      else if(r.status===401||r.status===403)em='API key was rejected ('+em+'). Click "Change key" and re-enter a valid key.';
+      else em='API error '+r.status+': '+em;
+      throw new Error(em)}
+    var data=await r.json();
+    if(data.stop_reason==='refusal')throw new Error('The model declined to answer that question. Try asking it a different way.');
+    var txt=(data.content||[]).filter(function(c){return c.type==='text'}).map(function(c){return c.text}).join('');
+    if(!txt.trim())throw new Error('The model returned an empty response'+(data.stop_reason==='max_tokens'?' (hit the max_tokens limit \u2014 raise it and retry).':' (stop_reason: '+data.stop_reason+').'));
+    return txt;
   }
   throw new Error('Rate limited after '+maxRetries+' retries. Please wait a minute and try again.');
 }
