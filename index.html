@@ -585,12 +585,26 @@ var EVARS=[],PROPS=[],EVENTS=[],METS=[],DIMS=[],DATECOLS=[];
 var KEY_EVENTS=[];
 var selF=new Set(),tView='monthly',chInst={},chHist=[];
 var KEY_VALIDATED=false, DATA_LOADED=false;
+// Server proxy mode (xPerion VM): config.js sets window.INTELLISIGHT_PROXY to the proxy endpoint.
+// The API key is added by the server and never reaches the browser.
+var PROXY=(typeof window.INTELLISIGHT_PROXY==='string'&&window.INTELLISIGHT_PROXY)?window.INTELLISIGHT_PROXY:'';
+function apiUrl(){return PROXY||'https://api.anthropic.com/v1/messages'}
+function apiHeaders(k){var h={'Content-Type':'application/json','anthropic-version':'2023-06-01'};if(!PROXY){h['x-api-key']=k;h['anthropic-dangerous-direct-browser-access']='true'}return h}
 
 // ===== MULTI-SOURCE KEY RESOLUTION =====
 // Priority: 1) config.js  2) localStorage  3) URL ?key= param  4) URL #key= hash
 // Once resolved, key is persisted to localStorage for future visits.
 (function(){
   var resolved='';
+  if(PROXY){
+    document.addEventListener('DOMContentLoaded',function(){
+      var keyWrap=document.getElementById('keySectionWrap');
+      if(keyWrap) keyWrap.style.display='none';
+      KEY_VALIDATED=true;
+      checkLaunchReady();
+    });
+    return;
+  }
 
   // Source 1: config.js (window.INTELLISIGHT_KEY set by external file)
   if(window.INTELLISIGHT_KEY && window.INTELLISIGHT_KEY.length>10){
@@ -1016,7 +1030,7 @@ async function doValidate(){
   if(k.indexOf('sk-ant-')!==0){e.textContent='Invalid key format.';e.classList.add('s');showKeyStatus('fail','Invalid key');return}
   b.disabled=true;b.textContent='Validating...';e.classList.remove('s');showKeyStatus('pending','Validating...');
   try{
-    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(Object.assign({model:MODEL,max_tokens:64,messages:[{role:'user',content:'Reply OK'}]},THINKING?{thinking:THINKING}:{}))});
+    var r=await fetch(apiUrl(),{method:'POST',headers:apiHeaders(k),body:JSON.stringify(Object.assign({model:MODEL,max_tokens:64,messages:[{role:'user',content:'Reply OK'}]},THINKING?{thinking:THINKING}:{}))});
     if(r.ok){
       AK=k;KEY_VALIDATED=true;
       showKeyStatus('ok','Connected');
@@ -1551,12 +1565,13 @@ async function doSend(){
 async function callAI(msgs,mt){
   var maxRetries=3;
   for(var attempt=0;attempt<maxRetries;attempt++){
-    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(Object.assign({model:MODEL,max_tokens:mt||3000,messages:msgs},THINKING?{thinking:THINKING}:{}))});
+    var r=await fetch(apiUrl(),{method:'POST',headers:apiHeaders(AK),body:JSON.stringify(Object.assign({model:MODEL,max_tokens:mt||3000,messages:msgs},THINKING?{thinking:THINKING}:{}))});
     if(r.status===429){var wait=Math.pow(2,attempt+1)*5;console.log('Rate limited, waiting '+wait+'s before retry '+(attempt+1));await new Promise(function(ok){setTimeout(ok,wait*1000)});continue}
     if(!r.ok){
       var d={};try{d=await r.json()}catch(_){}
       var em=(d.error&&d.error.message)||('HTTP '+r.status);
-      if(r.status===404)em='Model "'+MODEL+'" is unavailable (API said: '+em+'). It may have been retired \u2014 update the MODEL constant near the top of the script.';
+      if(PROXY)em='AI Engine error '+r.status+': '+em;
+      else if(r.status===404)em='Model "'+MODEL+'" is unavailable (API said: '+em+'). It may have been retired \u2014 update the MODEL constant near the top of the script.';
       else if(r.status===401||r.status===403)em='API key was rejected ('+em+'). Click "Change key" and re-enter a valid key.';
       else em='API error '+r.status+': '+em;
       throw new Error(em)}
